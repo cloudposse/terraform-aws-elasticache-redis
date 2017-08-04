@@ -16,6 +16,3 @@ output "config_host" {
 }
 
 */
-output "hosts" {
-  value = "${join(",", null_resource.host.*.triggers.name)}"
-}

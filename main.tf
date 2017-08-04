@@ -6,18 +6,6 @@ module "label" {
   stage     = "${var.stage}"
 }
 
-resource "null_resource" "host" {
-  count = "${var.cluster_size}"
-
-  triggers = {
-    name = "${replace(aws_elasticache_cluster.default.cluster_address, ".cfg.", format(".%04d.", count.index + 1))}:11211"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 #
 # Security Group Resources
 #
