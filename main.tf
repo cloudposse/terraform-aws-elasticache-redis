@@ -56,7 +56,7 @@ resource "aws_elasticache_parameter_group" "default" {
 #
 resource "aws_elasticache_cluster" "default" {
   cluster_id             = "${module.label.id}"
-  engine                 = "memcached"
+  engine                 = "redis"
   engine_version         = "${var.engine_version}"
   node_type              = "${var.instance_type}"
   num_cache_nodes        = "${var.cluster_size}"
