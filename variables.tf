@@ -40,7 +40,7 @@ variable "instance_type" {
 }
 
 variable "engine_version" {
-  default = "1.4.33"
+  default = "3.2"
 }
 
 variable "notification_topic_arn" {
