@@ -65,7 +65,7 @@ resource "aws_elasticache_cluster" "default" {
   security_group_ids     = ["${aws_security_group.default.id}"]
   maintenance_window     = "${var.maintenance_window}"
   notification_topic_arn = "${var.notification_topic_arn}"
-  port                   = "11211"
+  port                   = "6379"
   az_mode                = "${var.cluster_size == 1 ? "single-az" : "cross-az" }"
   availability_zones     = ["${slice(var.availability_zones, 0, var.cluster_size)}"]
 
