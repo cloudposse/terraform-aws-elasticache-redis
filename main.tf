@@ -86,7 +86,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   }
 
   alarm_actions = ["${var.alarm_actions}"]
-  depends_on    = ["aws_elasticache_cluster.default"]
+  depends_on    = ["aws_elasticache_replication_group.default"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -106,7 +106,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   }
 
   alarm_actions = ["${var.alarm_actions}"]
-  depends_on    = ["aws_elasticache_cluster.default"]
+  depends_on    = ["aws_elasticache_replication_group.default"]
 }
 
 /*
