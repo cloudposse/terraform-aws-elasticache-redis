@@ -113,14 +113,3 @@ module "dns" {
   zone_id   = "${var.zone_id}"
   records   = ["${aws_elasticache_replication_group.default.primary_endpoint_address}"]
 }
-
-module "dns_config" {
-  source    = "git::https://github.com/cloudposse/tf_hostname.git"
-  namespace = "${var.namespace}"
-  name      = "config.${var.name}"
-  stage     = "${var.stage}"
-  ttl       = 60
-  zone_id   = "${var.zone_id}"
-  records   = ["${aws_elasticache_replication_group.default.configuration_endpoint_address}"]
-}
-
