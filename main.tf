@@ -58,7 +58,7 @@ resource "aws_elasticache_replication_group" "default" {
   number_cache_clusters         = "${var.cluster_size}"
   port                          = 6379
   parameter_group_name          = "${aws_elasticache_parameter_group.default.name}"
-  availability_zones            = "${var.availability_zones}"
+  availability_zones            = ["${var.availability_zones}"]
   automatic_failover_enabled    = true
   subnet_group_name      = "${aws_elasticache_subnet_group.default.name}"
   security_group_ids     = ["${aws_security_group.default.id}"]
