@@ -60,7 +60,7 @@ resource "aws_elasticache_cluster" "default" {
   engine_version         = "${var.engine_version}"
   node_type              = "${var.instance_type}"
   num_cache_nodes        = "${var.cluster_size}"
-  parameter_group_name   = "default.redis3.2.cluster.on"
+  parameter_group_name   = "default.redis3.2"
   subnet_group_name      = "${aws_elasticache_subnet_group.default.name}"
   security_group_ids     = ["${aws_security_group.default.id}"]
   maintenance_window     = "${var.maintenance_window}"
