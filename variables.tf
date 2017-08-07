@@ -32,11 +32,21 @@ variable "maintenance_window" {
 }
 
 variable "cluster_size" {
-  default = "2"
+  default = "1"
 }
+
+
+variable "port" {
+  default = "6379"
+}
+
 
 variable "instance_type" {
   default = "cache.t2.micro"
+}
+
+variable "family" {
+  default = "redis3.2"
 }
 
 variable "engine_version" {
@@ -63,6 +73,10 @@ variable "alarm_actions" {
 
 variable "apply_immediately" {
   default = "true"
+}
+
+variable "automatic_failover" {
+  default = "false"
 }
 
 variable "availability_zones" {

@@ -10,10 +10,12 @@ output "port" {
   value = "11211"
 }
 
-/*
+output "host" {
+  value = "${module.dns.hostname}"
+}
+
 output "config_host" {
   value = "${module.dns_config.hostname}"
 }
 
-*/
 

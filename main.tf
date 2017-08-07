@@ -12,17 +12,9 @@ module "label" {
 resource "aws_security_group" "default" {
   vpc_id = "${var.vpc_id}"
   name   = "${module.label.id}"
-
   ingress {
-    from_port       = "6380"                     # Redis
-    to_port         = "6380"
-    protocol        = "tcp"
-    security_groups = ["${var.security_groups}"]
-  }
-
-  ingress {
-    from_port       = "6379"                     # Memcache
-    to_port         = "6379"
+    from_port       = "${var.port}"                    # Redis
+    to_port         = "${var.port}"
     protocol        = "tcp"
     security_groups = ["${var.security_groups}"]
   }
@@ -48,7 +40,7 @@ resource "aws_elasticache_subnet_group" "default" {
 
 resource "aws_elasticache_parameter_group" "default" {
   name   = "${module.label.id}"
-  family = "redis3.2"
+  family = "${var.family}"
 }
 
 resource "aws_elasticache_replication_group" "default" {
@@ -56,14 +48,16 @@ resource "aws_elasticache_replication_group" "default" {
   replication_group_description = "${module.label.id}"
   node_type                     = "${var.instance_type}"
   number_cache_clusters         = "${var.cluster_size}"
-  port                          = 6379
+  port                          = "${var.port}"
   parameter_group_name          = "${aws_elasticache_parameter_group.default.name}"
   availability_zones            = ["${slice(var.availability_zones, 0, var.cluster_size)}"]
-  automatic_failover_enabled    = false
+  automatic_failover_enabled    = "${var.automatic_failover}"
   subnet_group_name             = "${aws_elasticache_subnet_group.default.name}"
   security_group_ids            = ["${aws_security_group.default.id}"]
   maintenance_window            = "${var.maintenance_window}"
   notification_topic_arn        = "${var.notification_topic_arn}"
+
+  tags = "${module.label.tags}"
 }
 
 #
@@ -109,25 +103,24 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   depends_on    = ["aws_elasticache_replication_group.default"]
 }
 
-/*
+
 module "dns" {
-  source    = "../hostname"
+  source    = "git::https://github.com/cloudposse/tf_hostname.git"
   namespace = "${var.namespace}"
   name      = "${var.name}"
   stage     = "${var.stage}"
   ttl       = 60
   zone_id   = "${var.zone_id}"
-  records   = ["${aws_elasticache_replication_group.default.cluster_address}"]
+  records   = ["${aws_elasticache_replication_group.default.primary_endpoint_address}"]
 }
 
 module "dns_config" {
-  source    = "../hostname"
+  source    = "git::https://github.com/cloudposse/tf_hostname.git"
   namespace = "${var.namespace}"
   name      = "config.${var.name}"
   stage     = "${var.stage}"
   ttl       = 60
   zone_id   = "${var.zone_id}"
-  records   = ["${aws_elasticache_replication_group.default.configuration_endpoint}"]
+  records   = ["${aws_elasticache_replication_group.default.configuration_endpoint_address}"]
 }
-*/
 
