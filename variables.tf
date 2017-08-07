@@ -32,7 +32,7 @@ variable "maintenance_window" {
 }
 
 variable "cluster_size" {
-  default = "2"
+  default = "1"
 }
 
 variable "instance_type" {
