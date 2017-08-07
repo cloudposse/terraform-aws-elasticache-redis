@@ -1,5 +1,5 @@
 output "id" {
-  value = "${aws_elasticache_cluster.default.id}"
+  value = "${aws_elasticache_replication_group.default.id}"
 }
 
 output "security_group_id" {

@@ -117,7 +117,7 @@ module "dns" {
   stage     = "${var.stage}"
   ttl       = 60
   zone_id   = "${var.zone_id}"
-  records   = ["${aws_elasticache_cluster.default.cluster_address}"]
+  records   = ["${aws_elasticache_replication_group.default.cluster_address}"]
 }
 
 module "dns_config" {
@@ -127,6 +127,6 @@ module "dns_config" {
   stage     = "${var.stage}"
   ttl       = 60
   zone_id   = "${var.zone_id}"
-  records   = ["${aws_elasticache_cluster.default.configuration_endpoint}"]
+  records   = ["${aws_elasticache_replication_group.default.configuration_endpoint}"]
 }
 */
