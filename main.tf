@@ -14,14 +14,14 @@ resource "aws_security_group" "default" {
   name   = "${module.label.id}"
 
   ingress {
-    from_port       = "6380"                    # Redis
+    from_port       = "6380"                     # Redis
     to_port         = "6380"
     protocol        = "tcp"
     security_groups = ["${var.security_groups}"]
   }
 
   ingress {
-    from_port       = "6379"                    # Memcache
+    from_port       = "6379"                     # Memcache
     to_port         = "6379"
     protocol        = "tcp"
     security_groups = ["${var.security_groups}"]
@@ -58,12 +58,12 @@ resource "aws_elasticache_replication_group" "default" {
   number_cache_clusters         = "${var.cluster_size}"
   port                          = 6379
   parameter_group_name          = "${aws_elasticache_parameter_group.default.name}"
-  availability_zones            = ["${var.availability_zones}"]
+  availability_zones            = ["${slice(var.availability_zones, 0, var.cluster_size)}"]
   automatic_failover_enabled    = true
-  subnet_group_name      = "${aws_elasticache_subnet_group.default.name}"
-  security_group_ids     = ["${aws_security_group.default.id}"]
-  maintenance_window     = "${var.maintenance_window}"
-  notification_topic_arn = "${var.notification_topic_arn}"
+  subnet_group_name             = "${aws_elasticache_subnet_group.default.name}"
+  security_group_ids            = ["${aws_security_group.default.id}"]
+  maintenance_window            = "${var.maintenance_window}"
+  notification_topic_arn        = "${var.notification_topic_arn}"
 }
 
 #
@@ -130,3 +130,4 @@ module "dns_config" {
   records   = ["${aws_elasticache_replication_group.default.configuration_endpoint}"]
 }
 */
+
