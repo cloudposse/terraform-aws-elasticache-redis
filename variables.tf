@@ -61,11 +61,6 @@ variable "alarm_cpu_threshold_percent" {
   default = "75"
 }
 
-variable "alarm_memory_threshold_bytes" {
-  # 10MB
-  default = "10000000"
-}
-
 variable "alarm_actions" {
   type    = "list"
   default = []
