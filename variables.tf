@@ -18,10 +18,6 @@ variable "vpc_id" {
   default = ""
 }
 
-variable "max_item_size" {
-  default = "10485760"
-}
-
 variable "subnets" {
   type    = "list"
   default = []
