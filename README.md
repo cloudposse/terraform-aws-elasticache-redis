@@ -1,13 +1,13 @@
 # tf_redis
 
-Terraform config to create redis cluster based on aws elastic cache
+Terraform module to provision a ElastiCache Redis Cluster
 
 ## Usage
 
 Include this repository as a module in your existing terraform code:
 
 ```
-module "api_redis" {
+module "example_redis" {
   source          = "git::https://github.com/cloudposse/tf_redis.git?ref=tags/0.1.0"
   namespace       = "general"
   name            = "redis"
