@@ -7,7 +7,7 @@ output "security_group_id" {
 }
 
 output "port" {
-  value = "11211"
+  value = "${var.port}"
 }
 
 output "host" {
