@@ -31,11 +31,9 @@ variable "cluster_size" {
   default = "1"
 }
 
-
 variable "port" {
   default = "6379"
 }
-
 
 variable "instance_type" {
   default = "cache.t2.micro"
@@ -80,3 +78,18 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {}
+
+variable "delimiter" {
+  type    = "string"
+  default = "-"
+}
+
+variable "attributes" {
+  type    = "list"
+  default = []
+}
+
+variable "tags" {
+  type    = "map"
+  default = {}
+}
