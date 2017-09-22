@@ -35,7 +35,7 @@ module "example_redis" {
 ## Input
 
 |  Name                        |  Default            |  Decription                                            |
-|:----------------------------:|:-------------------:|:------------------------------------------------------:|
+|:-----------------------------|:-------------------:|:-------------------------------------------------------|
 | namespace                    |global               |Namespace                                               |
 | stage                        |default              |Stage                                                   |
 | name                         |redis                |Name                                                    |
@@ -61,7 +61,7 @@ module "example_redis" {
 ## Output
 
 | Name              | Decription        |
-|:-----------------:|:-----------------:|
+|:------------------|:------------------|
 | id                | Redis cluster id  |
 | security_group_id | Security group id |
 | host              | Redis host        |
