@@ -13,4 +13,3 @@ output "port" {
 output "host" {
   value = "${module.dns.hostname}"
 }
-

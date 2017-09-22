@@ -1,6 +1,6 @@
 # Define composite variables for resources
 module "label" {
-  source     = "git::https://github.com/cloudposse/tf_label.git?ref=tags/0.2.0"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.2.1"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
@@ -15,8 +15,9 @@ module "label" {
 resource "aws_security_group" "default" {
   vpc_id = "${var.vpc_id}"
   name   = "${module.label.id}"
+
   ingress {
-    from_port       = "${var.port}"                    # Redis
+    from_port       = "${var.port}"              # Redis
     to_port         = "${var.port}"
     protocol        = "tcp"
     security_groups = ["${var.security_groups}"]
@@ -29,7 +30,7 @@ resource "aws_security_group" "default" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags   = "${module.label.tags}"
+  tags = "${module.label.tags}"
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -56,7 +57,7 @@ resource "aws_elasticache_replication_group" "default" {
   maintenance_window            = "${var.maintenance_window}"
   notification_topic_arn        = "${var.notification_topic_arn}"
 
-  tags                          = "${module.label.tags}"
+  tags = "${module.label.tags}"
 }
 
 #
@@ -72,15 +73,15 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   period              = "300"
   statistic           = "Average"
 
-  threshold           = "${var.alarm_cpu_threshold_percent}"
+  threshold = "${var.alarm_cpu_threshold_percent}"
 
   dimensions {
     CacheClusterId = "${module.label.id}"
   }
 
-  alarm_actions       = ["${var.alarm_actions}"]
-  depends_on          = ["aws_elasticache_replication_group.default"]
-  tags                = "${module.label.tags}"
+  alarm_actions = ["${var.alarm_actions}"]
+  depends_on    = ["aws_elasticache_replication_group.default"]
+  tags          = "${module.label.tags}"
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -93,20 +94,19 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   period              = "60"
   statistic           = "Average"
 
-  threshold           = "${var.alarm_memory_threshold_bytes}"
+  threshold = "${var.alarm_memory_threshold_bytes}"
 
   dimensions {
     CacheClusterId = "${module.label.id}"
   }
 
-  alarm_actions       = ["${var.alarm_actions}"]
-  depends_on          = ["aws_elasticache_replication_group.default"]
-  tags                = "${module.label.tags}"
+  alarm_actions = ["${var.alarm_actions}"]
+  depends_on    = ["aws_elasticache_replication_group.default"]
+  tags          = "${module.label.tags}"
 }
 
-
 module "dns" {
-  source    = "git::https://github.com/cloudposse/tf_hostname.git?ref=tags/0.1.0"
+  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.1.1"
   namespace = "${var.namespace}"
   name      = "${var.name}"
   stage     = "${var.stage}"

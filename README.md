@@ -1,14 +1,15 @@
-# tf_redis
+# terraform-aws-elasticache-redis
 
-Terraform module to provision a ElastiCache Redis Cluster
+Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster
+
 
 ## Usage
 
 Include this repository as a module in your existing terraform code:
 
-```
+```hcl
 module "example_redis" {
-  source          = "git::https://github.com/cloudposse/tf_redis.git?ref=tags/0.1.0"
+  source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
   namespace       = "general"
   name            = "redis"
   stage           = "prod"
@@ -30,10 +31,11 @@ module "example_redis" {
 }
 ```
 
+
 ## Input
 
-|  Name                        |  Default            |  Decription                                            |
-|:----------------------------:|:-------------------:|:------------------------------------------------------:|
+|  Name                        |  Default            |  Description                                           |
+|:-----------------------------|:-------------------:|:-------------------------------------------------------|
 | namespace                    |global               |Namespace                                               |
 | stage                        |default              |Stage                                                   |
 | name                         |redis                |Name                                                    |
@@ -46,7 +48,7 @@ module "example_redis" {
 | engine_version               | 3.2.4               | Redis engine version                                   |
 | port                         | 6379                | Redis port                                             |
 | maintenance_window           | wed:03:00-wed:04:00 | Maintenance window                                     |
-| notification_topic_arn       |                     | Notificate topic arn                                   |
+| notification_topic_arn       |                     | Notification topic arn                                 |
 | alarm_cpu_threshold_percent  | 75                  | CPU threshold alarm level                              |
 | alarm_memory_threshold_bytes | 10000000            | Ram threshold alarm level                              |
 | alarm_actions                | []                  | Alarm action list                                      |
@@ -55,12 +57,17 @@ module "example_redis" {
 | availability_zones           | []                  | Availability zone ids                                  |
 | zone_id                      | false               | Route53 dns zone id                                    |
 
+
 ## Output
 
-| Name              | Decription        |
-|:-----------------:|:-----------------:|
+| Name              | Description       |
+|:------------------|:------------------|
 | id                | Redis cluster id  |
 | security_group_id | Security group id |
 | host              | Redis host        |
 | port              | Redis port        |
 
+
+## License
+
+Apache 2 License. See [`LICENSE`](LICENSE) for full details.
