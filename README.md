@@ -34,7 +34,7 @@ module "example_redis" {
 
 ## Input
 
-|  Name                        |  Default            |  Decription                                            |
+|  Name                        |  Default            |  Description                                           |
 |:-----------------------------|:-------------------:|:-------------------------------------------------------|
 | namespace                    |global               |Namespace                                               |
 | stage                        |default              |Stage                                                   |
@@ -48,7 +48,7 @@ module "example_redis" {
 | engine_version               | 3.2.4               | Redis engine version                                   |
 | port                         | 6379                | Redis port                                             |
 | maintenance_window           | wed:03:00-wed:04:00 | Maintenance window                                     |
-| notification_topic_arn       |                     | Notificate topic arn                                   |
+| notification_topic_arn       |                     | Notification topic arn                                 |
 | alarm_cpu_threshold_percent  | 75                  | CPU threshold alarm level                              |
 | alarm_memory_threshold_bytes | 10000000            | Ram threshold alarm level                              |
 | alarm_actions                | []                  | Alarm action list                                      |
@@ -60,7 +60,7 @@ module "example_redis" {
 
 ## Output
 
-| Name              | Decription        |
+| Name              | Description       |
 |:------------------|:------------------|
 | id                | Redis cluster id  |
 | security_group_id | Security group id |
