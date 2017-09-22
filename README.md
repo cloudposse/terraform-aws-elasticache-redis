@@ -1,14 +1,15 @@
-# tf_redis
+# terraform-aws-elasticache-redis
 
-Terraform module to provision a ElastiCache Redis Cluster
+Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster
+
 
 ## Usage
 
 Include this repository as a module in your existing terraform code:
 
-```
+```hcl
 module "example_redis" {
-  source          = "git::https://github.com/cloudposse/tf_redis.git?ref=tags/0.1.0"
+  source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
   namespace       = "general"
   name            = "redis"
   stage           = "prod"
@@ -29,6 +30,7 @@ module "example_redis" {
   automatic_failover = "false"
 }
 ```
+
 
 ## Input
 
@@ -55,6 +57,7 @@ module "example_redis" {
 | availability_zones           | []                  | Availability zone ids                                  |
 | zone_id                      | false               | Route53 dns zone id                                    |
 
+
 ## Output
 
 | Name              | Decription        |
@@ -64,3 +67,7 @@ module "example_redis" {
 | host              | Redis host        |
 | port              | Redis port        |
 
+
+## License
+
+Apache 2 License. See [`LICENSE`](LICENSE) for full details.
