@@ -13,7 +13,7 @@ module "example_redis" {
   namespace       = "general"
   name            = "redis"
   stage           = "prod"
-  zone_id         = "${var.route52_zone_id}"
+  zone_id         = "${var.route53_zone_id}"
   security_groups = ["${var.security_group_id}"]
 
   vpc_id                       = "${var.vpc_id}"
