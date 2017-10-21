@@ -1,6 +1,6 @@
 # Define composite variables for resources
 module "label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.2.1"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.2.2"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
@@ -81,7 +81,6 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 
   alarm_actions = ["${var.alarm_actions}"]
   depends_on    = ["aws_elasticache_replication_group.default"]
-  tags          = "${module.label.tags}"
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -102,7 +101,6 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 
   alarm_actions = ["${var.alarm_actions}"]
   depends_on    = ["aws_elasticache_replication_group.default"]
-  tags          = "${module.label.tags}"
 }
 
 module "dns" {
