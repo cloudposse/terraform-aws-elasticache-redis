@@ -1,6 +1,7 @@
 # Define composite variables for resources
 module "label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.2.2"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.0"
+  enabled    = "${var.enabled}"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
@@ -13,6 +14,7 @@ module "label" {
 # Security Group Resources
 #
 resource "aws_security_group" "default" {
+  count  = "${var.enabled == "true" ? 1 : 0}"
   vpc_id = "${var.vpc_id}"
   name   = "${module.label.id}"
 
@@ -34,16 +36,19 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_elasticache_subnet_group" "default" {
+  count      = "${var.enabled == "true" ? 1 : 0}"
   name       = "${module.label.id}"
   subnet_ids = ["${var.subnets}"]
 }
 
 resource "aws_elasticache_parameter_group" "default" {
+  count  = "${var.enabled == "true" ? 1 : 0}"
   name   = "${module.label.id}"
   family = "${var.family}"
 }
 
 resource "aws_elasticache_replication_group" "default" {
+  count                         = "${var.enabled == "true" ? 1 : 0}"
   replication_group_id          = "${module.label.id}"
   replication_group_description = "${module.label.id}"
   node_type                     = "${var.instance_type}"
@@ -64,6 +69,7 @@ resource "aws_elasticache_replication_group" "default" {
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
+  count               = "${var.enabled == "true" ? 1 : 0}"
   alarm_name          = "${module.label.id}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
@@ -84,6 +90,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
+  count               = "${var.enabled == "true" ? 1 : 0}"
   alarm_name          = "${module.label.id}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
@@ -104,7 +111,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.1.1"
+  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.2.0"
+  enabled   = "${var.enabled}"
   namespace = "${var.namespace}"
   name      = "${var.name}"
   stage     = "${var.stage}"
