@@ -1,9 +1,9 @@
 output "id" {
-  value = "${aws_elasticache_replication_group.default.id}"
+  value = "${join("", aws_elasticache_replication_group.default.*.id)}"
 }
 
 output "security_group_id" {
-  value = "${aws_security_group.default.id}"
+  value = "${join("", aws_security_group.default.*.id)}"
 }
 
 output "port" {
