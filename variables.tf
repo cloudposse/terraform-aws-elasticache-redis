@@ -2,6 +2,11 @@ variable "namespace" {
   default = "global"
 }
 
+variable "enabled" {
+  description = "Set to false to prevent the module from creating any resources"
+  default     = true
+}
+
 variable "stage" {
   default = "default"
 }
