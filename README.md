@@ -36,6 +36,7 @@ module "example_redis" {
 
 |  Name                        |  Default            |  Description                                                    |
 |:-----------------------------|:-------------------:|:----------------------------------------------------------------|
+| enabled                      | true                | Set to false to prevent the module from creating any resources  |
 | namespace                    | global              | Namespace                                                       |
 | stage                        | default             | Stage                                                           |
 | name                         | redis               | Name                                                            |
