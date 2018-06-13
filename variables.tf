@@ -44,6 +44,24 @@ variable "instance_type" {
   default = "cache.t2.micro"
 }
 
+# format HH24:mm-HH24:mm
+variable "snapshot_window" {
+  default = ""
+}
+
+variable "snapshot_name" {
+  default = ""
+}
+
+variable "snapshot_retention_limit" {
+  default = ""
+}
+
+variable "snapshot_arns" {
+  type    = "list"
+  default = []
+}
+
 variable "family" {
   default = "redis3.2"
 }
