@@ -15,6 +15,10 @@ variable "name" {
   default = "redis"
 }
 
+variable "dns_name" {
+  default = "redis"
+}
+
 variable "security_groups" {
   type = "list"
 }
@@ -54,7 +58,7 @@ variable "snapshot_name" {
 }
 
 variable "snapshot_retention_limit" {
-  default = ""
+  default = 0
 }
 
 variable "snapshot_arns" {
