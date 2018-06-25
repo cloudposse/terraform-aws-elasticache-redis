@@ -61,6 +61,7 @@ resource "aws_elasticache_replication_group" "default" {
   security_group_ids            = ["${aws_security_group.default.id}"]
   maintenance_window            = "${var.maintenance_window}"
   notification_topic_arn        = "${var.notification_topic_arn}"
+  engine_version                = "${var.engine_version}"
   snapshot_window               = "${var.snapshot_window}"
   snapshot_name                 = "${var.snapshot_name}"
   snapshot_retention_limit      = "${var.snapshot_retention_limit}"
