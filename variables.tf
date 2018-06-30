@@ -49,7 +49,7 @@ variable "family" {
 }
 
 variable "engine_version" {
-  default = "3.2.4"
+  default = "4.0.10"
 }
 
 variable "notification_topic_arn" {
