@@ -45,7 +45,7 @@ variable "instance_type" {
 }
 
 variable "family" {
-  default = "redis3.2"
+  default = "redis4.0"
 }
 
 variable "engine_version" {
