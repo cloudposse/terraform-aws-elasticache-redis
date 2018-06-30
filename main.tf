@@ -61,6 +61,7 @@ resource "aws_elasticache_replication_group" "default" {
   security_group_ids            = ["${aws_security_group.default.id}"]
   maintenance_window            = "${var.maintenance_window}"
   notification_topic_arn        = "${var.notification_topic_arn}"
+  engine_version                = "${var.engine_version}"
 
   tags = "${module.label.tags}"
 }

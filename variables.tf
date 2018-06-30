@@ -45,11 +45,11 @@ variable "instance_type" {
 }
 
 variable "family" {
-  default = "redis3.2"
+  default = "redis4.0"
 }
 
 variable "engine_version" {
-  default = "3.2.4"
+  default = "4.0.10"
 }
 
 variable "notification_topic_arn" {
