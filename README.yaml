@@ -1,0 +1,81 @@
+---
+#
+# This is the canonical configuration for the `README.md`
+# Run `make readme` to rebuild the `README.md`
+#
+
+# Name of this project
+name: terraform-aws-elasticache-redis
+
+# Logo for this project
+#logo: docs/logo.png
+
+# License of this project
+license: "APACHE2"
+
+# Canonical GitHub repo
+github_repo: cloudposse/terraform-aws-elasticache-redis
+
+# Badges to display
+badges:
+  - name: "Build Status"
+    image: "https://travis-ci.org/cloudposse/terraform-aws-elasticache-redis.svg?branch=master"
+    url: "https://travis-ci.org/cloudposse/terraform-aws-elasticache-redis"
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg"
+    url: "https://travis-ci.org/cloudposse/terraform-aws-elasticache-redis/releases"
+  - name: "Slack Community"
+    image: "https://slack.cloudposse.com/badge.svg"
+    url: "https://slack.cloudposse.com"
+
+# Short description of this project
+description: |-
+  Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster
+
+# How to use this project
+usage: |-
+  Include this repository as a module in your existing terraform code:
+
+  ```hcl
+  module "example_redis" {
+    source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
+    namespace       = "general"
+    name            = "redis"
+    stage           = "prod"
+    zone_id         = "${var.route53_zone_id}"
+    security_groups = ["${var.security_group_id}"]
+
+    vpc_id                       = "${var.vpc_id}"
+    subnets                      = "${var.private_subnets}"
+    maintenance_window           = "wed:03:00-wed:04:00"
+    cluster_size                 = "2"
+    instance_type                = "cache.t2.micro"
+    engine_version               = "3.2.4"
+    alarm_cpu_threshold_percent  = "${var.cache_alarm_cpu_threshold_percent}"
+    alarm_memory_threshold_bytes = "${var.cache_alarm_memory_threshold_bytes}"
+    apply_immediately            = "true"
+    availability_zones           = "${var.availability_zones}"
+
+    automatic_failover = "false"
+  }
+  ```
+
+
+include:
+  - "docs/targets.md"
+  - "docs/terraform.md"
+
+# Contributors to this project
+contributors:
+  - name: "Erik Osterman"
+    github: "osterman"
+  - name: "Igor Rodionov"
+    github: "goruha"
+  - name: "Andriy Knysh"
+    github: "aknysh"
+  - name: "Daren Desjardins"
+    github: "darend"
+  - name: "Max Moon"
+    github: "MoonMoon1919"
+  - name: "Christopher Riley"
+    github: "christopherriley"
