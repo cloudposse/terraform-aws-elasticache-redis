@@ -19,6 +19,11 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 
 
+
+
+
+
+
 ## Usage
 
 Include this repository as a module in your existing terraform code:
@@ -66,11 +71,11 @@ Available targets:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
 | alarm_actions | Alarm action list | list | `<list>` | no |
 | alarm_cpu_threshold_percent | CPU threshold alarm level | string | `75` | no |
 | alarm_memory_threshold_bytes | Ram threshold alarm level | string | `10000000` | no |
 | apply_immediately | Apply changes immediately | string | `true` | no |
+| at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
 | attributes | Additional attributes (_e.g._ "1") | list | `<list>` | no |
 | automatic_failover | Automatic failover (Not available for T1/T2 instances) | string | `false` | no |
 | availability_zones | Availability zone ids | list | `Availability zone ids` | no |
@@ -183,6 +188,13 @@ See [LICENSE](LICENSE) for full details.
     under the License.
 
 
+
+
+
+
+
+
+
 ## Trademarks
 
 All other trademarks referenced herein are the property of their respective owners.
@@ -227,3 +239,5 @@ Check out [our other projects][github], [apply for a job][jobs], or [hire us][hi
   [MoonMoon1919_avatar]: https://github.com/MoonMoon1919.png?size=150
   [christopherriley_homepage]: https://github.com/christopherriley
   [christopherriley_avatar]: https://github.com/christopherriley.png?size=150
+
+

@@ -7,6 +7,7 @@
 | alarm_cpu_threshold_percent | CPU threshold alarm level | string | `75` | no |
 | alarm_memory_threshold_bytes | Ram threshold alarm level | string | `10000000` | no |
 | apply_immediately | Apply changes immediately | string | `true` | no |
+| at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
 | attributes | Additional attributes (_e.g._ "1") | list | `<list>` | no |
 | automatic_failover | Automatic failover (Not available for T1/T2 instances) | string | `false` | no |
 | availability_zones | Availability zone ids | list | `Availability zone ids` | no |
@@ -25,6 +26,7 @@
 | stage | Stage | string | `default` | no |
 | subnets | AWS subnet ids | list | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map | `<map>` | no |
+| transit_encryption_enabled | Enable TLS | string | `false` | no |
 | vpc_id | AWS VPC id | string | `REQUIRED` | no |
 | zone_id | Route53 DNS Zone id | string | `false` | no |
 
