@@ -109,7 +109,7 @@ variable "automatic_failover" {
 variable "availability_zones" {
   type        = "list"
   description = "Availability zone ids"
-  default     = "Availability zone ids"
+  default     = []
 }
 
 variable "zone_id" {

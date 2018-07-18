@@ -78,7 +78,7 @@ Available targets:
 | at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
 | attributes | Additional attributes (_e.g._ "1") | list | `<list>` | no |
 | automatic_failover | Automatic failover (Not available for T1/T2 instances) | string | `false` | no |
-| availability_zones | Availability zone ids | list | `Availability zone ids` | no |
+| availability_zones | Availability zone ids | list | `<list>` | no |
 | cluster_size | Count of nodes in cluster | string | `1` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | string | `-` | no |
 | enabled | Set to false to prevent the module from creating any resources | string | `true` | no |
