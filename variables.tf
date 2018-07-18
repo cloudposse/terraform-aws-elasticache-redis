@@ -65,6 +65,16 @@ variable "engine_version" {
   description = "Redis engine version"
 }
 
+variable "at_rest_encryption_enabled" {
+  default     = "false"
+  description = "Enable encryption at rest"
+}
+
+variable "transit_encryption_enabled" {
+  default     = "false"
+  description = "Enable TLS"
+}
+
 variable "notification_topic_arn" {
   default     = "10000000"
   description = "Notification topic arn"
@@ -100,7 +110,7 @@ variable "automatic_failover" {
 variable "availability_zones" {
   type        = "list"
   description = "Availability zone ids"
-  default     = "Availability zone ids"
+  default     = []
 }
 
 variable "zone_id" {
