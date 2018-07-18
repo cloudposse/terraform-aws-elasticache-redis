@@ -62,6 +62,8 @@ resource "aws_elasticache_replication_group" "default" {
   maintenance_window            = "${var.maintenance_window}"
   notification_topic_arn        = "${var.notification_topic_arn}"
   engine_version                = "${var.engine_version}"
+  at_rest_encryption_enabled    = "${var.at_rest_encryption_enabled}"
+  transit_encryption_enabled    = "${var.transit_encryption_enabled}"
 
   tags = "${module.label.tags}"
 }

@@ -66,6 +66,7 @@ Available targets:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
 | alarm_actions | Alarm action list | list | `<list>` | no |
 | alarm_cpu_threshold_percent | CPU threshold alarm level | string | `75` | no |
 | alarm_memory_threshold_bytes | Ram threshold alarm level | string | `10000000` | no |
@@ -88,6 +89,7 @@ Available targets:
 | stage | Stage | string | `default` | no |
 | subnets | AWS subnet ids | list | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map | `<map>` | no |
+| transit_encryption_enabled | Enable TLS | string | `false` | no |
 | vpc_id | AWS VPC id | string | `REQUIRED` | no |
 | zone_id | Route53 DNS Zone id | string | `false` | no |
 
@@ -225,5 +227,3 @@ Check out [our other projects][github], [apply for a job][jobs], or [hire us][hi
   [MoonMoon1919_avatar]: https://github.com/MoonMoon1919.png?size=150
   [christopherriley_homepage]: https://github.com/christopherriley
   [christopherriley_avatar]: https://github.com/christopherriley.png?size=150
-
-
