@@ -12,12 +12,23 @@ provider "aws" {
   }
 }
 
+variable "namespace" {
+}
+
+variable "name" {
+}
+
+variable "stage" {
+}
+
 variable "region" {
-  default = "us-west-2"
 }
 
 variable "availability_zones" {
-  default = ["us-west-2a", "us-west-2b"]
+  type = "list"
+}
+
+variable "zone_id" {
 }
 
 module "vpc" {
@@ -45,7 +56,7 @@ module "redis" {
   name      = "redis"
   stage     = "testing"
 
-  #  zone_id   = "${var.route53_zone_id}"
+  zone_id   = "${var.zone_id}"
 
   vpc_id             = "${module.vpc.vpc_id}"
   subnets            = "${module.subnets.private_subnet_ids}"
