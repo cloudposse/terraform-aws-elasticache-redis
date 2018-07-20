@@ -12,24 +12,19 @@ provider "aws" {
   }
 }
 
-variable "namespace" {
-}
+variable "namespace" {}
 
-variable "name" {
-}
+variable "name" {}
 
-variable "stage" {
-}
+variable "stage" {}
 
-variable "region" {
-}
+variable "region" {}
 
 variable "availability_zones" {
   type = "list"
 }
 
-variable "zone_id" {
-}
+variable "zone_id" {}
 
 module "vpc" {
   source    = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.3.3"
@@ -56,7 +51,7 @@ module "redis" {
   name      = "redis"
   stage     = "testing"
 
-  zone_id   = "${var.zone_id}"
+  zone_id = "${var.zone_id}"
 
   vpc_id             = "${module.vpc.vpc_id}"
   subnets            = "${module.subnets.private_subnet_ids}"
@@ -66,4 +61,11 @@ module "redis" {
   apply_immediately  = "true"
   availability_zones = "${var.availability_zones}"
   automatic_failover = "false"
+
+  engine_version               = "4.0.10"
+  family                       = "redis4.0"
+  port                         = "6379"
+  alarm_cpu_threshold_percent  = "75"
+  alarm_memory_threshold_bytes = "10000000"
+  at_rest_encryption_enabled   = "true"
 }
