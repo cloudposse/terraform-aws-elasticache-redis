@@ -28,16 +28,16 @@ variable "zone_id" {}
 
 module "vpc" {
   source    = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.3.3"
-  namespace = "eg"
-  stage     = "testing"
-  name      = "redis"
+  namespace = "${var.namespace}"
+  stage     = "${var.stage}"
+  name      = "${var.name}"
 }
 
 module "subnets" {
   source             = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.3.5"
-  namespace          = "eg"
-  stage              = "testing"
-  name               = "redis"
+  namespace          = "${var.namespace}"
+  stage              = "${var.stage}"
+  name               = "${var.name}"
   region             = "${var.region}"
   availability_zones = "${var.availability_zones}"
   vpc_id             = "${module.vpc.vpc_id}"
@@ -46,13 +46,11 @@ module "subnets" {
 }
 
 module "redis" {
-  source    = "../../"
-  namespace = "eg"
-  name      = "redis"
-  stage     = "testing"
-
-  zone_id = "${var.zone_id}"
-
+  source             = "../../"
+  namespace          = "${var.namespace}"
+  stage              = "${var.stage}"
+  name               = "${var.name}"
+  zone_id            = "${var.zone_id}"
   vpc_id             = "${module.vpc.vpc_id}"
   subnets            = "${module.subnets.private_subnet_ids}"
   maintenance_window = "wed:03:00-wed:04:00"
