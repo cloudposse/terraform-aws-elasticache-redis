@@ -44,7 +44,8 @@ module "redis" {
   namespace = "eg"
   name      = "redis"
   stage     = "testing"
-#  zone_id   = "${var.route53_zone_id}"
+
+  #  zone_id   = "${var.route53_zone_id}"
 
   vpc_id             = "${module.vpc.vpc_id}"
   subnets            = "${module.subnets.private_subnet_ids}"
@@ -53,6 +54,5 @@ module "redis" {
   instance_type      = "cache.t2.micro"
   apply_immediately  = "true"
   availability_zones = "${var.availability_zones}"
-
   automatic_failover = "false"
 }
