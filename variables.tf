@@ -76,7 +76,7 @@ variable "transit_encryption_enabled" {
 }
 
 variable "notification_topic_arn" {
-  default     = "10000000"
+  default     = ""
   description = "Notification topic arn"
 }
 

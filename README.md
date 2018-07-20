@@ -55,6 +55,10 @@ module "example_redis" {
 
 
 
+## Examples
+
+Review the [complete example](examples/simple) to see how to use this module.
+
 
 
 ## Makefile Targets
@@ -88,7 +92,7 @@ Available targets:
 | maintenance_window | Maintenance window | string | `wed:03:00-wed:04:00` | no |
 | name | Name | string | `redis` | no |
 | namespace | Namespace | string | `global` | no |
-| notification_topic_arn | Notification topic arn | string | `10000000` | no |
+| notification_topic_arn | Notification topic arn | string | `` | no |
 | port | Redis port | string | `6379` | no |
 | security_groups | AWS security group ids | list | `<list>` | no |
 | stage | Stage | string | `default` | no |

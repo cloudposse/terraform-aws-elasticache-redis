@@ -60,6 +60,8 @@ usage: |-
   }
   ```
 
+examples: |-
+  Review the [complete example](examples/simple) to see how to use this module.
 
 include:
   - "docs/targets.md"
