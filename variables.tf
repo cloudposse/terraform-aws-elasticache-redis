@@ -71,7 +71,7 @@ variable "at_rest_encryption_enabled" {
 }
 
 variable "transit_encryption_enabled" {
-  default     = "false"
+  default     = "true"
   description = "Enable TLS"
 }
 
@@ -134,4 +134,10 @@ variable "tags" {
   type        = "map"
   description = "Additional tags (_e.g._ map(\"BusinessUnit\",\"ABC\")"
   default     = {}
+}
+
+variable "auth_token" {
+  type        = "string"
+  description = "Auth token for password protecting redis, transit_encryption_enabled must be set to 'true'! Password must be longer than 16 chars"
+  default     = ""
 }

@@ -30,19 +30,19 @@ Include this repository as a module in your existing terraform code:
 
 ```hcl
 module "example_redis" {
-  source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
-  namespace       = "general"
-  name            = "redis"
-  stage           = "prod"
-  zone_id         = "${var.route53_zone_id}"
-  security_groups = ["${var.security_group_id}"]
-
+  source = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
+  namespace                    = "general"
+  name                         = "redis"
+  stage                        = "prod"
+  zone_id                      = "${var.route53_zone_id}"
+  security_groups              = ["${var.security_group_id}"]
+  auth_token                   = "${var.auth_token}"
   vpc_id                       = "${var.vpc_id}"
   subnets                      = "${var.private_subnets}"
   maintenance_window           = "wed:03:00-wed:04:00"
   cluster_size                 = "2"
   instance_type                = "cache.t2.micro"
-  engine_version               = "3.2.4"
+  engine_version               = "4.0.10"
   alarm_cpu_threshold_percent  = "${var.cache_alarm_cpu_threshold_percent}"
   alarm_memory_threshold_bytes = "${var.cache_alarm_memory_threshold_bytes}"
   apply_immediately            = "true"
@@ -81,6 +81,7 @@ Available targets:
 | apply_immediately | Apply changes immediately | string | `true` | no |
 | at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
 | attributes | Additional attributes (_e.g._ "1") | list | `<list>` | no |
+| auth_token | Auth token for password protecting redis (used as password) | string | `REQUIRED` | yes |
 | automatic_failover | Automatic failover (Not available for T1/T2 instances) | string | `false` | no |
 | availability_zones | Availability zone ids | list | `<list>` | no |
 | cluster_size | Count of nodes in cluster | string | `1` | no |
@@ -98,7 +99,7 @@ Available targets:
 | stage | Stage | string | `default` | no |
 | subnets | AWS subnet ids | list | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map | `<map>` | no |
-| transit_encryption_enabled | Enable TLS | string | `false` | no |
+| transit_encryption_enabled | Enable TLS | string | `true` | yes |
 | vpc_id | AWS VPC id | string | `REQUIRED` | no |
 | zone_id | Route53 DNS Zone id | string | `false` | no |
 
