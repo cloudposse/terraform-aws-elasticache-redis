@@ -37,6 +37,12 @@ usage: |-
   Include this repository as a module in your existing terraform code:
 
   ```hcl
+  // Generate a random string for auth token, no special chars
+  resource "random_string" "auth_token" {
+    length = 64
+    special = false
+  }
+
   module "example_redis" {
     source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
     namespace       = "general"
@@ -45,18 +51,23 @@ usage: |-
     zone_id         = "${var.route53_zone_id}"
     security_groups = ["${var.security_group_id}"]
 
+    auth_token                   = "${random_string.auth_token.result}"
     vpc_id                       = "${var.vpc_id}"
     subnets                      = "${var.private_subnets}"
     maintenance_window           = "wed:03:00-wed:04:00"
     cluster_size                 = "2"
     instance_type                = "cache.t2.micro"
-    engine_version               = "3.2.4"
+    engine_version               = "4.0.10"
     alarm_cpu_threshold_percent  = "${var.cache_alarm_cpu_threshold_percent}"
     alarm_memory_threshold_bytes = "${var.cache_alarm_memory_threshold_bytes}"
     apply_immediately            = "true"
     availability_zones           = "${var.availability_zones}"
 
     automatic_failover = "false"
+  }
+
+  output "auth_token" {
+    value = "${random_string.auth_token.result}"
   }
   ```
 

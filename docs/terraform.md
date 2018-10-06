@@ -9,6 +9,7 @@
 | apply_immediately | Apply changes immediately | string | `true` | no |
 | at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
 | attributes | Additional attributes (_e.g._ "1") | list | `<list>` | no |
+| auth_token | Auth token for password protecting redis, transit_encryption_enabled must be set to 'true'! Password must be longer than 16 chars | string | `` | no |
 | automatic_failover | Automatic failover (Not available for T1/T2 instances) | string | `false` | no |
 | availability_zones | Availability zone ids | list | `<list>` | no |
 | cluster_size | Count of nodes in cluster | string | `1` | no |
@@ -26,7 +27,7 @@
 | stage | Stage | string | `default` | no |
 | subnets | AWS subnet ids | list | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map | `<map>` | no |
-| transit_encryption_enabled | Enable TLS | string | `false` | no |
+| transit_encryption_enabled | Enable TLS | string | `true` | no |
 | vpc_id | AWS VPC id | string | `REQUIRED` | no |
 | zone_id | Route53 DNS Zone id | string | `false` | no |
 
