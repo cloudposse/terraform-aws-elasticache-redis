@@ -30,6 +30,12 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 Include this repository as a module in your existing terraform code:
 
 ```hcl
+// Generate a random string for auth token, no special chars
+resource "random_string" "auth_token" {
+  length = 64
+  special = false
+}
+
 module "example_redis" {
   source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
   namespace       = "general"
@@ -38,7 +44,7 @@ module "example_redis" {
   zone_id         = "${var.route53_zone_id}"
   security_groups = ["${var.security_group_id}"]
 
-  auth_token                   = "${var.auth_token}"
+  auth_token                   = "${random_string.auth_token.result}"
   vpc_id                       = "${var.vpc_id}"
   subnets                      = "${var.private_subnets}"
   maintenance_window           = "wed:03:00-wed:04:00"
@@ -51,6 +57,10 @@ module "example_redis" {
   availability_zones           = "${var.availability_zones}"
 
   automatic_failover = "false"
+}
+
+output "auth_token" {
+  value = "${random_string.auth_token.result}"
 }
 ```
 
