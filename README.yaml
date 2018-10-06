@@ -45,12 +45,13 @@ usage: |-
     zone_id         = "${var.route53_zone_id}"
     security_groups = ["${var.security_group_id}"]
 
+    auth_token                   = "${var.auth_token}"
     vpc_id                       = "${var.vpc_id}"
     subnets                      = "${var.private_subnets}"
     maintenance_window           = "wed:03:00-wed:04:00"
     cluster_size                 = "2"
     instance_type                = "cache.t2.micro"
-    engine_version               = "3.2.4"
+    engine_version               = "4.0.10"
     alarm_cpu_threshold_percent  = "${var.cache_alarm_cpu_threshold_percent}"
     alarm_memory_threshold_bytes = "${var.cache_alarm_memory_threshold_bytes}"
     apply_immediately            = "true"
