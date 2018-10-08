@@ -42,9 +42,11 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = "${var.enabled == "true" ? 1 : 0}"
-  name   = "${module.label.id}"
-  family = "${var.family}"
+  count     = "${var.enabled == "true" ? 1 : 0}"
+  name      = "${module.label.id}"
+  family    = "${var.family}"
+  tags      = "${module.label.tags}"
+  parameter = "${var.parameter}"
 }
 
 resource "aws_elasticache_replication_group" "default" {
