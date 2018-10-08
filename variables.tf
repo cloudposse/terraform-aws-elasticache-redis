@@ -63,7 +63,7 @@ variable "family" {
 variable "parameter" {
   type        = "list"
   default     = []
-  description = "A list of Redis parameters to apply. Note that parameters may differ from a Redis family to another"
+  description = "A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another"
 }
 
 variable "engine_version" {
