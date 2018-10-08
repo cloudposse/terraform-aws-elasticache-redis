@@ -60,6 +60,12 @@ variable "family" {
   description = "Redis family "
 }
 
+variable "parameter" {
+  type        = "list"
+  default     = []
+  description = "A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another"
+}
+
 variable "engine_version" {
   default     = "4.0.10"
   description = "Redis engine version"
