@@ -66,4 +66,11 @@ module "redis" {
   alarm_cpu_threshold_percent  = "75"
   alarm_memory_threshold_bytes = "10000000"
   at_rest_encryption_enabled   = "true"
+
+  parameter = [
+    {
+      name = "notify-keyspace-events"
+      value = "lK"
+    },
+  ]
 }
