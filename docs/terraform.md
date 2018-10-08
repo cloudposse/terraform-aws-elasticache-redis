@@ -22,7 +22,7 @@
 | name | Name | string | `redis` | no |
 | namespace | Namespace | string | `global` | no |
 | notification_topic_arn | Notification topic arn | string | `` | no |
-| parameter | A list of Redis parameters to apply. Note that parameters may differ from a Redis family to another | list | `<list>` | no |
+| parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | list | `<list>` | no |
 | port | Redis port | string | `6379` | no |
 | security_groups | AWS security group ids | list | `<list>` | no |
 | stage | Stage | string | `default` | no |
