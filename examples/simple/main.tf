@@ -69,7 +69,7 @@ module "redis" {
 
   parameter = [
     {
-      name = "notify-keyspace-events"
+      name  = "notify-keyspace-events"
       value = "lK"
     },
   ]
