@@ -120,7 +120,7 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  default     = "false"
+  default     = ""
   description = "Route53 DNS Zone id"
 }
 
