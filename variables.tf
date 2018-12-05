@@ -147,3 +147,13 @@ variable "auth_token" {
   description = "Auth token for password protecting redis, transit_encryption_enabled must be set to 'true'! Password must be longer than 16 chars"
   default     = ""
 }
+
+variable "replication_group_id" {
+  type = "string"
+  description = "Replication group ID with the following constraints:
+
+A name must contain from 1 to 20 alphanumeric characters or hyphens.
+The first character must be a letter.
+A name cannot end with a hyphen or contain two consecutive hyphens."
+  default = ""
+}
