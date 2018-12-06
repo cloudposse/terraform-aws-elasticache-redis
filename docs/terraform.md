@@ -24,6 +24,7 @@
 | notification_topic_arn | Notification topic arn | string | `` | no |
 | parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | list | `<list>` | no |
 | port | Redis port | string | `6379` | no |
+| replication_group_id | Replication group ID with the following constraints:  A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | string | `` | no |
 | security_groups | AWS security group ids | list | `<list>` | no |
 | stage | Stage | string | `default` | no |
 | subnets | AWS subnet ids | list | `<list>` | no |
