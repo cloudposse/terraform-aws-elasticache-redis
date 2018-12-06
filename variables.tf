@@ -149,11 +149,7 @@ variable "auth_token" {
 }
 
 variable "replication_group_id" {
-  type = "string"
-  description = "Replication group ID with the following constraints:
-
-A name must contain from 1 to 20 alphanumeric characters or hyphens.
-The first character must be a letter.
-A name cannot end with a hyphen or contain two consecutive hyphens."
-  default = ""
+  type        = "string"
+  description = "Replication group ID with the following constraints: \nA name must contain from 1 to 20 alphanumeric characters or hyphens. \n The first character must be a letter. \n A name cannot end with a hyphen or contain two consecutive hyphens."
+  default     = ""
 }
