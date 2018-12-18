@@ -103,6 +103,12 @@ variable "alarm_actions" {
   default     = []
 }
 
+variable "ok_actions" {
+  type        = "list"
+  description = "The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN)"
+  default     = []
+}
+
 variable "apply_immediately" {
   default     = "true"
   description = "Apply changes immediately"

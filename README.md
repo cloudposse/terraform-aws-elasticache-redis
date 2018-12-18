@@ -70,6 +70,8 @@ module "example_redis" {
   alarm_memory_threshold_bytes = "${var.cache_alarm_memory_threshold_bytes}"
   apply_immediately            = "true"
   availability_zones           = "${var.availability_zones}"
+  alarm_actions                = ["${var.alarm_actions}"]
+  ok_actions                   = ["${var.ok_actions}"]
 
   automatic_failover = "false"
 }
@@ -103,7 +105,7 @@ Available targets:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| alarm_actions | Alarm action list | list | `<list>` | no |
+| alarm_actions | The list of actions to execute when this alarm transitions into an ALARM state from any other state. Each action is specified as an Amazon Resource Number (ARN). | list | `<list>` | no |
 | alarm_cpu_threshold_percent | CPU threshold alarm level | string | `75` | no |
 | alarm_memory_threshold_bytes | Ram threshold alarm level | string | `10000000` | no |
 | apply_immediately | Apply changes immediately | string | `true` | no |
@@ -122,6 +124,7 @@ Available targets:
 | name | Name | string | `redis` | no |
 | namespace | Namespace | string | `global` | no |
 | notification_topic_arn | Notification topic arn | string | `` | no |
+| ok_actions |  The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | list | `<list>` | no |
 | parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | list | `<list>` | no |
 | port | Redis port | string | `6379` | no |
 | replication_group_id | Replication group ID with the following constraints:  A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | string | `` | no |
