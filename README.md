@@ -98,7 +98,6 @@ Available targets:
   lint                                Lint terraform code
 
 ```
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -122,6 +121,7 @@ Available targets:
 | name | Name | string | `redis` | no |
 | namespace | Namespace | string | `global` | no |
 | notification_topic_arn | Notification topic arn | string | `` | no |
+| ok_actions | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | list | `<list>` | no |
 | parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | list | `<list>` | no |
 | port | Redis port | string | `6379` | no |
 | replication_group_id | Replication group ID with the following constraints:  A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | string | `` | no |
