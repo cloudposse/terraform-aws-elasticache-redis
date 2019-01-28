@@ -35,6 +35,12 @@ variable "subnets" {
   default     = []
 }
 
+variable "elasticache_subnet_group" {
+  type        = "string"
+  description = "Subnet group ID for the Elastic cache instance"
+  default     = ""
+}
+
 variable "maintenance_window" {
   default     = "wed:03:00-wed:04:00"
   description = "Maintenance window"
