@@ -67,11 +67,11 @@ variable "snapshot_arns" {
 }
 
 variable "family" {
-  default = "redis3.2"
+  default = "redis5.0"
 }
 
 variable "engine_version" {
-  default = "3.2.4"
+  default = "5.0.0"
 }
 
 variable "notification_topic_arn" {
