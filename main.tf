@@ -1,6 +1,6 @@
 # Define composite variables for resources
 module "label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.3"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.5.3"
   enabled    = "${var.enabled}"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
@@ -42,14 +42,17 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = "${var.enabled == "true" ? 1 : 0}"
-  name   = "${module.label.id}"
-  family = "${var.family}"
+  count     = "${var.enabled == "true" ? 1 : 0}"
+  name      = "${module.label.id}"
+  family    = "${var.family}"
+  parameter = "${var.parameter}"
 }
 
 resource "aws_elasticache_replication_group" "default" {
-  count                         = "${var.enabled == "true" ? 1 : 0}"
-  replication_group_id          = "${module.label.id}"
+  count = "${var.enabled == "true" ? 1 : 0}"
+
+  auth_token                    = "${var.auth_token}"
+  replication_group_id          = "${var.replication_group_id == "" ? module.label.id : var.replication_group_id}"
   replication_group_description = "${module.label.id}"
   node_type                     = "${var.instance_type}"
   number_cache_clusters         = "${var.cluster_size}"
@@ -67,6 +70,8 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_name                 = "${var.snapshot_name}"
   snapshot_retention_limit      = "${var.snapshot_retention_limit}"
   snapshot_arns                 = "${var.snapshot_arns}"
+  at_rest_encryption_enabled    = "${var.at_rest_encryption_enabled}"
+  transit_encryption_enabled    = "${var.transit_encryption_enabled}"
 
   tags = "${module.label.tags}"
 }
@@ -92,6 +97,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   }
 
   alarm_actions = ["${var.alarm_actions}"]
+  ok_actions    = ["${var.ok_actions}"]
   depends_on    = ["aws_elasticache_replication_group.default"]
 }
 
@@ -113,12 +119,13 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   }
 
   alarm_actions = ["${var.alarm_actions}"]
+  ok_actions    = ["${var.ok_actions}"]
   depends_on    = ["aws_elasticache_replication_group.default"]
 }
 
 module "dns" {
   source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.2.1"
-  enabled   = "${var.enabled}"
+  enabled   = "${var.enabled == "true" && length(var.zone_id) > 0 ? "true" : "false"}"
   namespace = "${var.namespace}"
   name      = "${var.dns_name}"
   stage     = "${var.stage}"
