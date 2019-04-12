@@ -37,7 +37,7 @@ variable "subnets" {
 
 variable "elasticache_subnet_group_name" {
   type        = "string"
-  description = "Subnet group ID for the Elastic cache instance"
+  description = "Subnet group ID for the ElastiCache instance"
   default     = ""
 }
 
