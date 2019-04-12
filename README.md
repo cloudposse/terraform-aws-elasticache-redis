@@ -42,7 +42,7 @@ We literally have [*hundreds of terraform modules*][terraform_modules] that are 
 
 ## Usage
 
-Include this repository as a module in your existing terraform code:
+**IMPORTANT:** Using the `master` branch in the module `source` is just an example. Do not pin to `master` in your code because there may be breaking changes between releases. Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-elasticache-redis/releases).
 
 ```hcl
 // Generate a random string for auth token, no special chars
@@ -98,7 +98,6 @@ Available targets:
   lint                                Lint terraform code
 
 ```
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -114,7 +113,7 @@ Available targets:
 | availability_zones | Availability zone ids | list | `<list>` | no |
 | cluster_size | Count of nodes in cluster | string | `1` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | string | `-` | no |
-| elasticache_subnet_group | Subnet group ID for the Elastic cache instance | string | `` | no |
+| elasticache_subnet_group_name | Subnet group ID for the ElastiCache instance | string | `` | no |
 | enabled | Set to false to prevent the module from creating any resources | string | `true` | no |
 | engine_version | Redis engine version | string | `4.0.10` | no |
 | family | Redis family | string | `redis4.0` | no |
@@ -140,9 +139,9 @@ Available targets:
 | Name | Description |
 |------|-------------|
 | host | Redis host |
-| id | Redis cluster id |
+| id | Redis cluster ID |
 | port | Redis port |
-| security_group_id | Security group id |
+| security_group_id | Security group ID |
 
 
 

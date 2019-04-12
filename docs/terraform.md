@@ -1,4 +1,3 @@
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -14,7 +13,7 @@
 | availability_zones | Availability zone ids | list | `<list>` | no |
 | cluster_size | Count of nodes in cluster | string | `1` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | string | `-` | no |
-| elasticache_subnet_group | Subnet group ID for the Elastic cache instance | string | `` | no |
+| elasticache_subnet_group_name | Subnet group ID for the ElastiCache instance | string | `` | no |
 | enabled | Set to false to prevent the module from creating any resources | string | `true` | no |
 | engine_version | Redis engine version | string | `4.0.10` | no |
 | family | Redis family | string | `redis4.0` | no |
@@ -40,7 +39,7 @@
 | Name | Description |
 |------|-------------|
 | host | Redis host |
-| id | Redis cluster id |
+| id | Redis cluster ID |
 | port | Redis port |
-| security_group_id | Security group id |
+| security_group_id | Security group ID |
 

@@ -40,7 +40,7 @@ locals {
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  count      = "${var.enabled == "true" && length(var.subnets) > 0 ? 1 : 0}"
+  count      = "${var.enabled == "true" && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0}"
   name       = "${module.label.id}"
   subnet_ids = ["${var.subnets}"]
 }
@@ -123,7 +123,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.2.1"
+  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.2.6"
   enabled   = "${var.enabled == "true" && length(var.zone_id) > 0 ? "true" : "false"}"
   namespace = "${var.namespace}"
   name      = "${var.name}"
