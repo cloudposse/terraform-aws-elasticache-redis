@@ -36,7 +36,7 @@ resource "aws_security_group" "default" {
 }
 
 locals {
-  elasticache_subnet_group = "${var.elasticache_subnet_group != "" ? var.elasticache_subnet_group : join("", aws_elasticache_subnet_group.default.*.name) }"
+  elasticache_subnet_group_name = "${var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name) }"
 }
 
 resource "aws_elasticache_subnet_group" "default" {
