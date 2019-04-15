@@ -35,8 +35,12 @@ resource "aws_security_group" "default" {
   tags = "${module.label.tags}"
 }
 
+locals {
+  elasticache_subnet_group_name = "${var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name) }"
+}
+
 resource "aws_elasticache_subnet_group" "default" {
-  count      = "${var.enabled == "true" ? 1 : 0}"
+  count      = "${var.enabled == "true" && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0}"
   name       = "${module.label.id}"
   subnet_ids = ["${var.subnets}"]
 }
@@ -60,7 +64,7 @@ resource "aws_elasticache_replication_group" "default" {
   parameter_group_name          = "${aws_elasticache_parameter_group.default.name}"
   availability_zones            = ["${slice(var.availability_zones, 0, var.cluster_size)}"]
   automatic_failover_enabled    = "${var.automatic_failover}"
-  subnet_group_name             = "${aws_elasticache_subnet_group.default.name}"
+  subnet_group_name             = "${local.elasticache_subnet_group_name}"
   security_group_ids            = ["${aws_security_group.default.id}"]
   maintenance_window            = "${var.maintenance_window}"
   notification_topic_arn        = "${var.notification_topic_arn}"
@@ -119,7 +123,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.2.1"
+  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.2.6"
   enabled   = "${var.enabled == "true" && length(var.zone_id) > 0 ? "true" : "false"}"
   namespace = "${var.namespace}"
   name      = "${var.name}"

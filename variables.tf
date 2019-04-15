@@ -25,14 +25,19 @@ variable "security_groups" {
 }
 
 variable "vpc_id" {
-  default     = "REQUIRED"
   description = "AWS VPC id"
 }
 
 variable "subnets" {
   type        = "list"
-  description = "AWS subnet ids"
+  description = "AWS subnet IDs"
   default     = []
+}
+
+variable "elasticache_subnet_group_name" {
+  type        = "string"
+  description = "Subnet group name for the ElastiCache instance"
+  default     = ""
 }
 
 variable "maintenance_window" {

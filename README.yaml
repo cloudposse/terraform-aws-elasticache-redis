@@ -48,7 +48,6 @@ description: |-
 
 # How to use this project
 usage: |-
-  Include this repository as a module in your existing terraform code:
 
   ```hcl
   // Generate a random string for auth token, no special chars
