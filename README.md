@@ -42,7 +42,11 @@ We literally have [*hundreds of terraform modules*][terraform_modules] that are 
 
 ## Usage
 
-**IMPORTANT:** Using the `master` branch in the module `source` is just an example. Do not pin to `master` in your code because there may be breaking changes between releases. Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-elasticache-redis/releases).
+
+**IMPORTANT:** The `master` branch is used in `source` just as an example. In your code, do not pin to `master` because there may be breaking changes between releases.
+Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-elasticache-redis/releases).
+
+
 
 ```hcl
 // Generate a random string for auth token, no special chars
@@ -113,7 +117,7 @@ Available targets:
 | availability_zones | Availability zone ids | list | `<list>` | no |
 | cluster_size | Count of nodes in cluster | string | `1` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | string | `-` | no |
-| elasticache_subnet_group_name | Subnet group ID for the ElastiCache instance | string | `` | no |
+| elasticache_subnet_group_name | Subnet group name for the ElastiCache instance | string | `` | no |
 | enabled | Set to false to prevent the module from creating any resources | string | `true` | no |
 | engine_version | Redis engine version | string | `4.0.10` | no |
 | family | Redis family | string | `redis4.0` | no |
@@ -128,10 +132,10 @@ Available targets:
 | replication_group_id | Replication group ID with the following constraints:  A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | string | `` | no |
 | security_groups | AWS security group ids | list | `<list>` | no |
 | stage | Stage | string | `default` | no |
-| subnets | AWS subnet ids | list | `<list>` | no |
+| subnets | AWS subnet IDs | list | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map | `<map>` | no |
 | transit_encryption_enabled | Enable TLS | string | `true` | no |
-| vpc_id | AWS VPC id | string | `REQUIRED` | no |
+| vpc_id | AWS VPC id | string | - | yes |
 | zone_id | Route53 DNS Zone id | string | `` | no |
 
 ## Outputs

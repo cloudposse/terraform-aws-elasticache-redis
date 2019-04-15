@@ -48,7 +48,6 @@ description: |-
 
 # How to use this project
 usage: |-
-  **IMPORTANT:** Using the `master` branch in the module `source` is just an example. Do not pin to `master` in your code because there may be breaking changes between releases. Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-elasticache-redis/releases).
 
   ```hcl
   // Generate a random string for auth token, no special chars
