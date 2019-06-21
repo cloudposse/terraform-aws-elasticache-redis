@@ -19,7 +19,7 @@ variable "name" {
 }
 
 variable "security_groups" {
-  type        = "list"
+  type        = list(string)
   default     = []
   description = "AWS security group ids"
 }
@@ -29,13 +29,13 @@ variable "vpc_id" {
 }
 
 variable "subnets" {
-  type        = "list"
+  type        = list(string)
   description = "AWS subnet IDs"
   default     = []
 }
 
 variable "elasticache_subnet_group_name" {
-  type        = "string"
+  type        = string
   description = "Subnet group name for the ElastiCache instance"
   default     = ""
 }
@@ -66,7 +66,7 @@ variable "family" {
 }
 
 variable "parameter" {
-  type        = "list"
+  type        = list(string)
   default     = []
   description = "A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another"
 }
@@ -103,13 +103,13 @@ variable "alarm_memory_threshold_bytes" {
 }
 
 variable "alarm_actions" {
-  type        = "list"
+  type        = list(string)
   description = "Alarm action list"
   default     = []
 }
 
 variable "ok_actions" {
-  type        = "list"
+  type        = list(string)
   description = "The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN)"
   default     = []
 }
@@ -125,7 +125,7 @@ variable "automatic_failover" {
 }
 
 variable "availability_zones" {
-  type        = "list"
+  type        = list(string)
   description = "Availability zone ids"
   default     = []
 }
@@ -136,31 +136,32 @@ variable "zone_id" {
 }
 
 variable "delimiter" {
-  type        = "string"
+  type        = string
   default     = "-"
   description = "Delimiter between `name`, `namespace`, `stage` and `attributes`"
 }
 
 variable "attributes" {
-  type        = "list"
+  type        = list(string)
   description = "Additional attributes (_e.g._ \"1\")"
   default     = []
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   description = "Additional tags (_e.g._ map(\"BusinessUnit\",\"ABC\")"
   default     = {}
 }
 
 variable "auth_token" {
-  type        = "string"
+  type        = string
   description = "Auth token for password protecting redis, transit_encryption_enabled must be set to 'true'! Password must be longer than 16 chars"
   default     = ""
 }
 
 variable "replication_group_id" {
-  type        = "string"
+  type        = string
   description = "Replication group ID with the following constraints: \nA name must contain from 1 to 20 alphanumeric characters or hyphens. \n The first character must be a letter. \n A name cannot end with a hyphen or contain two consecutive hyphens."
   default     = ""
 }
+
