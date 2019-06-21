@@ -27,14 +27,14 @@ variable "availability_zones" {
 variable "zone_id" {}
 
 module "vpc" {
-  source    = "git::https://github.com/rverma-nikiai/terraform-aws-vpc.git?ref=master"
+  source    = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
   namespace = "${var.namespace}"
   stage     = "${var.stage}"
   name      = "${var.name}"
 }
 
 module "subnets" {
-  source             = "git::https://github.com/rverma-nikiai/terraform-aws-dynamic-subnets.git?ref=master"
+  source             = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
   namespace          = "${var.namespace}"
   stage              = "${var.stage}"
   name               = "${var.name}"

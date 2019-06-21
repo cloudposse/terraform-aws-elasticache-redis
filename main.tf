@@ -1,6 +1,6 @@
 # Define composite variables for resources
 module "label" {
-  source     = "git::https://github.com/rverma-nikiai/terraform-null-label.git?ref=master"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=master"
   enabled    = var.enabled
   namespace  = var.namespace
   name       = var.name
@@ -134,7 +134,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source    = "git::https://github.com/rverma-nikiai/terraform-aws-route53-cluster-hostname.git?ref=master"
+  source    = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=master"
   enabled   = var.enabled == "true" && length(var.zone_id) > 0 ? "true" : "false"
   namespace = var.namespace
   name      = var.name
