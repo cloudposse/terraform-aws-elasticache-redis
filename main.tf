@@ -66,7 +66,6 @@ resource "aws_elasticache_parameter_group" "default" {
 resource "aws_elasticache_replication_group" "default" {
   count = var.enabled == "true" ? 1 : 0
 
-  auth_token                    = var.auth_token
   replication_group_id          = var.replication_group_id == "" ? module.label.id : var.replication_group_id
   replication_group_description = module.label.id
   node_type                     = var.instance_type
@@ -141,6 +140,6 @@ module "dns" {
   stage     = var.stage
   ttl       = 60
   zone_id   = var.zone_id
-  records   = [aws_elasticache_replication_group.default.*.primary_endpoint_address]
+  records   = aws_elasticache_replication_group.default.*.primary_endpoint_address
 }
 
