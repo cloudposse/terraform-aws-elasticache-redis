@@ -126,7 +126,11 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 
   alarm_actions = ["${var.alarm_actions}"]
   ok_actions    = ["${var.ok_actions}"]
-  depends_on    = ["${coalesce(aws_elasticache_replication_group.*)}"]
+
+  depends_on = [
+    "aws_elasticache_replication_group.default",
+    "aws_elasticache_replication_group.noauth",
+  ]
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -148,7 +152,11 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 
   alarm_actions = ["${var.alarm_actions}"]
   ok_actions    = ["${var.ok_actions}"]
-  depends_on    = ["${coalesce(aws_elasticache_replication_group.*)}"]
+
+  depends_on = [
+    "aws_elasticache_replication_group.default",
+    "aws_elasticache_replication_group.noauth",
+  ]
 }
 
 module "dns" {
@@ -159,5 +167,5 @@ module "dns" {
   stage     = "${var.stage}"
   ttl       = 60
   zone_id   = "${var.zone_id}"
-  records   = ["${coalesce(aws_elasticache_replication_group.*.*.primary_endpoint_address)}"]
+  records   = ["${join("", aws_elasticache_replication_group.default.*.primary_endpoint_address, aws_elasticache_replication_group.noauth.*.primary_endpoint_address)}"]
 }
