@@ -19,11 +19,11 @@ resource "aws_security_group" "default" {
   name   = "${module.label.id}"
 
   ingress {
-    from_port       = "${var.port}"            # Redis
+    from_port       = "${var.port}"              # Redis
     to_port         = "${var.port}"
     protocol        = "tcp"
-    security_groups = "${var.security_groups}"
-    cidr_blocks     = "${var.cidr_blocks}"
+    security_groups = ["${var.security_groups}"]
+    cidr_blocks     = ["${var.cidr_blocks}"]
   }
 
   egress {
