@@ -19,10 +19,11 @@ resource "aws_security_group" "default" {
   name   = "${module.label.id}"
 
   ingress {
-    from_port       = "${var.port}"              # Redis
+    from_port       = "${var.port}"            # Redis
     to_port         = "${var.port}"
     protocol        = "tcp"
-    security_groups = ["${var.security_groups}"]
+    security_groups = "${var.security_groups}"
+    cidr_blocks     = "${var.cidr_blocks}"
   }
 
   egress {
@@ -52,10 +53,38 @@ resource "aws_elasticache_parameter_group" "default" {
   parameter = "${var.parameter}"
 }
 
+locals {
+  with_auth    = "${var.enabled && var.auth_token != "" }"
+  without_auth = "${var.enabled && var.auth_token == "" }"
+}
+
 resource "aws_elasticache_replication_group" "default" {
-  count = "${var.enabled == "true" ? 1 : 0}"
+  count = "${local.with_auth == "true" ? 1 : 0}"
 
   auth_token                    = "${var.auth_token}"
+  replication_group_id          = "${var.replication_group_id == "" ? module.label.id : var.replication_group_id}"
+  replication_group_description = "${module.label.id}"
+  node_type                     = "${var.instance_type}"
+  number_cache_clusters         = "${var.cluster_size}"
+  port                          = "${var.port}"
+  parameter_group_name          = "${aws_elasticache_parameter_group.default.name}"
+  availability_zones            = ["${slice(var.availability_zones, 0, var.cluster_size)}"]
+  automatic_failover_enabled    = "${var.automatic_failover}"
+  subnet_group_name             = "${local.elasticache_subnet_group_name}"
+  security_group_ids            = ["${aws_security_group.default.id}"]
+  maintenance_window            = "${var.maintenance_window}"
+  notification_topic_arn        = "${var.notification_topic_arn}"
+  engine_version                = "${var.engine_version}"
+  at_rest_encryption_enabled    = "${var.at_rest_encryption_enabled}"
+  transit_encryption_enabled    = "${var.transit_encryption_enabled}"
+
+  tags = "${module.label.tags}"
+}
+
+resource "aws_elasticache_replication_group" "noauth" {
+  count = "${local.without_auth == "true" ? 1 : 0}"
+
+  # auth_token                    = "${var.auth_token}"
   replication_group_id          = "${var.replication_group_id == "" ? module.label.id : var.replication_group_id}"
   replication_group_description = "${module.label.id}"
   node_type                     = "${var.instance_type}"
@@ -97,7 +126,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 
   alarm_actions = ["${var.alarm_actions}"]
   ok_actions    = ["${var.ok_actions}"]
-  depends_on    = ["aws_elasticache_replication_group.default"]
+  depends_on    = ["aws_elasticache_replication_group.*"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -119,7 +148,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 
   alarm_actions = ["${var.alarm_actions}"]
   ok_actions    = ["${var.ok_actions}"]
-  depends_on    = ["aws_elasticache_replication_group.default"]
+  depends_on    = ["aws_elasticache_replication_group.*"]
 }
 
 module "dns" {
@@ -130,5 +159,5 @@ module "dns" {
   stage     = "${var.stage}"
   ttl       = 60
   zone_id   = "${var.zone_id}"
-  records   = ["${aws_elasticache_replication_group.default.*.primary_endpoint_address}"]
+  records   = ["${coalesce(aws_elasticache_replication_group.*.*.primary_endpoint_address)}"]
 }

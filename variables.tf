@@ -24,6 +24,12 @@ variable "security_groups" {
   description = "AWS security group ids"
 }
 
+variable "cidr_blocks" {
+  type        = "list"
+  default     = []
+  description = "AWS allowed CIDR blocks. i.e. 10.0.0.0/24"
+}
+
 variable "vpc_id" {
   description = "AWS VPC id"
 }
