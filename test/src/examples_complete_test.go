@@ -39,4 +39,14 @@ func TestExamplesComplete(t *testing.T) {
 	publicSubnetCidrs := terraform.OutputList(t, terraformOptions, "public_subnet_cidrs")
 	// Verify we're getting back the outputs we expect
 	assert.Equal(t, []string{"172.16.128.0/18", "172.16.192.0/18"}, publicSubnetCidrs)
+
+	// Run `terraform output` to get the value of an output variable
+	clusterHost := terraform.Output(t, terraformOptions, "cluster_host")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "redis-test.testing.cloudposse.co", clusterHost)
+
+	// Run `terraform output` to get the value of an output variable
+	clusterId := terraform.Output(t, terraformOptions, "cluster_id")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "eg-test-redis-test", clusterId)
 }
