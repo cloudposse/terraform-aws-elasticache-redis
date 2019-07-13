@@ -32,9 +32,9 @@ github_repo: cloudposse/terraform-aws-elasticache-redis
 
 # Badges to display
 badges:
-  - name: "Build Status"
-    image: "https://travis-ci.org/cloudposse/terraform-aws-elasticache-redis.svg?branch=master"
-    url: "https://travis-ci.org/cloudposse/terraform-aws-elasticache-redis"
+  - name: "Codefresh Build Status"
+    image: "https://g.codefresh.io/api/badges/pipeline/cloudposse/terraform-modules%2Fterraform-aws-elasticache-redis?type=cf-1"
+    url: "https://g.codefresh.io/public/accounts/cloudposse/pipelines/5d23a11695dc3006a29862e2"
   - name: "Latest Release"
     image: "https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg"
     url: "https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment/releases/latest"
@@ -58,29 +58,28 @@ usage: |-
 
   module "example_redis" {
     source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
-    namespace       = "general"
+    namespace       = "eg"
+    stage           = "dev"
     name            = "redis"
-    stage           = "prod"
-    zone_id         = "${var.route53_zone_id}"
-    security_groups = ["${var.security_group_id}"]
+    zone_id         = var.route53_zone_id
+    security_groups = [var.security_group_id]
 
-    auth_token                   = "${random_string.auth_token.result}"
-    vpc_id                       = "${var.vpc_id}"
-    subnets                      = "${var.private_subnets}"
+    auth_token                   = random_string.auth_token.result
+    vpc_id                       = var.vpc_id
+    subnets                      = var.private_subnets
     maintenance_window           = "wed:03:00-wed:04:00"
-    cluster_size                 = "2"
+    cluster_size                 = 2
     instance_type                = "cache.t2.micro"
     engine_version               = "4.0.10"
-    alarm_cpu_threshold_percent  = "${var.cache_alarm_cpu_threshold_percent}"
-    alarm_memory_threshold_bytes = "${var.cache_alarm_memory_threshold_bytes}"
-    apply_immediately            = "true"
-    availability_zones           = "${var.availability_zones}"
-
-    automatic_failover = "false"
+    alarm_cpu_threshold_percent  = var.cache_alarm_cpu_threshold_percent
+    alarm_memory_threshold_bytes = var.cache_alarm_memory_threshold_bytes
+    apply_immediately            = true
+    availability_zones           = var.availability_zones
+    automatic_failover           = false
   }
 
   output "auth_token" {
-    value = "${random_string.auth_token.result}"
+    value = random_string.auth_token.result
   }
   ```
 

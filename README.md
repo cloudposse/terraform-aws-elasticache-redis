@@ -3,7 +3,7 @@
 
 [![Cloud Posse][logo]](https://cpco.io/homepage)
 
-# terraform-aws-elasticache-redis [![Build Status](https://travis-ci.org/cloudposse/terraform-aws-elasticache-redis.svg?branch=master)](https://travis-ci.org/cloudposse/terraform-aws-elasticache-redis) [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg)](https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
+# terraform-aws-elasticache-redis [![Codefresh Build Status](https://g.codefresh.io/api/badges/pipeline/cloudposse/terraform-modules%2Fterraform-aws-elasticache-redis?type=cf-1)](https://g.codefresh.io/public/accounts/cloudposse/pipelines/5d23a11695dc3006a29862e2) [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg)](https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
 
 
 Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster
@@ -57,29 +57,28 @@ resource "random_string" "auth_token" {
 
 module "example_redis" {
   source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
-  namespace       = "general"
+  namespace       = "eg"
+  stage           = "dev"
   name            = "redis"
-  stage           = "prod"
-  zone_id         = "${var.route53_zone_id}"
-  security_groups = ["${var.security_group_id}"]
+  zone_id         = var.route53_zone_id
+  security_groups = [var.security_group_id]
 
-  auth_token                   = "${random_string.auth_token.result}"
-  vpc_id                       = "${var.vpc_id}"
-  subnets                      = "${var.private_subnets}"
+  auth_token                   = random_string.auth_token.result
+  vpc_id                       = var.vpc_id
+  subnets                      = var.private_subnets
   maintenance_window           = "wed:03:00-wed:04:00"
-  cluster_size                 = "2"
+  cluster_size                 = 2
   instance_type                = "cache.t2.micro"
   engine_version               = "4.0.10"
-  alarm_cpu_threshold_percent  = "${var.cache_alarm_cpu_threshold_percent}"
-  alarm_memory_threshold_bytes = "${var.cache_alarm_memory_threshold_bytes}"
-  apply_immediately            = "true"
-  availability_zones           = "${var.availability_zones}"
-
-  automatic_failover = "false"
+  alarm_cpu_threshold_percent  = var.cache_alarm_cpu_threshold_percent
+  alarm_memory_threshold_bytes = var.cache_alarm_memory_threshold_bytes
+  apply_immediately            = true
+  availability_zones           = var.availability_zones
+  automatic_failover           = false
 }
 
 output "auth_token" {
-  value = "${random_string.auth_token.result}"
+  value = random_string.auth_token.result
 }
 ```
 
@@ -106,37 +105,37 @@ Available targets:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| alarm_actions | Alarm action list | list | `<list>` | no |
-| alarm_cpu_threshold_percent | CPU threshold alarm level | string | `75` | no |
-| alarm_memory_threshold_bytes | Ram threshold alarm level | string | `10000000` | no |
-| apply_immediately | Apply changes immediately | string | `true` | no |
-| at_rest_encryption_enabled | Enable encryption at rest | string | `false` | no |
-| attributes | Additional attributes (_e.g._ "1") | list | `<list>` | no |
-| auth_token | Auth token for password protecting redis, transit_encryption_enabled must be set to 'true'! Password must be longer than 16 chars | string | `` | no |
-| automatic_failover | Automatic failover (Not available for T1/T2 instances) | string | `false` | no |
-| availability_zones | Availability zone ids | list | `<list>` | no |
-| cluster_size | Count of nodes in cluster | string | `1` | no |
+| alarm_actions | Alarm action list | list(string) | `<list>` | no |
+| alarm_cpu_threshold_percent | CPU threshold alarm level | number | `75` | no |
+| alarm_memory_threshold_bytes | Ram threshold alarm level | number | `10000000` | no |
+| apply_immediately | Apply changes immediately | bool | `true` | no |
+| at_rest_encryption_enabled | Enable encryption at rest | bool | `false` | no |
+| attributes | Additional attributes (_e.g._ "1") | list(string) | `<list>` | no |
+| auth_token | Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars | string | `` | no |
+| automatic_failover | Automatic failover (Not available for T1/T2 instances) | bool | `false` | no |
+| availability_zones | Availability zone IDs | list(string) | `<list>` | no |
+| cluster_size | Count of nodes in cluster | number | `1` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | string | `-` | no |
 | elasticache_subnet_group_name | Subnet group name for the ElastiCache instance | string | `` | no |
-| enabled | Set to false to prevent the module from creating any resources | string | `true` | no |
+| enabled | Set to false to prevent the module from creating any resources | bool | `true` | no |
 | engine_version | Redis engine version | string | `4.0.10` | no |
 | family | Redis family | string | `redis4.0` | no |
 | instance_type | Elastic cache instance type | string | `cache.t2.micro` | no |
 | maintenance_window | Maintenance window | string | `wed:03:00-wed:04:00` | no |
-| name | Name | string | `redis` | no |
-| namespace | Namespace | string | `global` | no |
+| name | Name of the application | string | - | yes |
+| namespace | Namespace (e.g. `eg` or `cp`) | string | `` | no |
 | notification_topic_arn | Notification topic arn | string | `` | no |
-| ok_actions | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | list | `<list>` | no |
-| parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | list | `<list>` | no |
-| port | Redis port | string | `6379` | no |
+| ok_actions | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | list(string) | `<list>` | no |
+| parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | object | `<list>` | no |
+| port | Redis port | number | `6379` | no |
 | replication_group_id | Replication group ID with the following constraints:  A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | string | `` | no |
-| security_groups | AWS security group ids | list | `<list>` | no |
-| stage | Stage | string | `default` | no |
-| subnets | AWS subnet IDs | list | `<list>` | no |
-| tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map | `<map>` | no |
-| transit_encryption_enabled | Enable TLS | string | `true` | no |
-| vpc_id | AWS VPC id | string | - | yes |
-| zone_id | Route53 DNS Zone id | string | `` | no |
+| security_groups | Security Group IDs | list(string) | `<list>` | no |
+| stage | Stage (e.g. `prod`, `dev`, `staging`) | string | `` | no |
+| subnets | Subnet IDs | list(string) | `<list>` | no |
+| tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map(string) | `<map>` | no |
+| transit_encryption_enabled | Enable TLS | bool | `true` | no |
+| vpc_id | VPC ID | string | - | yes |
+| zone_id | Route53 DNS Zone ID | string | `` | no |
 
 ## Outputs
 
