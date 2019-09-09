@@ -27,6 +27,8 @@
 | port | Redis port | number | `6379` | no |
 | replication_group_id | Replication group ID with the following constraints:  A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | string | `` | no |
 | security_groups | Security Group IDs | list(string) | `<list>` | no |
+| snapshot_retention_limit | The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. | number | `0` | no |
+| snapshot_window | The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. | string | `06:30-07:30` | no |
 | stage | Stage (e.g. `prod`, `dev`, `staging`) | string | `` | no |
 | subnets | Subnet IDs | list(string) | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map(string) | `<map>` | no |
