@@ -130,6 +130,8 @@ Available targets:
 | port | Redis port | number | `6379` | no |
 | replication_group_id | Replication group ID with the following constraints:  A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | string | `` | no |
 | security_groups | Security Group IDs | list(string) | `<list>` | no |
+| snapshot_retention_limit | The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. | number | `0` | no |
+| snapshot_window | The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. | string | `06:30-07:30` | no |
 | stage | Stage (e.g. `prod`, `dev`, `staging`) | string | `` | no |
 | subnets | Subnet IDs | list(string) | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map(string) | `<map>` | no |
@@ -270,17 +272,17 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
 |---|---|---|---|---|---|
 
   [osterman_homepage]: https://github.com/osterman
-  [osterman_avatar]: https://github.com/osterman.png?size=150
+  [osterman_avatar]: https://img.cloudposse.com/150x150/https://github.com/osterman.png
   [goruha_homepage]: https://github.com/goruha
-  [goruha_avatar]: https://github.com/goruha.png?size=150
+  [goruha_avatar]: https://img.cloudposse.com/150x150/https://github.com/goruha.png
   [aknysh_homepage]: https://github.com/aknysh
-  [aknysh_avatar]: https://github.com/aknysh.png?size=150
+  [aknysh_avatar]: https://img.cloudposse.com/150x150/https://github.com/aknysh.png
   [darend_homepage]: https://github.com/darend
-  [darend_avatar]: https://github.com/darend.png?size=150
+  [darend_avatar]: https://img.cloudposse.com/150x150/https://github.com/darend.png
   [MoonMoon1919_homepage]: https://github.com/MoonMoon1919
-  [MoonMoon1919_avatar]: https://github.com/MoonMoon1919.png?size=150
+  [MoonMoon1919_avatar]: https://img.cloudposse.com/150x150/https://github.com/MoonMoon1919.png
   [christopherriley_homepage]: https://github.com/christopherriley
-  [christopherriley_avatar]: https://github.com/christopherriley.png?size=150
+  [christopherriley_avatar]: https://img.cloudposse.com/150x150/https://github.com/christopherriley.png
 
 
 
