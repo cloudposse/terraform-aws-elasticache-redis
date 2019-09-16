@@ -61,7 +61,7 @@ resource "aws_elasticache_parameter_group" "default" {
 resource "aws_elasticache_replication_group" "default" {
   count = var.enabled ? 1 : 0
 
-  auth_token                    = transit_encryption_enabled ? var.auth_token : null
+  auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
   replication_group_id          = var.replication_group_id == "" ? module.label.id : var.replication_group_id
   replication_group_description = module.label.id
   node_type                     = var.instance_type
