@@ -24,7 +24,7 @@ variable "name" {
 variable "security_groups" {
   type        = list(string)
   default     = []
-  description = "Security Group IDs"
+  description = "A list of security group IDs that are allowed ingress to the cluster"
 }
 
 variable "vpc_id" {

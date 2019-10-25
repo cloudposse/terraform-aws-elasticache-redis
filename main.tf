@@ -17,21 +17,30 @@ resource "aws_security_group" "default" {
   vpc_id = var.vpc_id
   name   = module.label.id
 
-  ingress {
-    from_port       = var.port # Redis
-    to_port         = var.port
-    protocol        = "tcp"
-    security_groups = var.security_groups
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = module.label.tags
+}
+
+resource "aws_security_group_rule" "default_ingress" {
+  for_each                 = toset(var.security_groups)
+  description              = "default ingress"
+  type                     = "ingress"
+  from_port                = var.port # Redis
+  to_port                  = var.port
+  protocol                 = "tcp"
+  source_security_group_id = each.value
+
+  security_group_id = aws_security_group.default.*.id
+}
+
+resource "aws_security_group_rule" "default_egress" {
+  description              = "default egress"
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = aws_security_group.default
+
+  security_group_id = aws_security_group.default.*.id
 }
 
 locals {
