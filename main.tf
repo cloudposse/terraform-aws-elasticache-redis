@@ -21,7 +21,7 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_security_group_rule" "default_ingress" {
-  for_each                 = toset(var.security_groups)
+  for_each                 = var.enabled ? toset(var.security_groups) : []
   description              = "default ingress"
   type                     = "ingress"
   from_port                = var.port # Redis
@@ -29,18 +29,19 @@ resource "aws_security_group_rule" "default_ingress" {
   protocol                 = "tcp"
   source_security_group_id = each.value
 
-  security_group_id = aws_security_group.default.*.id
+  security_group_id = join("", aws_security_group.default.*.id)
 }
 
 resource "aws_security_group_rule" "default_egress" {
-  description              = "default egress"
-  type                     = "ingress"
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  source_security_group_id = aws_security_group.default
+  count       = var.enabled ? 1 : 0
+  description = "default egress"
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
 
-  security_group_id = aws_security_group.default.*.id
+  security_group_id = join("", aws_security_group.default.*.id)
 }
 
 locals {
