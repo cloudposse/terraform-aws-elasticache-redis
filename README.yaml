@@ -50,10 +50,12 @@ description: |-
 usage: |-
 
   ```hcl
-  // Generate a random string for auth token, no special chars
-  resource "random_string" "auth_token" {
+  // Generate a random string for auth token with usable special chars (allowed and unescaped)
+  // Use `terraform state pull | grep 'auth_token'` to retrieve
+  resource "random_password" "auth_token" {
     length = 64
-    special = false
+    special = true
+    override_special = "!#$^-"
   }
 
   module "example_redis" {
@@ -76,10 +78,6 @@ usage: |-
     apply_immediately            = true
     availability_zones           = var.availability_zones
     automatic_failover           = false
-  }
-
-  output "auth_token" {
-    value = random_string.auth_token.result
   }
   ```
 
