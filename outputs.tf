@@ -14,6 +14,6 @@ output "port" {
 }
 
 output "host" {
-  value       = concat(aws_elasticache_replication_group.default.*.primary_endpoint_address, [""])[0]
+  value       = module.dns.hostname != "" ? module.dns.hostname : join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)
   description = "Redis host"
 }
