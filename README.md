@@ -182,7 +182,8 @@ Available targets:
 
 | Name | Description |
 |------|-------------|
-| host | Redis host |
+| endpoint | Redis primary endpoint |
+| host | Redis hostname |
 | id | Redis cluster ID |
 | port | Redis port |
 | security_group_id | Security group ID |
