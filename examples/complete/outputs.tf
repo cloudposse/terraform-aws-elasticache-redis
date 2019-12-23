@@ -23,7 +23,12 @@ output "cluster_security_group_id" {
   description = "Cluster Security Group ID"
 }
 
+output "cluster_endpoint" {
+  value       = module.redis.endpoint
+  description = "Redis primary endpoint"
+}
+
 output "cluster_host" {
   value       = module.redis.host
-  description = "Redis host"
+  description = "Redis hostname"
 }

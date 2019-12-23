@@ -49,38 +49,62 @@ description: |-
 # How to use this project
 usage: |-
 
+  For a complete example, see [examples/complete](examples/complete).
+
+  For automated tests of the complete example using [bats](https://github.com/bats-core/bats-core) and [Terratest](https://github.com/gruntwork-io/terratest) (which tests and deploys the example on AWS), see [test](test).
+
   ```hcl
-  // Generate a random string for auth token, no special chars
-  resource "random_string" "auth_token" {
-    length = 64
-    special = false
-  }
+    provider "aws" {
+      region = var.region
+    }
 
-  module "example_redis" {
-    source          = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
-    namespace       = "eg"
-    stage           = "dev"
-    name            = "redis"
-    zone_id         = var.route53_zone_id
-    security_groups = [var.security_group_id]
+    module "vpc" {
+      source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.8.1"
+      namespace  = var.namespace
+      stage      = var.stage
+      name       = var.name
+      cidr_block = "172.16.0.0/16"
+    }
 
-    auth_token                   = random_string.auth_token.result
-    vpc_id                       = var.vpc_id
-    subnets                      = var.private_subnets
-    maintenance_window           = "wed:03:00-wed:04:00"
-    cluster_size                 = 2
-    instance_type                = "cache.t2.micro"
-    engine_version               = "4.0.10"
-    alarm_cpu_threshold_percent  = var.cache_alarm_cpu_threshold_percent
-    alarm_memory_threshold_bytes = var.cache_alarm_memory_threshold_bytes
-    apply_immediately            = true
-    availability_zones           = var.availability_zones
-    automatic_failover           = false
-  }
+    module "subnets" {
+      source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.18.1"
+      availability_zones   = var.availability_zones
+      namespace            = var.namespace
+      stage                = var.stage
+      name                 = var.name
+      vpc_id               = module.vpc.vpc_id
+      igw_id               = module.vpc.igw_id
+      cidr_block           = module.vpc.vpc_cidr_block
+      nat_gateway_enabled  = true
+      nat_instance_enabled = false
+    }
 
-  output "auth_token" {
-    value = random_string.auth_token.result
-  }
+    module "redis" {
+      source                     = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
+      availability_zones         = var.availability_zones
+      namespace                  = var.namespace
+      stage                      = var.stage
+      name                       = var.name
+      zone_id                    = var.zone_id
+      vpc_id                     = module.vpc.vpc_id
+      allowed_security_groups    = [module.vpc.vpc_default_security_group_id]
+      subnets                    = module.subnets.private_subnet_ids
+      cluster_size               = var.cluster_size
+      instance_type              = var.instance_type
+      apply_immediately          = true
+      automatic_failover         = false
+      engine_version             = var.engine_version
+      family                     = var.family
+      at_rest_encryption_enabled = var.at_rest_encryption_enabled
+      transit_encryption_enabled = var.transit_encryption_enabled
+
+      parameter = [
+        {
+          name  = "notify-keyspace-events"
+          value = "lK"
+        }
+      ]
+    }
   ```
 
 examples: |-

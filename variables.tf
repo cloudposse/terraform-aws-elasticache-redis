@@ -21,10 +21,28 @@ variable "name" {
   description = "Name of the application"
 }
 
-variable "security_groups" {
+variable "use_existing_security_groups" {
+  type        = bool
+  description = "Flag to enable/disable creation of Security Group in the module. Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into"
+  default     = false
+}
+
+variable "existing_security_groups" {
   type        = list(string)
   default     = []
-  description = "Security Group IDs"
+  description = "List of existing Security Group IDs to place the cluster into. Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster"
+}
+
+variable "allowed_security_groups" {
+  type        = list(string)
+  default     = []
+  description = "List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module"
+}
+
+variable "allowed_cidr_blocks" {
+  type        = list(string)
+  default     = []
+  description = "List of CIDR blocks that are allowed ingress to the cluster's Security Group created in the module"
 }
 
 variable "vpc_id" {
@@ -53,7 +71,7 @@ variable "maintenance_window" {
 variable "cluster_size" {
   type        = number
   default     = 1
-  description = "Count of nodes in cluster"
+  description = "Number of nodes in cluster"
 }
 
 variable "port" {
@@ -177,7 +195,7 @@ variable "tags" {
 variable "auth_token" {
   type        = string
   description = "Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars"
-  default     = ""
+  default     = null
 }
 
 variable "replication_group_id" {
