@@ -156,7 +156,7 @@ variable "apply_immediately" {
   description = "Apply changes immediately"
 }
 
-variable "automatic_failover" {
+variable "automatic_failover_enabled" {
   type        = bool
   default     = false
   description = "Automatic failover (Not available for T1/T2 instances)"
@@ -213,5 +213,23 @@ variable "snapshot_window" {
 variable "snapshot_retention_limit" {
   type        = number
   description = "The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them."
+  default     = 0
+}
+
+variable "cluster_mode_enabled" {
+  type        = bool
+  description = "Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed"
+  default     = false
+}
+
+variable "cluster_mode_replicas_per_node_group" {
+  type        = number
+  description = "Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource"
+  default     = 0
+}
+
+variable "cluster_mode_num_node_groups" {
+  type        = number
+  description = "Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications"
   default     = 0
 }

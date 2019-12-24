@@ -87,7 +87,7 @@ resource "aws_elasticache_replication_group" "default" {
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
   availability_zones            = slice(var.availability_zones, 0, var.cluster_size)
-  automatic_failover_enabled    = var.automatic_failover
+  automatic_failover_enabled    = var.automatic_failover_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
   security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
   maintenance_window            = var.maintenance_window
@@ -99,6 +99,14 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_retention_limit      = var.snapshot_retention_limit
 
   tags = module.label.tags
+
+  dynamic "cluster_mode" {
+    for_each = var.cluster_mode_enabled ? ["true"] : []
+    content {
+      replicas_per_node_group = var.cluster_mode_replicas_per_node_group
+      num_node_groups         = var.cluster_mode_num_node_groups
+    }
+  }
 }
 
 #

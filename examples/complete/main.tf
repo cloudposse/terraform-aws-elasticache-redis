@@ -36,7 +36,7 @@ module "redis" {
   cluster_size               = var.cluster_size
   instance_type              = var.instance_type
   apply_immediately          = true
-  automatic_failover         = false
+  automatic_failover_enabled = false
   engine_version             = var.engine_version
   family                     = var.family
   at_rest_encryption_enabled = var.at_rest_encryption_enabled

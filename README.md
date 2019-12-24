@@ -177,8 +177,11 @@ Available targets:
 | at_rest_encryption_enabled | Enable encryption at rest | bool | `false` | no |
 | attributes | Additional attributes (_e.g._ "1") | list(string) | `<list>` | no |
 | auth_token | Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars | string | `null` | no |
-| automatic_failover | Automatic failover (Not available for T1/T2 instances) | bool | `false` | no |
+| automatic_failover_enabled | Automatic failover (Not available for T1/T2 instances) | bool | `false` | no |
 | availability_zones | Availability zone IDs | list(string) | `<list>` | no |
+| cluster_mode_enabled | Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed | bool | `false` | no |
+| cluster_mode_num_node_groups | Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications | number | `0` | no |
+| cluster_mode_replicas_per_node_group | Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource | number | `0` | no |
 | cluster_size | Number of nodes in cluster | number | `1` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | string | `-` | no |
 | elasticache_subnet_group_name | Subnet group name for the ElastiCache instance | string | `` | no |
