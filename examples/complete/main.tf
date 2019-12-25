@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.7.0"
+  source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.8.1"
   namespace  = var.namespace
   stage      = var.stage
   name       = var.name
@@ -11,7 +11,7 @@ module "vpc" {
 }
 
 module "subnets" {
-  source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.16.0"
+  source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.18.1"
   availability_zones   = var.availability_zones
   namespace            = var.namespace
   stage                = var.stage
@@ -31,12 +31,12 @@ module "redis" {
   name                       = var.name
   zone_id                    = var.zone_id
   vpc_id                     = module.vpc.vpc_id
-  security_groups            = [module.vpc.vpc_default_security_group_id]
+  allowed_security_groups    = [module.vpc.vpc_default_security_group_id]
   subnets                    = module.subnets.private_subnet_ids
   cluster_size               = var.cluster_size
   instance_type              = var.instance_type
   apply_immediately          = true
-  automatic_failover         = false
+  automatic_failover_enabled = false
   engine_version             = var.engine_version
   family                     = var.family
   at_rest_encryption_enabled = var.at_rest_encryption_enabled

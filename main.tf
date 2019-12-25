@@ -1,5 +1,5 @@
 module "label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.14.1"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.16.0"
   enabled    = var.enabled
   namespace  = var.namespace
   name       = var.name
@@ -13,25 +13,43 @@ module "label" {
 # Security Group Resources
 #
 resource "aws_security_group" "default" {
-  count  = var.enabled ? 1 : 0
+  count  = var.enabled && var.use_existing_security_groups == false ? 1 : 0
   vpc_id = var.vpc_id
   name   = module.label.id
+  tags   = module.label.tags
+}
 
-  ingress {
-    from_port       = var.port # Redis
-    to_port         = var.port
-    protocol        = "tcp"
-    security_groups = var.security_groups
-  }
+resource "aws_security_group_rule" "egress" {
+  count             = var.enabled && var.use_existing_security_groups == false ? 1 : 0
+  description       = "Allow all egress traffic"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = join("", aws_security_group.default.*.id)
+  type              = "egress"
+}
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group_rule" "ingress_security_groups" {
+  count                    = var.enabled && var.use_existing_security_groups == false ? length(var.allowed_security_groups) : 0
+  description              = "Allow inbound traffic from existing Security Groups"
+  from_port                = var.port
+  to_port                  = var.port
+  protocol                 = "tcp"
+  source_security_group_id = var.allowed_security_groups[count.index]
+  security_group_id        = join("", aws_security_group.default.*.id)
+  type                     = "ingress"
+}
 
-  tags = module.label.tags
+resource "aws_security_group_rule" "ingress_cidr_blocks" {
+  count             = var.enabled && var.use_existing_security_groups == false && length(var.allowed_cidr_blocks) > 0 ? 1 : 0
+  description       = "Allow inbound traffic from CIDR blocks"
+  from_port         = var.port
+  to_port           = var.port
+  protocol          = "tcp"
+  cidr_blocks       = var.allowed_cidr_blocks
+  security_group_id = join("", aws_security_group.default.*.id)
+  type              = "ingress"
 }
 
 locals {
@@ -61,7 +79,7 @@ resource "aws_elasticache_parameter_group" "default" {
 resource "aws_elasticache_replication_group" "default" {
   count = var.enabled ? 1 : 0
 
-  auth_token                    = var.auth_token
+  auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
   replication_group_id          = var.replication_group_id == "" ? module.label.id : var.replication_group_id
   replication_group_description = module.label.id
   node_type                     = var.instance_type
@@ -69,9 +87,9 @@ resource "aws_elasticache_replication_group" "default" {
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
   availability_zones            = slice(var.availability_zones, 0, var.cluster_size)
-  automatic_failover_enabled    = var.automatic_failover
+  automatic_failover_enabled    = var.automatic_failover_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
-  security_group_ids            = [join("", aws_security_group.default.*.id)]
+  security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
   maintenance_window            = var.maintenance_window
   notification_topic_arn        = var.notification_topic_arn
   engine_version                = var.engine_version
@@ -81,6 +99,14 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_retention_limit      = var.snapshot_retention_limit
 
   tags = module.label.tags
+
+  dynamic "cluster_mode" {
+    for_each = var.cluster_mode_enabled ? ["true"] : []
+    content {
+      replicas_per_node_group = var.cluster_mode_replicas_per_node_group
+      num_node_groups         = var.cluster_mode_num_node_groups
+    }
+  }
 }
 
 #

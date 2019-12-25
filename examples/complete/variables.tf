@@ -25,7 +25,7 @@ variable "name" {
 
 variable "cluster_size" {
   type        = number
-  description = "Count of nodes in cluster"
+  description = "Number of nodes in cluster"
 }
 
 variable "instance_type" {
