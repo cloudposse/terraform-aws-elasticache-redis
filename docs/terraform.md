@@ -35,6 +35,7 @@
 | snapshot_retention_limit | The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. | number | `0` | no |
 | snapshot_window | The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. | string | `06:30-07:30` | no |
 | stage | Stage (e.g. `prod`, `dev`, `staging`) | string | `` | no |
+| dns_subdomain | The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name. | string | `` | no |
 | subnets | Subnet IDs | list(string) | `<list>` | no |
 | tags | Additional tags (_e.g._ map("BusinessUnit","ABC") | map(string) | `<map>` | no |
 | transit_encryption_enabled | Enable TLS | bool | `true` | no |
