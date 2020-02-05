@@ -164,5 +164,5 @@ module "dns" {
   name    = var.name
   ttl     = 60
   zone_id = var.zone_id
-  records = [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
+  records = var.cluster_mode_enabled ? [join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address)] : [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
 }
