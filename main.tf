@@ -70,7 +70,7 @@ resource "aws_elasticache_parameter_group" "default" {
 
 
   dynamic "parameter" {
-    for_each = var.cluster_mode_enabled ? concat([{ "name" = "cluster-enabled" , "value" = "yes" }], var.parameter) : var.parameter
+    for_each = var.cluster_mode_enabled ? concat([{ "name" = "cluster-enabled", "value" = "yes" }], var.parameter) : var.parameter
     content {
       name  = parameter.value.name
       value = parameter.value.value
