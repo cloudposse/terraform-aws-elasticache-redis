@@ -67,8 +67,10 @@ resource "aws_elasticache_parameter_group" "default" {
   name   = module.label.id
   family = var.family
 
+
+
   dynamic "parameter" {
-    for_each = var.parameter
+    for_each = var.cluster_mode_enabled ? concat([{ "name" = "cluster-enabled", "value" = "yes" }], var.parameter) : var.parameter
     content {
       name  = parameter.value.name
       value = parameter.value.value
@@ -83,7 +85,7 @@ resource "aws_elasticache_replication_group" "default" {
   replication_group_id          = var.replication_group_id == "" ? module.label.id : var.replication_group_id
   replication_group_description = module.label.id
   node_type                     = var.instance_type
-  number_cache_clusters         = var.cluster_size
+  number_cache_clusters         = var.cluster_mode_enabled ? (1 + var.cluster_mode_replicas_per_node_group) * var.cluster_mode_num_node_groups : var.cluster_size
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
   availability_zones            = slice(var.availability_zones, 0, var.cluster_size)
@@ -107,6 +109,7 @@ resource "aws_elasticache_replication_group" "default" {
       num_node_groups         = var.cluster_mode_num_node_groups
     }
   }
+
 }
 
 #
@@ -162,5 +165,5 @@ module "dns" {
   name    = var.dns_subdomain != "" ? var.dns_subdomain : var.name
   ttl     = 60
   zone_id = var.zone_id
-  records = [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
+  records = var.cluster_mode_enabled ? [join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address)] : [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
 }
