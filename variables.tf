@@ -71,7 +71,7 @@ variable "maintenance_window" {
 variable "cluster_size" {
   type        = number
   default     = 1
-  description = "Number of nodes in cluster"
+  description = "Number of nodes in cluster. *Ignored when `cluster_mode_enabled` == `true`*"
 }
 
 variable "port" {
