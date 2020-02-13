@@ -99,6 +99,7 @@ resource "aws_elasticache_replication_group" "default" {
   transit_encryption_enabled    = var.transit_encryption_enabled
   snapshot_window               = var.snapshot_window
   snapshot_retention_limit      = var.snapshot_retention_limit
+  apply_immediately             = var.apply_immediately
 
   tags = module.label.tags
 
