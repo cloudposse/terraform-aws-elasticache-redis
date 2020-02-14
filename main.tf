@@ -162,7 +162,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 module "dns" {
   source  = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.3.0"
   enabled = var.enabled && var.zone_id != "" ? true : false
-  name    = var.name
+  name    = var.dns_subdomain != "" ? var.dns_subdomain : var.name
   ttl     = 60
   zone_id = var.zone_id
   records = var.cluster_mode_enabled ? [join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address)] : [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]

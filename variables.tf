@@ -174,6 +174,12 @@ variable "zone_id" {
   description = "Route53 DNS Zone ID"
 }
 
+variable "dns_subdomain" {
+  type        = string
+  default     = ""
+  description = "The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name."
+}
+
 variable "delimiter" {
   type        = string
   default     = "-"

@@ -184,6 +184,7 @@ Available targets:
 | cluster_mode_replicas_per_node_group | Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource | number | `0` | no |
 | cluster_size | Number of nodes in cluster. *Ignored when `cluster_mode_enabled` == `true`* | number | `1` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | string | `-` | no |
+| dns_subdomain | The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name. | string | `` | no |
 | elasticache_subnet_group_name | Subnet group name for the ElastiCache instance | string | `` | no |
 | enabled | Set to false to prevent the module from creating any resources | bool | `true` | no |
 | engine_version | Redis engine version | string | `4.0.10` | no |
