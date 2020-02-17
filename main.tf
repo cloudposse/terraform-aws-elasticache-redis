@@ -130,7 +130,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   threshold = var.alarm_cpu_threshold_percent
 
   dimensions = {
-    CacheClusterId = module.label.id
+    CacheClusterId = format("${module.label.id}-%03d", 1)
   }
 
   alarm_actions = var.alarm_actions
@@ -152,7 +152,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   threshold = var.alarm_memory_threshold_bytes
 
   dimensions = {
-    CacheClusterId = module.label.id
+    CacheClusterId = format("${module.label.id}-%03d", 1)
   }
 
   alarm_actions = var.alarm_actions
