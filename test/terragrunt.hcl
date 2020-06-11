@@ -1,7 +1,7 @@
 locals {
   ## !!!CHANGE ME!!! ##
-  application = "skeleton"
-  repo        = "terraform-module-skeleton"
+  application = "terraform-aws-elasticache-redis-foo"
+  repo        = "terraform-aws-elasticache-redis"
   repo_path   = "test"
   owner       = "devops@opploans.com"
 
