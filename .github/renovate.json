@@ -1,0 +1,3 @@
+{
+  "extends": ["github>opploans/renovate-config:devops-terraform-module"]
+}
