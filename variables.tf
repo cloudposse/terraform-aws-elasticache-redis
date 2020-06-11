@@ -1,3 +1,46 @@
+variable "application" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by application."
+}
+
+variable "environment" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by environment."
+}
+
+variable "repo" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by repo."
+}
+
+variable "repo_path" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by repo and subgroup them by the repos path."
+}
+
+variable "owner" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by owner."
+}
+
+variable "additional_tags" {
+  type        = map(string)
+description = "Additional tags to add to your resources in addition to default."
+default     = {}
+}
+
+variable "aws_profile" {
+type        = string
+description = "AWS profile for provider"
+default     = "default"
+}
+
+variable "aws_region" {
+type        = string
+description = "AWS region for provider."
+default     = "us-east-1"
+}
+
 variable "enabled" {
   type        = bool
   description = "Set to false to prevent the module from creating any resources"
