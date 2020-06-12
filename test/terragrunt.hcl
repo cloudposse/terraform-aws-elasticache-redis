@@ -41,5 +41,6 @@ inputs = {
   owner       = local.owner
   subscription_pagerduty_endpoint = "https://events.pagerduty.com/integration/36a0f8f84e6640289c1da0031dc352dc/enqueue"
   vpc_id      = "vpc-047f251367f6941dc"
-
+  zone_id     = "ZBQY0PPB9MV8M"
+  subnet_ids  = ["subnet-07ca94f8c92792ebf"]
 }
