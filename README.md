@@ -19,7 +19,7 @@
 | allowed\_security\_groups | List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module | `list(string)` | `[]` | no |
 | application | This value is part of the AWS cloud asset tagging strategy to be able to group items by application. | `string` | n/a | yes |
 | apply\_immediately | Apply changes immediately | `bool` | `true` | no |
-| at\_rest\_encryption\_enabled | Enable encryption at rest | `bool` | `false` | no |
+| at\_rest\_encryption\_enabled | Enable encryption at rest | `bool` | `true` | no |
 | attributes | Additional attributes (\_e.g._ "1") | `list(string)` | `[]` | no |
 | auth\_token | Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars | `string` | n/a | yes |
 | automatic\_failover\_enabled | Automatic failover (Not available for T1/T2 instances) | `bool` | `false` | no |
@@ -34,7 +34,6 @@
 | cpu\_utilization\_high\_period | Duration in seconds to evaluate for the alarm. | `number` | `300` | no |
 | cpu\_utilization\_high\_threshold | The maximum percentage of CPU utilization average. | `number` | `80` | no |
 | delimiter | Delimiter between `name`, `namespace`, `stage` and `attributes` | `string` | `"-"` | no |
-| dns\_subdomain | The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name. | `string` | `""` | no |
 | elasticache\_subnet\_group\_name | Subnet group name for the ElastiCache instance | `string` | `""` | no |
 | enabled | Set to false to prevent the module from creating any resources | `bool` | `true` | no |
 | engine\_version | Redis engine version | `string` | `"4.0.10"` | no |
@@ -46,20 +45,20 @@
 | memory\_utilization\_high\_evaluation\_periods | Number of periods to evaluate for the alarm. | `number` | `1` | no |
 | memory\_utilization\_high\_period | Duration in seconds to evaluate for the alarm. | `number` | `300` | no |
 | memory\_utilization\_high\_threshold | The maximum percentage of memory utilization average. | `number` | `80` | no |
-| name | Name of the application | `string` | n/a | yes |
 | namespace | Namespace (e.g. `eg` or `cp`) | `string` | `""` | no |
 | notification\_topic\_arn | Notification topic arn | `string` | `""` | no |
 | ok\_actions | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | `list(string)` | `[]` | no |
 | owner | This value is part of the AWS cloud asset tagging strategy to be able to group items by owner. | `string` | n/a | yes |
 | parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
 | port | Redis port | `number` | `6379` | no |
+| redis\_fqdn | The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name. | `string` | `""` | no |
 | replication\_group\_id | Replication group ID with the following constraints: <br>A name must contain from 1 to 20 alphanumeric characters or hyphens.   The first character must be a letter.   A name cannot end with a hyphen or contain two consecutive hyphens. | `string` | `""` | no |
 | repo | This value is part of the AWS cloud asset tagging strategy to be able to group items by repo. | `string` | n/a | yes |
 | repo\_path | This value is part of the AWS cloud asset tagging strategy to be able to group items by repo and subgroup them by the repos path. | `string` | n/a | yes |
 | snapshot\_retention\_limit | The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. | `number` | `0` | no |
 | snapshot\_window | The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. | `string` | `"06:30-07:30"` | no |
 | stage | Stage (e.g. `prod`, `dev`, `staging`) | `string` | `""` | no |
-| subnets | Subnet IDs | `list(string)` | `[]` | no |
+| subnet\_ids | Subnet IDs | `list(string)` | `[]` | no |
 | subscription\_pagerduty\_endpoint | Pagerduty endpoint for SNS topic subscription (alarms). | `string` | n/a | yes |
 | tags | Additional tags (\_e.g._ map("BusinessUnit","ABC") | `map(string)` | `{}` | no |
 | transit\_encryption\_enabled | Enable TLS | `bool` | `true` | no |
