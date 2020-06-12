@@ -207,20 +207,7 @@ variable "notification_topic_arn" {
   default     = ""
   description = "Notification topic arn"
 }
-
-variable "alarm_cpu_threshold_percent" {
-  type        = number
-  default     = 75
-  description = "CPU threshold alarm level"
-}
-
-variable "alarm_memory_threshold_bytes" {
-  # 10MB
-  type        = number
-  default     = 10000000
-  description = "Ram threshold alarm level"
-}
-
+        
 variable "alarm_actions" {
   type        = list(string)
   description = "Alarm action list"
