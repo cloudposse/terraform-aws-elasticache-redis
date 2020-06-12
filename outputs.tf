@@ -19,6 +19,6 @@ output "endpoint" {
 }
 
 output "host" {
-  value       = module.dns.hostname
+  value       = aws_route53_record.redis.fqdn
   description = "Redis hostname"
 }

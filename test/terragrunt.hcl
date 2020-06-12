@@ -39,4 +39,7 @@ inputs = {
   repo_path   = local.repo_path
   aws_profile = local.account
   owner       = local.owner
+  subscription_pagerduty_endpoint = "https://events.pagerduty.com/integration/36a0f8f84e6640289c1da0031dc352dc/enqueue"
+  vpc_id      = "vpc-047f251367f6941dc"
+
 }
