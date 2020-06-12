@@ -41,14 +41,10 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
   type              = "ingress"
 }
 
-locals {
-  elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
-}
-
 resource "aws_elasticache_subnet_group" "default" {
-  count      = var.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
+  count      = var.enabled && var.elasticache_subnet_group_name == "" && length(var.subnet_ids) > 0 ? 1 : 0
   name       = local.resource_name
-  subnet_ids = var.subnets
+  subnet_ids = var.subnet_ids
 }
 
 resource "aws_elasticache_parameter_group" "default" {
@@ -77,7 +73,7 @@ resource "aws_elasticache_replication_group" "default" {
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
-  availability_zones            = var.cluster_mode_enabled ? null : slice(var.availability_zones, 0, var.cluster_size)
+  availability_zones            = var.availability_zones
   automatic_failover_enabled    = var.automatic_failover_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
   security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
@@ -153,14 +149,10 @@ resource "aws_cloudwatch_metric_alarm" "memory_utilization_high" {
 
 resource "aws_route53_record" "redis" {
   zone_id = var.zone_id
-  name    = var.dns_subdomain != "" ? var.dns_subdomain : local.resource_name
-  type    = "A"
-
-  alias {
-    name                   = var.cluster_mode_enabled ? join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address) : join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)
-    zone_id                = var.zone_id
-    evaluate_target_health = false
-  }
+  name    = var.redis_fqdn != "" ? var.redis_fqdn : "${var.application}-redis"
+  type    = "CNAME"
+  ttl     = 500
+  records = var.cluster_mode_enabled ?  aws_elasticache_replication_group.default.*.configuration_endpoint_address : aws_elasticache_replication_group.default.*.primary_endpoint_address
 
   lifecycle {
     create_before_destroy = true

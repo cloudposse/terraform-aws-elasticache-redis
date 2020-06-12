@@ -133,7 +133,7 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
-variable "subnets" {
+variable "subnet_ids" {
   type        = list(string)
   description = "Subnet IDs"
   default     = []
@@ -257,7 +257,7 @@ variable "zone_id" {
   description = "Route53 DNS Zone ID"
 }
 
-variable "dns_subdomain" {
+variable "redis_fqdn" {
   type        = string
   default     = ""
   description = "The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name."
