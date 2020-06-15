@@ -1,3 +1,91 @@
+variable "application" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by application."
+}
+
+variable "environment" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by environment."
+}
+
+variable "repo" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by repo."
+}
+
+variable "repo_path" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by repo and subgroup them by the repos path."
+}
+
+variable "owner" {
+  type        = string
+  description = "This value is part of the AWS cloud asset tagging strategy to be able to group items by owner."
+}
+
+variable "additional_tags" {
+  type        = map(string)
+  description = "Additional tags to add to your resources in addition to default."
+  default     = {}
+}
+
+variable "aws_profile" {
+  type        = string
+  description = "AWS profile for provider"
+  default     = "default"
+}
+
+variable "aws_region" {
+  type        = string
+  description = "AWS region for provider."
+  default     = "us-east-1"
+}
+
+#### redis module variables ####
+
+variable "subscription_pagerduty_endpoint" {
+  type        = string
+  description = "Pagerduty endpoint for SNS topic subscription (alarms)."
+}
+
+variable "cpu_utilization_high_evaluation_periods" {
+  type        = number
+  description = "Number of periods to evaluate for the alarm."
+  default     = 1
+}
+
+variable "memory_utilization_high_evaluation_periods" {
+  type        = number
+  description = "Number of periods to evaluate for the alarm."
+  default     = 1
+}
+
+variable "cpu_utilization_high_threshold" {
+  type        = number
+  description = "The maximum percentage of CPU utilization average."
+  default     = 80
+}
+
+variable "memory_utilization_high_threshold" {
+  type        = number
+  description = "The maximum percentage of memory utilization average."
+  default     = 80
+}
+
+variable "cpu_utilization_high_period" {
+  type        = number
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = 300
+}
+
+variable "memory_utilization_high_period" {
+  type        = number
+  description = "Duration in seconds to evaluate for the alarm."
+  default     = 300
+}
+
+
+##########existing vars################
 variable "enabled" {
   type        = bool
   description = "Set to false to prevent the module from creating any resources"
@@ -14,11 +102,6 @@ variable "stage" {
   type        = string
   description = "Stage (e.g. `prod`, `dev`, `staging`)"
   default     = ""
-}
-
-variable "name" {
-  type        = string
-  description = "Name of the application"
 }
 
 variable "use_existing_security_groups" {
@@ -50,7 +133,7 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
-variable "subnets" {
+variable "subnet_ids" {
   type        = list(string)
   description = "Subnet IDs"
   default     = []
@@ -109,7 +192,7 @@ variable "engine_version" {
 
 variable "at_rest_encryption_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "Enable encryption at rest"
 }
 
@@ -124,20 +207,7 @@ variable "notification_topic_arn" {
   default     = ""
   description = "Notification topic arn"
 }
-
-variable "alarm_cpu_threshold_percent" {
-  type        = number
-  default     = 75
-  description = "CPU threshold alarm level"
-}
-
-variable "alarm_memory_threshold_bytes" {
-  # 10MB
-  type        = number
-  default     = 10000000
-  description = "Ram threshold alarm level"
-}
-
+        
 variable "alarm_actions" {
   type        = list(string)
   description = "Alarm action list"
@@ -174,7 +244,7 @@ variable "zone_id" {
   description = "Route53 DNS Zone ID"
 }
 
-variable "dns_subdomain" {
+variable "redis_fqdn" {
   type        = string
   default     = ""
   description = "The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name."

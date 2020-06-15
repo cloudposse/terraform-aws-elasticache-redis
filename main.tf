@@ -1,22 +1,11 @@
-module "label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.16.0"
-  enabled    = var.enabled
-  namespace  = var.namespace
-  name       = var.name
-  stage      = var.stage
-  delimiter  = var.delimiter
-  attributes = var.attributes
-  tags       = var.tags
-}
-
 #
 # Security Group Resources
 #
 resource "aws_security_group" "default" {
   count  = var.enabled && var.use_existing_security_groups == false ? 1 : 0
   vpc_id = var.vpc_id
-  name   = module.label.id
-  tags   = module.label.tags
+  name   = local.resource_name
+  tags   = local.tags
 }
 
 resource "aws_security_group_rule" "egress" {
@@ -52,19 +41,15 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
   type              = "ingress"
 }
 
-locals {
-  elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
-}
-
 resource "aws_elasticache_subnet_group" "default" {
-  count      = var.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
-  name       = module.label.id
-  subnet_ids = var.subnets
+  count      = var.enabled && var.elasticache_subnet_group_name == "" && length(var.subnet_ids) > 0 ? 1 : 0
+  name       = local.resource_name
+  subnet_ids = var.subnet_ids
 }
 
 resource "aws_elasticache_parameter_group" "default" {
   count  = var.enabled ? 1 : 0
-  name   = module.label.id
+  name   = local.resource_name
   family = var.family
 
 
@@ -82,13 +67,13 @@ resource "aws_elasticache_replication_group" "default" {
   count = var.enabled ? 1 : 0
 
   auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
-  replication_group_id          = var.replication_group_id == "" ? module.label.id : var.replication_group_id
-  replication_group_description = module.label.id
+  replication_group_id          = var.replication_group_id == "" ? local.resource_name : var.replication_group_id
+  replication_group_description = local.resource_name
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
-  availability_zones            = var.cluster_mode_enabled ? null : slice(var.availability_zones, 0, var.cluster_size)
+  availability_zones            = var.availability_zones
   automatic_failover_enabled    = var.automatic_failover_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
   security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
@@ -101,7 +86,7 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_retention_limit      = var.snapshot_retention_limit
   apply_immediately             = var.apply_immediately
 
-  tags = module.label.tags
+  tags = local.tags
 
   dynamic "cluster_mode" {
     for_each = var.cluster_mode_enabled ? ["true"] : []
@@ -113,58 +98,63 @@ resource "aws_elasticache_replication_group" "default" {
 
 }
 
-#
-# CloudWatch Resources
-#
-resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
-  count               = var.enabled ? 1 : 0
-  alarm_name          = "${module.label.id}-cpu-utilization"
-  alarm_description   = "Redis cluster CPU utilization"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/ElastiCache"
-  period              = "300"
-  statistic           = "Average"
-
-  threshold = var.alarm_cpu_threshold_percent
-
-  dimensions = {
-    CacheClusterId = module.label.id
-  }
-
-  alarm_actions = var.alarm_actions
-  ok_actions    = var.ok_actions
-  depends_on    = [aws_elasticache_replication_group.default]
+resource "aws_sns_topic" "cloudwatch" {
+  name         = local.resource_name
+  display_name = local.resource_name
 }
 
-resource "aws_cloudwatch_metric_alarm" "cache_memory" {
-  count               = var.enabled ? 1 : 0
-  alarm_name          = "${module.label.id}-freeable-memory"
-  alarm_description   = "Redis cluster freeable memory"
-  comparison_operator = "LessThanThreshold"
-  evaluation_periods  = "1"
-  metric_name         = "FreeableMemory"
-  namespace           = "AWS/ElastiCache"
-  period              = "60"
-  statistic           = "Average"
-
-  threshold = var.alarm_memory_threshold_bytes
-
-  dimensions = {
-    CacheClusterId = module.label.id
-  }
-
-  alarm_actions = var.alarm_actions
-  ok_actions    = var.ok_actions
-  depends_on    = [aws_elasticache_replication_group.default]
+resource "aws_sns_topic_subscription" "cloudwatch" {
+  endpoint               = var.subscription_pagerduty_endpoint
+  protocol               = "https"
+  topic_arn              = aws_sns_topic.cloudwatch.arn
+  endpoint_auto_confirms = true
+  depends_on             = [aws_sns_topic.cloudwatch]
 }
 
-module "dns" {
-  source  = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.3.0"
-  enabled = var.enabled && var.zone_id != "" ? true : false
-  name    = var.dns_subdomain != "" ? var.dns_subdomain : var.name
-  ttl     = 60
+resource "aws_cloudwatch_metric_alarm" "cpu_utilization_high" {
+  alarm_name                = format("%s-%s", local.resource_name, "cpu-high")
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = var.cpu_utilization_high_evaluation_periods
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/ElastiCache"
+  period                    = var.cpu_utilization_high_period
+  statistic                 = "Average"
+  threshold                 = max(var.cpu_utilization_high_threshold, 0)
+  alarm_actions             = [aws_sns_topic.cloudwatch.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch.arn]
+  insufficient_data_actions = [aws_sns_topic.cloudwatch.arn]
+
+  dimensions = {
+    CacheClusterId = local.resource_name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "memory_utilization_high" {
+  alarm_name                = format("%s-%s", local.resource_name, "memory-high")
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = var.memory_utilization_high_evaluation_periods
+  metric_name               = "MemoryUtilization"
+  namespace                 = "AWS/ElastiCache"
+  period                    = var.memory_utilization_high_period
+  statistic                 = "Average"
+  threshold                 = max(var.memory_utilization_high_threshold, 0)
+  alarm_actions             = [aws_sns_topic.cloudwatch.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch.arn]
+  insufficient_data_actions = [aws_sns_topic.cloudwatch.arn]
+
+  dimensions = {
+    CacheClusterId = local.resource_name
+  }
+}
+
+resource "aws_route53_record" "redis" {
   zone_id = var.zone_id
-  records = var.cluster_mode_enabled ? [join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address)] : [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
+  name    = var.redis_fqdn != "" ? var.redis_fqdn : "${var.application}-redis"
+  type    = "CNAME"
+  ttl     = 500
+  records = var.cluster_mode_enabled ? aws_elasticache_replication_group.default.*.configuration_endpoint_address : aws_elasticache_replication_group.default.*.primary_endpoint_address
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
