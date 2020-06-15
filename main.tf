@@ -67,7 +67,7 @@ resource "aws_elasticache_replication_group" "default" {
   count = var.enabled ? 1 : 0
 
   auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
-  replication_group_id          = var.replication_group_id == "" ? local.resource_name : var.replication_group_id
+  replication_group_id          = local.resource_name
   replication_group_description = local.resource_name
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
@@ -75,7 +75,7 @@ resource "aws_elasticache_replication_group" "default" {
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
   availability_zones            = var.availability_zones
   automatic_failover_enabled    = var.automatic_failover_enabled
-  subnet_group_name             = local.elasticache_subnet_group_name
+  subnet_group_name             = local.resource_name
   security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
   maintenance_window            = var.maintenance_window
   notification_topic_arn        = var.notification_topic_arn
@@ -151,7 +151,7 @@ resource "aws_route53_record" "redis" {
   zone_id = var.zone_id
   name    = var.redis_fqdn != "" ? var.redis_fqdn : "${var.application}-redis"
   type    = "CNAME"
-  ttl     = 500
+  ttl     = 300
   records = var.cluster_mode_enabled ? aws_elasticache_replication_group.default.*.configuration_endpoint_address : aws_elasticache_replication_group.default.*.primary_endpoint_address
 
   lifecycle {
