@@ -153,7 +153,7 @@ variable "maintenance_window" {
 
 variable "cluster_size" {
   type        = number
-  default     = 1
+  default     = 2
   description = "Number of nodes in cluster. *Ignored when `cluster_mode_enabled` == `true`*"
 }
 
@@ -228,7 +228,7 @@ variable "apply_immediately" {
 
 variable "automatic_failover_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "Automatic failover (Not available for T1/T2 instances)"
 }
 
