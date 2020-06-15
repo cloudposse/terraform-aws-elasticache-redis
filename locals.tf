@@ -11,6 +11,4 @@ locals {
 
   tags                          = merge(local.common_tags, var.additional_tags)
   resource_name                 = format("%s-%s", var.environment, var.application)
-  elasticache_subnet_group_name = coalesce(var.elasticache_subnet_group_name, join("", aws_elasticache_subnet_group.default.*.name))
-
 }
