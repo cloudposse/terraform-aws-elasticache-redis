@@ -228,7 +228,7 @@ variable "apply_immediately" {
 
 variable "automatic_failover_enabled" {
   type        = bool
-  default     = true
+  default     = false
   description = "Automatic failover (Not available for T1/T2 instances)"
 }
 
