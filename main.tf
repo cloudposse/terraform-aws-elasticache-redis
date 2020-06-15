@@ -75,7 +75,7 @@ resource "aws_elasticache_replication_group" "default" {
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
   availability_zones            = var.availability_zones
   automatic_failover_enabled    = var.automatic_failover_enabled
-  subnet_group_name             = local.elasticache_subnet_group_name
+  subnet_group_name             = local.resource_name
   security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
   maintenance_window            = var.maintenance_window
   notification_topic_arn        = var.notification_topic_arn
