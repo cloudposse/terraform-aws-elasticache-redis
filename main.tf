@@ -151,7 +151,7 @@ resource "aws_route53_record" "redis" {
   zone_id = var.zone_id
   name    = var.redis_fqdn != "" ? var.redis_fqdn : "${var.application}-redis"
   type    = "CNAME"
-  ttl     = 500
+  ttl     = 300
   records = var.cluster_mode_enabled ? aws_elasticache_replication_group.default.*.configuration_endpoint_address : aws_elasticache_replication_group.default.*.primary_endpoint_address
 
   lifecycle {
