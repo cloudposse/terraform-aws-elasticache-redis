@@ -16,7 +16,7 @@ locals {
     Tool        = "terraform"
   }
 
-  tags                          = merge(local.common_tags, var.additional_tags)
+  tags                 = merge(local.common_tags, var.additional_tags)
   resource_name        = module.unique_name.resource_name
-unique_resource_name = module.unique_name.unique_resource_name
+  unique_resource_name = module.unique_name.unique_resource_name
 }
