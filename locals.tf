@@ -1,3 +1,10 @@
+module "unique_name" {
+  source = "git@github.com:opploans/terraform-opploans-unique-resource-name?ref=v0.2.0"
+
+  environment = var.environment
+  application = var.application
+}
+
 locals {
   common_tags = {
     Name        = local.resource_name
@@ -9,6 +16,7 @@ locals {
     Tool        = "terraform"
   }
 
-  tags                          = merge(local.common_tags, var.additional_tags)
-  resource_name                 = format("%s-%s", var.environment, var.application)
+  tags                 = merge(local.common_tags, var.additional_tags)
+  resource_name        = module.unique_name.resource_name
+  unique_resource_name = module.unique_name.unique_resource_name
 }

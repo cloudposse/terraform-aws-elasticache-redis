@@ -207,7 +207,7 @@ variable "notification_topic_arn" {
   default     = ""
   description = "Notification topic arn"
 }
-        
+
 variable "alarm_actions" {
   type        = list(string)
   description = "Alarm action list"
