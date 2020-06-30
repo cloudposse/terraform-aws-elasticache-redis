@@ -135,6 +135,9 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 
   alarm_actions = var.alarm_actions
   ok_actions    = var.ok_actions
+
+  treat_missing_data = var.treat_missing_data
+
   depends_on    = [aws_elasticache_replication_group.default]
 }
 
@@ -157,6 +160,9 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 
   alarm_actions = var.alarm_actions
   ok_actions    = var.ok_actions
+
+  treat_missing_data = var.treat_missing_data
+
   depends_on    = [aws_elasticache_replication_group.default]
 }
 

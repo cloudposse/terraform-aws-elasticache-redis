@@ -239,3 +239,9 @@ variable "cluster_mode_num_node_groups" {
   description = "Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications"
   default     = 0
 }
+
+variable "treat_missing_data" {
+  type        = string
+  description = "Sets how this alarm is to handle missing data points. Supported values are 'missing', 'ignore', breaching' and 'notBreaching'."
+  default     = "missing"
+}
