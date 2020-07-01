@@ -96,6 +96,10 @@ resource "aws_elasticache_replication_group" "default" {
     }
   }
 
+  lifecycle {
+    ignore_changes = ["replication_group_id"]
+  }
+
 }
 
 resource "aws_sns_topic" "cloudwatch" {
