@@ -97,7 +97,7 @@ resource "aws_elasticache_replication_group" "default" {
   }
 
   lifecycle {
-    ignore_changes = ["replication_group_id"]
+    ignore_changes = ["number_cache_clusters"]
   }
 
 }
