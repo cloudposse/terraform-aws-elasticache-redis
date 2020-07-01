@@ -24,7 +24,7 @@
 | availability\_zones | Availability zone IDs | `list(string)` | `[]` | no |
 | aws\_profile | AWS profile for provider | `string` | `"default"` | no |
 | aws\_region | AWS region for provider. | `string` | `"us-east-1"` | no |
-| cluster\_mode\_enabled | Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed | `bool` | `false` | no |
+| cluster\_mode\_enabled | Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed | `bool` | `true` | no |
 | cluster\_mode\_num\_node\_groups | Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications | `number` | `0` | no |
 | cluster\_mode\_replicas\_per\_node\_group | Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource | `number` | `0` | no |
 | cluster\_size | Number of nodes in cluster. *Ignored when `cluster_mode_enabled` == `true`\* | `number` | `2` | no |
