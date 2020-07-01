@@ -72,10 +72,10 @@ resource "aws_elasticache_replication_group" "default" {
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
-  parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
+  parameter_group_name          = aws_elasticache_parameter_group.default[0].name
   availability_zones            = var.availability_zones
   automatic_failover_enabled    = var.automatic_failover_enabled
-  subnet_group_name             = local.resource_name
+  subnet_group_name             = aws_elasticache_subnet_group.default[0].name
   security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
   maintenance_window            = var.maintenance_window
   notification_topic_arn        = var.notification_topic_arn
@@ -98,7 +98,7 @@ resource "aws_elasticache_replication_group" "default" {
 }
 
 resource "aws_sns_topic" "cloudwatch" {
-  name         = local.unique_resource_name
+  name         = local.resource_name
   display_name = local.resource_name
 }
 
@@ -111,7 +111,7 @@ resource "aws_sns_topic_subscription" "cloudwatch" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization_high" {
-  alarm_name                = format("%s-%s", local.unique_resource_name, "cpu-high")
+  alarm_name                = format("%s-%s", local.resource_name, "cpu-high")
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = var.cpu_utilization_high_evaluation_periods
   metric_name               = "CPUUtilization"
@@ -129,7 +129,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "memory_utilization_high" {
-  alarm_name                = format("%s-%s", local.unique_resource_name, "memory-high")
+  alarm_name                = format("%s-%s", local.resource_name, "memory-high")
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = var.memory_utilization_high_evaluation_periods
   metric_name               = "MemoryUtilization"
