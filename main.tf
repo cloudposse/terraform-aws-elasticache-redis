@@ -4,7 +4,7 @@
 resource "aws_security_group" "default" {
   count  = var.enabled && var.use_existing_security_groups == false ? 1 : 0
   vpc_id = var.vpc_id
-  name   = local.unique_resource_name
+  name   = local.resource_name
   tags   = local.tags
 }
 
@@ -49,7 +49,7 @@ resource "aws_elasticache_subnet_group" "default" {
 
 resource "aws_elasticache_parameter_group" "default" {
   count  = var.enabled ? 1 : 0
-  name   = local.unique_resource_name
+  name   = local.resource_name
   family = var.family
 
 
@@ -67,8 +67,8 @@ resource "aws_elasticache_replication_group" "default" {
   count = var.enabled ? 1 : 0
 
   auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
-  replication_group_id          = local.unique_resource_name
-  replication_group_description = local.unique_resource_name
+  replication_group_id          = local.resource_name
+  replication_group_description = local.resource_name
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
