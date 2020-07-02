@@ -38,7 +38,7 @@ resource "aws_elasticache_replication_group" "default" {
   replication_group_id          = local.resource_name
   replication_group_description = local.resource_name
   node_type                     = var.instance_type
-  number_cache_clusters         = var.cluster_mode_enabled ? var.cluster_size : null
+  number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
   parameter_group_name          = aws_elasticache_parameter_group.default.name
   automatic_failover_enabled    = var.automatic_failover_enabled
