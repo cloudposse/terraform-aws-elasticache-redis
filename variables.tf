@@ -218,13 +218,13 @@ variable "cluster_mode_enabled" {
 variable "cluster_mode_replicas_per_node_group" {
   type        = number
   description = "Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource"
-  default     = 0
+  default     = 1
 }
 
 variable "cluster_mode_num_node_groups" {
   type        = number
   description = "Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications"
-  default     = 1
+  default     = 2
 }
 
 variable "sg_ingress_rules" {
