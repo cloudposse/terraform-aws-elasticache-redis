@@ -235,6 +235,11 @@ variable "sg_ingress_rules" {
       port        = 6379
       protocol    = "tcp"
       cidr_blocks = "lookup_private_subnet_cidrs"
+    },
+    "TCP/6379 from internal OppLoans CIDRs" = {
+      port        = 6379
+      protocol    = "tcp"
+      cidr_blocks = "lookup_internal_opploans_cidrs"
     }
   }
 }
