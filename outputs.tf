@@ -4,7 +4,7 @@ output "id" {
 }
 
 output "security_group_id" {
-  value       = join("", aws_security_group.default.*.id)
+  value       = module.redis_security_group.security_group_id
   description = "Security group ID"
 }
 
@@ -18,7 +18,7 @@ output "endpoint" {
   description = "Redis primary endpoint"
 }
 
-output "host" {
+output "fqdn" {
   value       = aws_route53_record.redis.fqdn
-  description = "Redis hostname"
+  description = "Redis CNAME fqdn"
 }
