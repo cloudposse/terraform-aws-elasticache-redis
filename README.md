@@ -1,12 +1,6 @@
 # terraform-aws-elasticcache-redis
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.12 |
-
 ## Providers
 
 | Name | Version |
@@ -16,20 +10,20 @@
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+|------|-------------|------|---------|:-----:|
 | additional\_tags | Additional tags to add to your resources in addition to default. | `map(string)` | `{}` | no |
 | alarm\_actions | Alarm action list | `list(string)` | `[]` | no |
 | application | This value is part of the AWS cloud asset tagging strategy to be able to group items by application. | `string` | n/a | yes |
 | apply\_immediately | Apply changes immediately | `bool` | `true` | no |
-| attributes | Additional attributes (\_e.g.\_ "1") | `list(string)` | `[]` | no |
-| auth\_token | Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars | `string` | `null` | no |
+| attributes | Additional attributes (\_e.g._ "1") | `list(string)` | `[]` | no |
+| auth\_token | Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars | `string` | n/a | yes |
 | automatic\_failover\_enabled | Automatic failover (Not available for T1/T2 instances) | `bool` | `true` | no |
 | aws\_profile | AWS profile for provider | `string` | `"default"` | no |
 | aws\_region | AWS region for provider. | `string` | `"us-east-1"` | no |
 | cluster\_mode\_enabled | Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed | `bool` | `true` | no |
-| cluster\_mode\_num\_node\_groups | Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications | `number` | `1` | no |
-| cluster\_mode\_replicas\_per\_node\_group | Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource | `number` | `0` | no |
-| cluster\_size | Number of nodes in cluster. \*Ignored when `cluster_mode_enabled` == `true`\* | `number` | `2` | no |
+| cluster\_mode\_num\_node\_groups | Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications | `number` | `2` | no |
+| cluster\_mode\_replicas\_per\_node\_group | Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource | `number` | `1` | no |
+| cluster\_size | Number of nodes in cluster. *Ignored when `cluster_mode_enabled` == `true`\* | `number` | `2` | no |
 | cpu\_utilization\_high\_evaluation\_periods | Number of periods to evaluate for the alarm. | `number` | `1` | no |
 | cpu\_utilization\_high\_period | Duration in seconds to evaluate for the alarm. | `number` | `300` | no |
 | cpu\_utilization\_high\_threshold | The maximum percentage of CPU utilization average. | `number` | `80` | no |
@@ -48,7 +42,7 @@
 | owner | This value is part of the AWS cloud asset tagging strategy to be able to group items by owner. | `string` | n/a | yes |
 | parameter | A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
 | port | Redis port | `number` | `6379` | no |
-| redis\_hostname | Hostname of redis | `string` | `null` | no |
+| redis\_hostname | Hostname of redis | `string` | n/a | yes |
 | repo | This value is part of the AWS cloud asset tagging strategy to be able to group items by repo. | `string` | n/a | yes |
 | repo\_path | This value is part of the AWS cloud asset tagging strategy to be able to group items by repo and subgroup them by the repos path. | `string` | n/a | yes |
 | sg\_egress\_rules | CIDR blocks can be looked up using these strings: 'lookup\_internet\_cidrs', 'lookup\_private\_subnet\_cidrs', 'lookup\_internet\_cidrs'. | `map(map(string))` | `{}` | no |
