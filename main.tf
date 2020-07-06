@@ -62,6 +62,10 @@ resource "aws_elasticache_replication_group" "default" {
       num_node_groups         = var.cluster_mode_num_node_groups
     }
   }
+
+  lifecycle {
+    ignore_changes = [auth_token]
+  }
 }
 
 resource "aws_sns_topic" "cloudwatch" {
