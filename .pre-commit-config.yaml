@@ -5,4 +5,6 @@
   - id: terraform_fmt
   - id: terraform_docs
   - id: terraform_tflint
-    exclude: ^test/
+    args:
+      - 'args=--deep'
+      - 'args=--enable-rule=terraform_documented_variables'

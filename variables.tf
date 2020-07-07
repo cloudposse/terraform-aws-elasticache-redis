@@ -84,13 +84,7 @@ variable "memory_utilization_high_period" {
   default     = 300
 }
 
-
 ##########existing vars################
-variable "enabled" {
-  type        = bool
-  description = "Set to false to prevent the module from creating any resources"
-  default     = true
-}
 
 variable "namespace" {
   type        = string
@@ -101,47 +95,6 @@ variable "namespace" {
 variable "stage" {
   type        = string
   description = "Stage (e.g. `prod`, `dev`, `staging`)"
-  default     = ""
-}
-
-variable "use_existing_security_groups" {
-  type        = bool
-  description = "Flag to enable/disable creation of Security Group in the module. Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into"
-  default     = false
-}
-
-variable "existing_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of existing Security Group IDs to place the cluster into. Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster"
-}
-
-variable "allowed_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module"
-}
-
-variable "allowed_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = "List of CIDR blocks that are allowed ingress to the cluster's Security Group created in the module"
-}
-
-variable "vpc_id" {
-  type        = string
-  description = "VPC ID"
-}
-
-variable "subnet_ids" {
-  type        = list(string)
-  description = "Subnet IDs"
-  default     = []
-}
-
-variable "elasticache_subnet_group_name" {
-  type        = string
-  description = "Subnet group name for the ElastiCache instance"
   default     = ""
 }
 
@@ -190,18 +143,6 @@ variable "engine_version" {
   description = "Redis engine version"
 }
 
-variable "at_rest_encryption_enabled" {
-  type        = bool
-  default     = true
-  description = "Enable encryption at rest"
-}
-
-variable "transit_encryption_enabled" {
-  type        = bool
-  default     = true
-  description = "Enable TLS"
-}
-
 variable "notification_topic_arn" {
   type        = string
   default     = ""
@@ -232,22 +173,10 @@ variable "automatic_failover_enabled" {
   description = "Automatic failover (Not available for T1/T2 instances)"
 }
 
-variable "availability_zones" {
-  type        = list(string)
-  description = "Availability zone IDs"
-  default     = []
-}
-
-variable "zone_id" {
+variable "redis_hostname" {
   type        = string
-  default     = ""
-  description = "Route53 DNS Zone ID"
-}
-
-variable "redis_fqdn" {
-  type        = string
-  default     = ""
-  description = "The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name."
+  default     = null
+  description = "Hostname of redis"
 }
 
 variable "delimiter" {
@@ -262,16 +191,9 @@ variable "attributes" {
   default     = []
 }
 
-variable "tags" {
-  type        = map(string)
-  description = "Additional tags (_e.g._ map(\"BusinessUnit\",\"ABC\")"
-  default     = {}
-}
-
 variable "auth_token" {
   type        = string
   description = "Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars"
-  default     = null
 }
 
 variable "snapshot_window" {
@@ -289,17 +211,40 @@ variable "snapshot_retention_limit" {
 variable "cluster_mode_enabled" {
   type        = bool
   description = "Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed"
-  default     = false
+  default     = true
 }
 
 variable "cluster_mode_replicas_per_node_group" {
   type        = number
   description = "Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource"
-  default     = 0
+  default     = 1
 }
 
 variable "cluster_mode_num_node_groups" {
   type        = number
   description = "Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications"
-  default     = 0
+  default     = 2
+}
+
+variable "sg_ingress_rules" {
+  type        = map(map(string))
+  description = "CIDR blocks can be looked up using these strings: 'lookup_internet_cidrs', 'lookup_private_subnet_cidrs', 'lookup_internet_cidrs'. See egress_rules for example."
+  default = {
+    "TCP/6379 from private subnets" = {
+      port        = 6379
+      protocol    = "tcp"
+      cidr_blocks = "lookup_private_subnet_cidrs"
+    },
+    "TCP/6379 from internal OppLoans CIDRs" = {
+      port        = 6379
+      protocol    = "tcp"
+      cidr_blocks = "lookup_internal_opploans_cidrs"
+    }
+  }
+}
+
+variable "sg_egress_rules" {
+  type        = map(map(string))
+  description = "CIDR blocks can be looked up using these strings: 'lookup_internet_cidrs', 'lookup_private_subnet_cidrs', 'lookup_internet_cidrs'."
+  default     = {}
 }
