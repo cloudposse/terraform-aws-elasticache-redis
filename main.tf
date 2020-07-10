@@ -59,13 +59,14 @@ resource "aws_elasticache_replication_group" "default" {
       REPLICATION_GROUP_ID = aws_elasticache_replication_group.default.replication_group_id
     }
     command = <<-EOT
-              aws elasticache modify-replication-group \
-                --replication-group-id $REPLICATION_GROUP_ID \
-                --multi-az-enabled \
-                --apply-immediately \
-                --region us-east-1
-    EOT
-  }
+                  AWS_PROFILE=var.aws_profile \
+                  aws elasticache modify-replication-group \
+                  --replication-group-id $REPLICATION_GROUP_ID \
+                  --multi-az-enabled \
+                  --apply-immediately \
+                  --region var.aws_region
+        EOT
+    }
 
   dynamic "cluster_mode" {
     for_each = var.cluster_mode_enabled ? ["true"] : []
