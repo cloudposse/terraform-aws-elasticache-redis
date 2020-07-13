@@ -58,7 +58,7 @@ resource "aws_elasticache_replication_group" "default" {
     environment = {
       REPLICATION_GROUP_ID = aws_elasticache_replication_group.default.replication_group_id
       AWS_PROFILE = var.aws_profile
-      region = var.aws_region
+      AWS_REGION = var.aws_region
     }
     command = <<-EOT
       AWS_PROFILE=$AWS_PROFILE \
@@ -66,7 +66,7 @@ resource "aws_elasticache_replication_group" "default" {
         --replication-group-id $REPLICATION_GROUP_ID \
         --multi-az-enabled \
         --apply-immediately \
-        --region $region
+        --region $AWS_REGION
     EOT
     }
 
