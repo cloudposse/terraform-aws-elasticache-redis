@@ -43,4 +43,5 @@ inputs = {
   vpc_id                          = "vpc-047f251367f6941dc"
   zone_id                         = "ZBQY0PPB9MV8M"
   subnet_ids                      = ["subnet-07ca94f8c92792ebf"]
+  auth_token                      = "test123456789-123456"
 }

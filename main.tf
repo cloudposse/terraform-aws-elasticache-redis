@@ -54,6 +54,21 @@ resource "aws_elasticache_replication_group" "default" {
   apply_immediately             = var.apply_immediately
 
   tags = local.tags
+  provisioner "local-exec" {
+    environment = {
+      REPLICATION_GROUP_ID = aws_elasticache_replication_group.default.replication_group_id
+      AWS_PROFILE = var.aws_profile
+      AWS_REGION = var.aws_region
+    }
+    command = <<-EOT
+      AWS_PROFILE=$AWS_PROFILE \
+      aws elasticache modify-replication-group \
+        --replication-group-id $REPLICATION_GROUP_ID \
+        --multi-az-enabled \
+        --apply-immediately \
+        --region $AWS_REGION
+    EOT
+    }
 
   dynamic "cluster_mode" {
     for_each = var.cluster_mode_enabled ? ["true"] : []
