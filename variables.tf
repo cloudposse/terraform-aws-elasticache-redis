@@ -245,6 +245,29 @@ variable "sg_ingress_rules" {
 
 variable "sg_egress_rules" {
   type        = map(map(string))
-  description = "CIDR blocks can be looked up using these strings: 'lookup_internet_cidrs', 'lookup_private_subnet_cidrs', 'lookup_internet_cidrs'."
+  description = "Egress rules to allow outbound access on specified ports"
+  default     = {
+    "REDIS/6379 to Internet" = {
+      port        = 6379
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    "HTTPS/443 to Internet" = {
+      port        = 443
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  }
+}
+
+variable "ingress_rules" {
+  type        = map(map(string))
+  description = "Additional ingress rules needed per service"
+  default     = {}
+}
+
+variable "egress_rules" {
+  type        = map(map(string))
+  description = "Additional egress rules needed per service"
   default     = {}
 }
