@@ -243,33 +243,6 @@ variable "sg_ingress_rules" {
   }
 }
 
-variable "ingress_rules" {
-  type        = map(map(string))
-  description = "Additional ingress rules needed per service"
-  default     = {}
-}
-
-
-variable "egress_rules" {
-  type        = map(map(string))
-  description = "Additional egress rules needed per service"
-  default     = {}
-}
-
-
-variable "ingress_rules_exist" {
-  type        = bool
-  description = "Boolean to check if ingress rules are being passed from service already"
-  default     = true
-}
-
-
-variable "egress_rules_exist" {
-  type        = bool
-  description = "Boolean to check if egress rules are being passed from service already"
-  default     = true
-}
-
 variable "sg_egress_rules" {
   type        = map(map(string))
   description = "Egress rules to allow outbound access on specified ports"
@@ -285,4 +258,16 @@ variable "sg_egress_rules" {
       cidr_blocks = "0.0.0.0/0"
     }
   }
+}
+
+variable "ingress_rules" {
+  type        = map(map(string))
+  description = "Additional ingress rules needed per service"
+  default     = {}
+}
+
+variable "egress_rules" {
+  type        = map(map(string))
+  description = "Additional egress rules needed per service"
+  default     = {}
 }
