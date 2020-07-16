@@ -11,8 +11,8 @@ module "redis_security_group" {
   additional_tags = var.additional_tags
 
   name_suffix   = "redis"
-  egress_rules  = var.egress_rules_exist ? merge(var.egress_rules, var.sg_egress_rules) : var.sg_egress_rules
-  ingress_rules = var.ingress_rules_exist ? merge(var.ingress_rules, var.sg_ingress_rules) : var.sg_ingress_rules
+  egress_rules  = merge(var.egress_rules, var.sg_egress_rules)
+  ingress_rules = merge(var.ingress_rules, var.sg_ingress_rules)
 }
 
 resource "aws_elasticache_subnet_group" "default" {
