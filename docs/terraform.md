@@ -39,6 +39,7 @@
 | existing\_security\_groups | List of existing Security Group IDs to place the cluster into. Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster | `list(string)` | `[]` | no |
 | family | Redis family | `string` | `"redis4.0"` | no |
 | instance\_type | Elastic cache instance type | `string` | `"cache.t2.micro"` | no |
+| label\_order | The naming order of the id output and Name tag | `list(string)` | `[]` | no |
 | maintenance\_window | Maintenance window | `string` | `"wed:03:00-wed:04:00"` | no |
 | name | Name of the application | `string` | n/a | yes |
 | namespace | Namespace (e.g. `eg` or `cp`) | `string` | `""` | no |
