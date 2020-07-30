@@ -239,3 +239,9 @@ variable "cluster_mode_num_node_groups" {
   description = "Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications"
   default     = 0
 }
+
+variable "label_order" {
+  type        = list(string)
+  default     = []
+  description = "The naming order of the id output and Name tag"
+}
