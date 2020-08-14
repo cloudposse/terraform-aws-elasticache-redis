@@ -54,6 +54,7 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
 
 locals {
   elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
+  elasticache_member_clusters = tolist(aws_elasticache_replication_group.default.member_clusters)
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -117,8 +118,8 @@ resource "aws_elasticache_replication_group" "default" {
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
-  count               = var.enabled ? 1 : 0
-  alarm_name          = "${module.label.id}-cpu-utilization"
+  count               = var.enabled ? length(local.elasticache_member_clusters) : 0
+  alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
@@ -130,7 +131,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   threshold = var.alarm_cpu_threshold_percent
 
   dimensions = {
-    CacheClusterId = module.label.id
+    CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
   alarm_actions = var.alarm_actions
@@ -139,8 +140,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
-  count               = var.enabled ? 1 : 0
-  alarm_name          = "${module.label.id}-freeable-memory"
+  count               = var.enabled ? length(local.elasticache_member_clusters) : 0
+  alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
@@ -152,7 +153,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   threshold = var.alarm_memory_threshold_bytes
 
   dimensions = {
-    CacheClusterId = module.label.id
+    CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
   alarm_actions = var.alarm_actions
