@@ -204,6 +204,12 @@ variable "auth_token" {
   default     = null
 }
 
+variable "kms_key_id" {
+  type        = string
+  description = "The ARN of the key that you wish to use if encrypting at rest. If not supplied, uses service managed encryption. `at_rest_encryption_enabled` must be set to `true`"
+  default     = null
+}
+
 variable "replication_group_id" {
   type        = string
   description = "Replication group ID with the following constraints: \nA name must contain from 1 to 20 alphanumeric characters or hyphens. \n The first character must be a letter. \n A name cannot end with a hyphen or contain two consecutive hyphens."

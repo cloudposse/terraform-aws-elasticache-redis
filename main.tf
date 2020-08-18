@@ -97,6 +97,7 @@ resource "aws_elasticache_replication_group" "default" {
   engine_version                = var.engine_version
   at_rest_encryption_enabled    = var.at_rest_encryption_enabled
   transit_encryption_enabled    = var.transit_encryption_enabled
+  kms_key_id                    = var.at_rest_encryption_enabled ? var.kms_key_id : null
   snapshot_window               = var.snapshot_window
   snapshot_retention_limit      = var.snapshot_retention_limit
   apply_immediately             = var.apply_immediately
