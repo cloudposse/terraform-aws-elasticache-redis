@@ -54,6 +54,15 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
 
 locals {
   elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
+  # if !cluster, then node_count = replica cluster_size, if cluster then node_count = shard*(replica + 1)
+  # Why doing this 'The "count" value depends on resource attributes that cannot be determined until apply'. So pre-calculating
+  member_clusters_count = (var.cluster_mode_enabled
+    ?
+    (var.cluster_mode_num_node_groups * (var.cluster_mode_replicas_per_node_group + 1))
+    :
+    var.cluster_size
+  )
+  elasticache_member_clusters = var.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -118,8 +127,8 @@ resource "aws_elasticache_replication_group" "default" {
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
-  count               = var.enabled ? 1 : 0
-  alarm_name          = "${module.label.id}-cpu-utilization"
+  count               = var.enabled ? local.member_clusters_count : 0
+  alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
@@ -131,7 +140,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   threshold = var.alarm_cpu_threshold_percent
 
   dimensions = {
-    CacheClusterId = module.label.id
+    CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
   alarm_actions = var.alarm_actions
@@ -140,8 +149,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
-  count               = var.enabled ? 1 : 0
-  alarm_name          = "${module.label.id}-freeable-memory"
+  count               = var.enabled ? local.member_clusters_count : 0
+  alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
@@ -153,7 +162,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   threshold = var.alarm_memory_threshold_bytes
 
   dimensions = {
-    CacheClusterId = module.label.id
+    CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
   alarm_actions = var.alarm_actions
