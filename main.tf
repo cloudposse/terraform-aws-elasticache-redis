@@ -149,6 +149,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   treat_missing_data = var.treat_missing_data
 
   depends_on    = [aws_elasticache_replication_group.default]
+
+  tags = module.label.tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -174,6 +176,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   treat_missing_data = var.treat_missing_data
 
   depends_on    = [aws_elasticache_replication_group.default]
+
+  tags = module.label.tags
 }
 
 module "dns" {
