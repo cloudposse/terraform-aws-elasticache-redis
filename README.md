@@ -130,7 +130,7 @@ For automated tests of the complete example using [bats](https://github.com/bats
 
 ## Examples
 
-Review the [complete example](examples/simple) to see how to use this module.
+Review the [complete example](examples/complete) to see how to use this module.
 
 
 
