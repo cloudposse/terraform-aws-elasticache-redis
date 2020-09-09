@@ -150,6 +150,12 @@ variable "ok_actions" {
   default     = []
 }
 
+variable "insufficient_data_actions" {
+  type        = list(string)
+  description = "The list of actions to execute when this alarm transitions into an insufficient data state from any other state. Each action is specified as an Amazon Resource Number (ARN)"
+  default     = []
+}
+
 variable "apply_immediately" {
   type        = bool
   default     = true

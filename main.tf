@@ -137,20 +137,21 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   period              = "300"
   statistic           = "Average"
 
-  threshold = var.alarm_cpu_threshold_percent
+  threshold           = var.alarm_cpu_threshold_percent
 
   dimensions = {
     CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
-  alarm_actions = var.alarm_actions
-  ok_actions    = var.ok_actions
+  alarm_actions             = var.alarm_actions
+  insufficient_data_actions = var.insufficient_data_actions
+  ok_actions                = var.ok_actions
 
-  treat_missing_data = var.treat_missing_data
+  treat_missing_data  = var.treat_missing_data
 
-  depends_on    = [aws_elasticache_replication_group.default]
+  depends_on          = [aws_elasticache_replication_group.default]
 
-  tags = module.label.tags
+  tags                = module.label.tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -164,20 +165,21 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   period              = "60"
   statistic           = "Average"
 
-  threshold = var.alarm_memory_threshold_bytes
+  threshold           = var.alarm_memory_threshold_bytes
 
   dimensions = {
     CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
-  alarm_actions = var.alarm_actions
-  ok_actions    = var.ok_actions
+  alarm_actions             = var.alarm_actions
+  ok_actions                = var.ok_actions
+  insufficient_data_actions = var.insufficient_data_actions
 
-  treat_missing_data = var.treat_missing_data
+  treat_missing_data  = var.treat_missing_data
 
-  depends_on    = [aws_elasticache_replication_group.default]
+  depends_on          = [aws_elasticache_replication_group.default]
 
-  tags = module.label.tags
+  tags                = module.label.tags
 }
 
 module "dns" {
