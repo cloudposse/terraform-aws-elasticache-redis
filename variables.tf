@@ -168,6 +168,42 @@ variable "alarm_statistic_cache_memory" {
   default     = "Average"
 }
 
+variable "alarm_evaluation_periods_cache_cpu" {
+  type        = number
+  description = "The number of periods over which data is compared to the specified threshold"
+  default     = 1
+}
+
+variable "alarm_evaluation_periods_cache_memory" {
+  type        = number
+  description = "The number of periods over which data is compared to the specified threshold"
+  default     = 1
+}
+
+variable "alarm_datapoints_to_alarm_cache_cpu" {
+  type        = number
+  description = "The number of datapoints that must be breaching to trigger the alarm."
+  default     = 1
+}
+
+variable "alarm_datapoints_to_alarm_cache_memory" {
+  type        = number
+  description = "The number of datapoints that must be breaching to trigger the alarm."
+  default     = 1
+}
+
+variable "alarm_period_cache_cpu" {
+  type        = number
+  description = "The period in seconds over which the specified statistic is applied."
+  default     = 300
+}
+
+variable "alarm_period_cache_memory" {
+  type        = number
+  description = "The period in seconds over which the specified statistic is applied."
+  default     = 60
+}
+
 variable "apply_immediately" {
   type        = bool
   default     = true

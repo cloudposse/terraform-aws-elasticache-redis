@@ -131,10 +131,10 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = var.alarm_evaluation_periods_cache_cpu
   metric_name         = "CPUUtilization"
   namespace           = "AWS/ElastiCache"
-  period              = "300"
+  period              = var.alarm_period_cache_cpu
   statistic           = var.alarm_statistic_cache_cpu
 
   threshold           = var.alarm_cpu_threshold_percent
@@ -143,6 +143,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
     CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
+  datapoints_to_alarm       = var.alarm_datapoints_to_alarm_cache_cpu
   alarm_actions             = var.alarm_actions
   insufficient_data_actions = var.insufficient_data_actions
   ok_actions                = var.ok_actions
@@ -159,10 +160,10 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = var.alarm_evaluation_periods_cache_memory
   metric_name         = "FreeableMemory"
   namespace           = "AWS/ElastiCache"
-  period              = "60"
+  period              = var.alarm_period_cache_memory
   statistic           = var.alarm_statistic_cache_memory
 
   threshold           = var.alarm_memory_threshold_bytes
@@ -171,6 +172,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
     CacheClusterId = element(local.elasticache_member_clusters, count.index)
   }
 
+  datapoints_to_alarm       = var.alarm_datapoints_to_alarm_cache_memory
   alarm_actions             = var.alarm_actions
   ok_actions                = var.ok_actions
   insufficient_data_actions = var.insufficient_data_actions
