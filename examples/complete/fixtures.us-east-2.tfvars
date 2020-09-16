@@ -1,3 +1,5 @@
+enabled = true
+
 region = "us-east-2"
 
 availability_zones = ["us-east-2a", "us-east-2b"]
@@ -21,3 +23,5 @@ at_rest_encryption_enabled = false
 transit_encryption_enabled = true
 
 zone_id = "Z3SO0TKDDQ0RGG"
+
+cloudwatch_metric_alarms_enabled = false
