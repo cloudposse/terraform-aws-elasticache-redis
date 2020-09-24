@@ -159,7 +159,7 @@ variable "insufficient_data_actions" {
 variable "alarm_statistic_cache_cpu" {
   type        = string
   description = "Statistic to use for alarm (p99, Average, Maximum, etc.)"
-  default     = "p99"
+  default     = "Average"
 }
 
 variable "alarm_statistic_cache_memory" {
