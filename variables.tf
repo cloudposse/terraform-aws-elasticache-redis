@@ -39,6 +39,13 @@ variable "elasticache_subnet_group_name" {
   default     = ""
 }
 
+
+variable "elasticache_parameter_group_name" {
+  type        = string
+  description = "Pramater group name for the ElastiCache instance"
+  default     = ""
+}
+
 variable "maintenance_window" {
   type        = string
   default     = "wed:03:00-wed:04:00"
