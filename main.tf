@@ -43,7 +43,7 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
 
 locals {
   elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
-
+  elasticache_parameter_group_name = var.elasticache_parameter_group_name != "" ? var.elasticache_parameter_group_name : join("", aws_elasticache_parameter_group.default.*.name)
   # if !cluster, then node_count = replica cluster_size, if cluster then node_count = shard*(replica + 1)
   # Why doing this 'The "count" value depends on resource attributes that cannot be determined until apply'. So pre-calculating
   member_clusters_count = (var.cluster_mode_enabled
@@ -63,7 +63,7 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = module.this.enabled ? 1 : 0
+  count  = module.this.enabled && var.elasticache_parameter_group_name == "" ? 1 : 0
   name   = module.this.id
   family = var.family
 
@@ -85,7 +85,7 @@ resource "aws_elasticache_replication_group" "default" {
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
-  parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
+  parameter_group_name          = local.elasticache_parameter_group_name
   availability_zones            = var.cluster_mode_enabled ? null : slice(var.availability_zones, 0, var.cluster_size)
   automatic_failover_enabled    = var.automatic_failover_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
