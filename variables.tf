@@ -210,3 +210,9 @@ variable "cloudwatch_metric_alarms_enabled" {
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
   default     = false
 }
+
+variable egress_cidr_blocks {
+  type        = list
+  default     = ["0.0.0.0/0"]
+  description = "Outbound traffic address"
+}
