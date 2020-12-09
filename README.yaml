@@ -34,7 +34,7 @@ github_repo: cloudposse/terraform-aws-elasticache-redis
 badges:
   - name: "Latest Release"
     image: "https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg"
-    url: "https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment/releases/latest"
+    url: "https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest"
   - name: "Slack Community"
     image: "https://slack.cloudposse.com/badge.svg"
     url: "https://slack.cloudposse.com"
