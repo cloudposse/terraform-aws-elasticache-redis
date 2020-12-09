@@ -46,13 +46,7 @@ locals {
 
   # if !cluster, then node_count = replica cluster_size, if cluster then node_count = shard*(replica + 1)
   # Why doing this 'The "count" value depends on resource attributes that cannot be determined until apply'. So pre-calculating
-  member_clusters_count = (var.cluster_mode_enabled
-    ?
-    (var.cluster_mode_num_node_groups * (var.cluster_mode_replicas_per_node_group + 1))
-    :
-    var.cluster_size
-  )
-
+  member_clusters_count       = var.cluster_mode_enabled ? (var.cluster_mode_num_node_groups * (var.cluster_mode_replicas_per_node_group + 1)) : var.cluster_size
   elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
 }
 
@@ -159,7 +153,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.8.0"
+  source  = "cloudposse/route53-cluster-hostname/aws"
+  version = "0.8.0"
 
   enabled  = module.this.enabled && var.zone_id != "" ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id

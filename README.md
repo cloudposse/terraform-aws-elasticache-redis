@@ -1,4 +1,6 @@
+<!-- markdownlint-disable -->
 # terraform-aws-elasticache-redis [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg)](https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
+<!-- markdownlint-restore -->
 
 [![README Header][readme_header_img]][readme_header_link]
 
@@ -77,7 +79,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "vpc" {
-    source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
+    source = "cloudposse/vpc/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version     = "x.x.x"
     namespace  = var.namespace
     stage      = var.stage
     name       = var.name
@@ -85,7 +89,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "subnets" {
-    source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
+    source = "cloudposse/dynamic-subnets/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version     = "x.x.x"
     availability_zones   = var.availability_zones
     namespace            = var.namespace
     stage                = var.stage
@@ -98,7 +104,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "redis" {
-    source                     = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
+    source = "cloudposse/elasticache-redis/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version     = "x.x.x"
     availability_zones         = var.availability_zones
     namespace                  = var.namespace
     stage                      = var.stage
@@ -151,7 +159,7 @@ Available targets:
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.0 |
+| terraform | >= 0.12.26 |
 | aws | >= 2.0 |
 | null | >= 2.0 |
 
@@ -356,8 +364,10 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
 
 ### Contributors
 
+<!-- markdownlint-disable -->
 |  [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] | [![Igor Rodionov][goruha_avatar]][goruha_homepage]<br/>[Igor Rodionov][goruha_homepage] | [![Andriy Knysh][aknysh_avatar]][aknysh_homepage]<br/>[Andriy Knysh][aknysh_homepage] | [![Daren Desjardins][darend_avatar]][darend_homepage]<br/>[Daren Desjardins][darend_homepage] | [![Max Moon][MoonMoon1919_avatar]][MoonMoon1919_homepage]<br/>[Max Moon][MoonMoon1919_homepage] | [![Christopher Riley][christopherriley_avatar]][christopherriley_homepage]<br/>[Christopher Riley][christopherriley_homepage] |
 |---|---|---|---|---|---|
+<!-- markdownlint-restore -->
 
   [osterman_homepage]: https://github.com/osterman
   [osterman_avatar]: https://img.cloudposse.com/150x150/https://github.com/osterman.png
