@@ -1,37 +1,26 @@
-module "label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.17.0"
-  enabled    = var.enabled
-  namespace  = var.namespace
-  name       = var.name
-  stage      = var.stage
-  delimiter  = var.delimiter
-  attributes = var.attributes
-  tags       = var.tags
-}
-
 #
 # Security Group Resources
 #
 resource "aws_security_group" "default" {
-  count  = var.enabled && var.use_existing_security_groups == false ? 1 : 0
+  count  = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
   vpc_id = var.vpc_id
-  name   = module.label.id
-  tags   = module.label.tags
+  name   = module.this.id
+  tags   = module.this.tags
 }
 
 resource "aws_security_group_rule" "egress" {
-  count             = var.enabled && var.use_existing_security_groups == false ? 1 : 0
-  description       = "Allow all egress traffic"
+  count             = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
+  description       = "Allow outbound traffic from existing cidr blocks"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = var.egress_cidr_blocks
   security_group_id = join("", aws_security_group.default.*.id)
   type              = "egress"
 }
 
 resource "aws_security_group_rule" "ingress_security_groups" {
-  count                    = var.enabled && var.use_existing_security_groups == false ? length(var.allowed_security_groups) : 0
+  count                    = module.this.enabled && var.use_existing_security_groups == false ? length(var.allowed_security_groups) : 0
   description              = "Allow inbound traffic from existing Security Groups"
   from_port                = var.port
   to_port                  = var.port
@@ -42,7 +31,7 @@ resource "aws_security_group_rule" "ingress_security_groups" {
 }
 
 resource "aws_security_group_rule" "ingress_cidr_blocks" {
-  count             = var.enabled && var.use_existing_security_groups == false && length(var.allowed_cidr_blocks) > 0 ? 1 : 0
+  count             = module.this.enabled && var.use_existing_security_groups == false && length(var.allowed_cidr_blocks) > 0 ? 1 : 0
   description       = "Allow inbound traffic from CIDR blocks"
   from_port         = var.port
   to_port           = var.port
@@ -54,6 +43,7 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
 
 locals {
   elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
+
   # if !cluster, then node_count = replica cluster_size, if cluster then node_count = shard*(replica + 1)
   # Why doing this 'The "count" value depends on resource attributes that cannot be determined until apply'. So pre-calculating
   member_clusters_count = (var.cluster_mode_enabled
@@ -62,24 +52,23 @@ locals {
     :
     var.cluster_size
   )
-  elasticache_member_clusters = var.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
+
+  elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  count      = var.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
-  name       = module.label.id
+  count      = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
+  name       = module.this.id
   subnet_ids = var.subnets
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = var.enabled ? 1 : 0
-  name   = module.label.id
+  count  = module.this.enabled ? 1 : 0
+  name   = module.this.id
   family = var.family
 
-
-
   dynamic "parameter" {
-    for_each = var.cluster_mode_enabled ? concat([{ "name" = "cluster-enabled", "value" = "yes" }], var.parameter) : var.parameter
+    for_each = var.cluster_mode_enabled ? concat([{ name = "cluster-enabled", value = "yes" }], var.parameter) : var.parameter
     content {
       name  = parameter.value.name
       value = parameter.value.value
@@ -88,11 +77,11 @@ resource "aws_elasticache_parameter_group" "default" {
 }
 
 resource "aws_elasticache_replication_group" "default" {
-  count = var.enabled ? 1 : 0
+  count = module.this.enabled ? 1 : 0
 
   auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
-  replication_group_id          = var.replication_group_id == "" ? module.label.id : var.replication_group_id
-  replication_group_description = module.label.id
+  replication_group_id          = var.replication_group_id == "" ? module.this.id : var.replication_group_id
+  replication_group_description = module.this.id
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
@@ -111,7 +100,7 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_retention_limit      = var.snapshot_retention_limit
   apply_immediately             = var.apply_immediately
 
-  tags = module.label.tags
+  tags = module.this.tags
 
   dynamic "cluster_mode" {
     for_each = var.cluster_mode_enabled ? ["true"] : []
@@ -120,14 +109,13 @@ resource "aws_elasticache_replication_group" "default" {
       num_node_groups         = var.cluster_mode_num_node_groups
     }
   }
-
 }
 
 #
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
-  count               = var.enabled ? local.member_clusters_count : 0
+  count               = module.this.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
@@ -149,7 +137,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
-  count               = var.enabled ? local.member_clusters_count : 0
+  count               = module.this.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
@@ -171,10 +159,13 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source  = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.6.0"
-  enabled = var.enabled && var.zone_id != "" ? true : false
-  name    = var.dns_subdomain != "" ? var.dns_subdomain : var.name
-  ttl     = 60
-  zone_id = var.zone_id
-  records = var.cluster_mode_enabled ? [join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address)] : [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
+  source = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.7.0"
+
+  enabled  = module.this.enabled && var.zone_id != "" ? true : false
+  dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
+  ttl      = 60
+  zone_id  = var.zone_id
+  records  = var.cluster_mode_enabled ? [join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address)] : [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
+
+  context = module.this.context
 }

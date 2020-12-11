@@ -1,26 +1,3 @@
-variable "enabled" {
-  type        = bool
-  description = "Set to false to prevent the module from creating any resources"
-  default     = true
-}
-
-variable "namespace" {
-  type        = string
-  description = "Namespace (e.g. `eg` or `cp`)"
-  default     = ""
-}
-
-variable "stage" {
-  type        = string
-  description = "Stage (e.g. `prod`, `dev`, `staging`)"
-  default     = ""
-}
-
-variable "name" {
-  type        = string
-  description = "Name of the application"
-}
-
 variable "use_existing_security_groups" {
   type        = bool
   description = "Flag to enable/disable creation of Security Group in the module. Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into"
@@ -180,24 +157,6 @@ variable "dns_subdomain" {
   description = "The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name."
 }
 
-variable "delimiter" {
-  type        = string
-  default     = "-"
-  description = "Delimiter between `name`, `namespace`, `stage` and `attributes`"
-}
-
-variable "attributes" {
-  type        = list(string)
-  description = "Additional attributes (_e.g._ \"1\")"
-  default     = []
-}
-
-variable "tags" {
-  type        = map(string)
-  description = "Additional tags (_e.g._ map(\"BusinessUnit\",\"ABC\")"
-  default     = {}
-}
-
 variable "auth_token" {
   type        = string
   description = "Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars"
@@ -244,4 +203,16 @@ variable "cluster_mode_num_node_groups" {
   type        = number
   description = "Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications"
   default     = 0
+}
+
+variable "cloudwatch_metric_alarms_enabled" {
+  type        = bool
+  description = "Boolean flag to enable/disable CloudWatch metrics alarms"
+  default     = false
+}
+
+variable egress_cidr_blocks {
+  type        = list
+  default     = ["0.0.0.0/0"]
+  description = "Outbound traffic address"
 }
