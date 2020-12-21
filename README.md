@@ -86,7 +86,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "vpc" {
-    source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
+    source = "cloudposse/vpc/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
     namespace  = var.namespace
     stage      = var.stage
     name       = var.name
@@ -94,7 +96,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "subnets" {
-    source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
+    source = "cloudposse/dynamic-subnets/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
     availability_zones   = var.availability_zones
     namespace            = var.namespace
     stage                = var.stage
@@ -107,7 +111,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "redis" {
-    source                     = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
+    source = "cloudposse/elasticache-redis/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
     availability_zones         = var.availability_zones
     namespace                  = var.namespace
     stage                      = var.stage
