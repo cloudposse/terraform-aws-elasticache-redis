@@ -88,7 +88,7 @@ For automated tests of the complete example using [bats](https://github.com/bats
   module "vpc" {
     source = "cloudposse/vpc/aws"
     # Cloud Posse recommends pinning every module to a specific version
-    # version   = "x.x.x"
+    # version     = "x.x.x"
 
     namespace  = var.namespace
     stage      = var.stage
@@ -99,7 +99,7 @@ For automated tests of the complete example using [bats](https://github.com/bats
   module "subnets" {
     source = "cloudposse/dynamic-subnets/aws"
     # Cloud Posse recommends pinning every module to a specific version
-    # version              = "x.x.x"
+    # version = "x.x.x"
 
     availability_zones   = var.availability_zones
     namespace            = var.namespace
