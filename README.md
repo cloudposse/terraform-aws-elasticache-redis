@@ -64,8 +64,15 @@ We literally have [*hundreds of terraform modules*][terraform_modules] that are 
 ## Usage
 
 
-**IMPORTANT:** The `master` branch is used in `source` just as an example. In your code, do not pin to `master` because there may be breaking changes between releases.
-Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-elasticache-redis/releases).
+**IMPORTANT:** We do not pin modules to versions in our examples because of the
+difficulty of keeping the versions in the documentation in sync with the latest released versions.
+We highly recommend that in your code you pin the version to the exact version you are
+using so that your infrastructure remains stable, and update versions in a
+systematic way so that they do not catch you by surprise.
+
+Also, because of a bug in the Terraform registry ([hashicorp/terraform#21417](https://github.com/hashicorp/terraform/issues/21417)),
+the registry shows many of our inputs as required when in fact they are optional.
+The table below correctly indicates which inputs are required.
 
 
 
@@ -81,7 +88,8 @@ For automated tests of the complete example using [bats](https://github.com/bats
   module "vpc" {
     source = "cloudposse/vpc/aws"
     # Cloud Posse recommends pinning every module to a specific version
-    # version     = "x.x.x"
+    # version   = "x.x.x"
+
     namespace  = var.namespace
     stage      = var.stage
     name       = var.name
@@ -91,7 +99,8 @@ For automated tests of the complete example using [bats](https://github.com/bats
   module "subnets" {
     source = "cloudposse/dynamic-subnets/aws"
     # Cloud Posse recommends pinning every module to a specific version
-    # version     = "x.x.x"
+    # version              = "x.x.x"
+
     availability_zones   = var.availability_zones
     namespace            = var.namespace
     stage                = var.stage
@@ -107,6 +116,7 @@ For automated tests of the complete example using [bats](https://github.com/bats
     source = "cloudposse/elasticache-redis/aws"
     # Cloud Posse recommends pinning every module to a specific version
     # version     = "x.x.x"
+
     availability_zones         = var.availability_zones
     namespace                  = var.namespace
     stage                      = var.stage
@@ -193,6 +203,7 @@ Available targets:
 | context | Single object for setting entire context at once.<br>See description of individual variables for details.<br>Leave string and numeric variables as `null` to use default value.<br>Individual variable settings (non-null) override settings in context object,<br>except for attributes, tags, and additional\_tag\_map, which are merged. | <pre>object({<br>    enabled             = bool<br>    namespace           = string<br>    environment         = string<br>    stage               = string<br>    name                = string<br>    delimiter           = string<br>    attributes          = list(string)<br>    tags                = map(string)<br>    additional_tag_map  = map(string)<br>    regex_replace_chars = string<br>    label_order         = list(string)<br>    id_length_limit     = number<br>  })</pre> | <pre>{<br>  "additional_tag_map": {},<br>  "attributes": [],<br>  "delimiter": null,<br>  "enabled": true,<br>  "environment": null,<br>  "id_length_limit": null,<br>  "label_order": [],<br>  "name": null,<br>  "namespace": null,<br>  "regex_replace_chars": null,<br>  "stage": null,<br>  "tags": {}<br>}</pre> | no |
 | delimiter | Delimiter to be used between `namespace`, `environment`, `stage`, `name` and `attributes`.<br>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
 | dns\_subdomain | The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name. | `string` | `""` | no |
+| egress\_cidr\_blocks | Outbound traffic address | `list` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | elasticache\_subnet\_group\_name | Subnet group name for the ElastiCache instance | `string` | `""` | no |
 | enabled | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
 | engine\_version | Redis engine version | `string` | `"4.0.10"` | no |

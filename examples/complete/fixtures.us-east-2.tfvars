@@ -14,9 +14,9 @@ instance_type = "cache.t2.micro"
 
 cluster_size = 1
 
-family = "redis4.0"
+family = "redis6.x"
 
-engine_version = "4.0.10"
+engine_version = "6.x"
 
 at_rest_encryption_enabled = false
 

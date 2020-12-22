@@ -18,9 +18,11 @@
 # will be null, and `module.this.delimiter` will be `-` (hyphen).
 #
 
+
 module "this" {
   source              = "cloudposse/label/null"
   version             = "0.22.0"
+
 
   enabled             = var.enabled
   namespace           = var.namespace
