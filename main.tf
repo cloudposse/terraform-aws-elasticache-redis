@@ -160,7 +160,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 
 module "dns" {
   source  = "cloudposse/route53-cluster-hostname/aws"
-  version = "0.9.0"
+  version = "0.10.0"
 
   enabled  = module.this.enabled && var.zone_id != "" ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
