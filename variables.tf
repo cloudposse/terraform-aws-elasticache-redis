@@ -178,7 +178,7 @@ variable "replication_group_id" {
 
 variable "snapshot_name" {
   type        = string
-  description = "(Optional) The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource."
+  description = "The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource."
   default     = null
 }
 
