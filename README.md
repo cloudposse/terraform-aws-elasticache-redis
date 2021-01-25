@@ -86,7 +86,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "vpc" {
-    source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
+    source = "cloudposse/vpc/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
     namespace  = var.namespace
     stage      = var.stage
     name       = var.name
@@ -94,7 +96,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "subnets" {
-    source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
+    source = "cloudposse/dynamic-subnets/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
     availability_zones   = var.availability_zones
     namespace            = var.namespace
     stage                = var.stage
@@ -107,7 +111,9 @@ For automated tests of the complete example using [bats](https://github.com/bats
   }
 
   module "redis" {
-    source                     = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
+    source = "cloudposse/elasticache-redis/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
     availability_zones         = var.availability_zones
     namespace                  = var.namespace
     stage                      = var.stage
@@ -214,6 +220,7 @@ Available targets:
 | port | Redis port | `number` | `6379` | no |
 | regex\_replace\_chars | Regex to replace chars with empty string in `namespace`, `environment`, `stage` and `name`.<br>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits. | `string` | `null` | no |
 | replication\_group\_id | Replication group ID with the following constraints: <br>A name must contain from 1 to 20 alphanumeric characters or hyphens. <br> The first character must be a letter. <br> A name cannot end with a hyphen or contain two consecutive hyphens. | `string` | `""` | no |
+| snapshot\_name | The name of a snapshot from which to restore data into the new node group. Changing the snapshot\_name forces a new resource. | `string` | `null` | no |
 | snapshot\_retention\_limit | The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. | `number` | `0` | no |
 | snapshot\_window | The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. | `string` | `"06:30-07:30"` | no |
 | stage | Stage, e.g. 'prod', 'staging', 'dev', OR 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
@@ -309,7 +316,7 @@ In general, PRs are welcome. We follow the typical "fork-and-pull" Git workflow.
 
 ## Copyright
 
-Copyright © 2017-2020 [Cloud Posse, LLC](https://cpco.io/copyright)
+Copyright © 2017-2021 [Cloud Posse, LLC](https://cpco.io/copyright)
 
 
 

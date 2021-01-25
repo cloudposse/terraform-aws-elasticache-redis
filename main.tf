@@ -96,6 +96,7 @@ resource "aws_elasticache_replication_group" "default" {
   at_rest_encryption_enabled    = var.at_rest_encryption_enabled
   transit_encryption_enabled    = var.transit_encryption_enabled
   kms_key_id                    = var.at_rest_encryption_enabled ? var.kms_key_id : null
+  snapshot_name                 = var.snapshot_name
   snapshot_arns                 = var.snapshot_arns
   snapshot_window               = var.snapshot_window
   snapshot_retention_limit      = var.snapshot_retention_limit
@@ -160,7 +161,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.8.0"
+  source  = "cloudposse/route53-cluster-hostname/aws"
+  version = "0.10.0"
 
   enabled  = module.this.enabled && var.zone_id != "" ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id

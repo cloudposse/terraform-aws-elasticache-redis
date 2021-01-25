@@ -181,6 +181,13 @@ variable "snapshot_arns" {
   default     = []
 }
 
+
+variable "snapshot_name" {
+  type        = string
+  description = "The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource."
+  default     = null
+}
+
 variable "snapshot_window" {
   type        = string
   description = "The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster."
