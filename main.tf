@@ -10,11 +10,11 @@ resource "aws_security_group" "default" {
 
 resource "aws_security_group_rule" "egress" {
   count             = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
-  description       = "Allow all egress traffic"
+  description       = "Allow outbound traffic from existing cidr blocks"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = var.egress_cidr_blocks
   security_group_id = join("", aws_security_group.default.*.id)
   type              = "egress"
 }
@@ -96,6 +96,8 @@ resource "aws_elasticache_replication_group" "default" {
   at_rest_encryption_enabled    = var.at_rest_encryption_enabled
   transit_encryption_enabled    = var.transit_encryption_enabled
   kms_key_id                    = var.at_rest_encryption_enabled ? var.kms_key_id : null
+  snapshot_name                 = var.snapshot_name
+  snapshot_arns                 = var.snapshot_arns
   snapshot_window               = var.snapshot_window
   snapshot_retention_limit      = var.snapshot_retention_limit
   apply_immediately             = var.apply_immediately
@@ -159,7 +161,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.7.0"
+  source  = "cloudposse/route53-cluster-hostname/aws"
+  version = "0.10.1"
 
   enabled  = module.this.enabled && var.zone_id != "" ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id

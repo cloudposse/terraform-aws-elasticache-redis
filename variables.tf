@@ -175,6 +175,19 @@ variable "replication_group_id" {
   default     = ""
 }
 
+variable "snapshot_arns" {
+  type        = list(string)
+  description = "A single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. Example: arn:aws:s3:::my_bucket/snapshot1.rdb"
+  default     = []
+}
+
+
+variable "snapshot_name" {
+  type        = string
+  description = "The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource."
+  default     = null
+}
+
 variable "snapshot_window" {
   type        = string
   description = "The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster."
@@ -209,4 +222,10 @@ variable "cloudwatch_metric_alarms_enabled" {
   type        = bool
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
   default     = false
+}
+
+variable egress_cidr_blocks {
+  type        = list
+  default     = ["0.0.0.0/0"]
+  description = "Outbound traffic address"
 }
