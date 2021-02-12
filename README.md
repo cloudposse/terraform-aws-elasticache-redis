@@ -195,6 +195,24 @@ Available targets:
 |------|---------|
 | aws | >= 2.0 |
 
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| dns | cloudposse/route53-cluster-hostname/aws | 0.12.0 |
+| this | cloudposse/label/null | 0.24.1 |
+
+## Resources
+
+| Name |
+|------|
+| [aws_cloudwatch_metric_alarm](https://registry.terraform.io/providers/hashicorp/aws/2.0/docs/resources/cloudwatch_metric_alarm) |
+| [aws_elasticache_parameter_group](https://registry.terraform.io/providers/hashicorp/aws/2.0/docs/resources/elasticache_parameter_group) |
+| [aws_elasticache_replication_group](https://registry.terraform.io/providers/hashicorp/aws/2.0/docs/resources/elasticache_replication_group) |
+| [aws_elasticache_subnet_group](https://registry.terraform.io/providers/hashicorp/aws/2.0/docs/resources/elasticache_subnet_group) |
+| [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/2.0/docs/resources/security_group) |
+| [aws_security_group_rule](https://registry.terraform.io/providers/hashicorp/aws/2.0/docs/resources/security_group_rule) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -215,7 +233,7 @@ Available targets:
 | cluster\_mode\_enabled | Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed | `bool` | `false` | no |
 | cluster\_mode\_num\_node\_groups | Number of node groups (shards) for this Redis replication group. Changing this number will trigger an online resizing operation before other settings modifications | `number` | `0` | no |
 | cluster\_mode\_replicas\_per\_node\_group | Number of replica nodes in each node group. Valid values are 0 to 5. Changing this number will force a new resource | `number` | `0` | no |
-| cluster\_size | Number of nodes in cluster. \*Ignored when `cluster_mode_enabled` == `true`\* | `number` | `1` | no |
+| cluster\_size | Number of nodes in cluster. *Ignored when `cluster_mode_enabled` == `true`* | `number` | `1` | no |
 | context | Single object for setting entire context at once.<br>See description of individual variables for details.<br>Leave string and numeric variables as `null` to use default value.<br>Individual variable settings (non-null) override settings in context object,<br>except for attributes, tags, and additional\_tag\_map, which are merged. | `any` | <pre>{<br>  "additional_tag_map": {},<br>  "attributes": [],<br>  "delimiter": null,<br>  "enabled": true,<br>  "environment": null,<br>  "id_length_limit": null,<br>  "label_key_case": null,<br>  "label_order": [],<br>  "label_value_case": null,<br>  "name": null,<br>  "namespace": null,<br>  "regex_replace_chars": null,<br>  "stage": null,<br>  "tags": {}<br>}</pre> | no |
 | delimiter | Delimiter to be used between `namespace`, `environment`, `stage`, `name` and `attributes`.<br>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
 | dns\_subdomain | The subdomain to use for the CNAME record. If not provided then the CNAME record will use var.name. | `string` | `""` | no |
@@ -233,6 +251,7 @@ Available targets:
 | label\_order | The naming order of the id output and Name tag.<br>Defaults to ["namespace", "environment", "stage", "name", "attributes"].<br>You can omit any of the 5 elements, but at least one must be present. | `list(string)` | `null` | no |
 | label\_value\_case | The letter case of output label values (also used in `tags` and `id`).<br>Possible values: `lower`, `title`, `upper` and `none` (no transformation).<br>Default value: `lower`. | `string` | `null` | no |
 | maintenance\_window | Maintenance window | `string` | `"wed:03:00-wed:04:00"` | no |
+| multi\_az\_enabled | Multi AZ (Automatic Failover must also be enabled.  If Cluster Mode is enabled, Multi AZ is on by default, and this setting is ignored) | `bool` | `false` | no |
 | name | Solution name, e.g. 'app' or 'jenkins' | `string` | `null` | no |
 | namespace | Namespace, which could be your organization name or abbreviation, e.g. 'eg' or 'cp' | `string` | `null` | no |
 | notification\_topic\_arn | Notification topic arn | `string` | `""` | no |
@@ -262,7 +281,6 @@ Available targets:
 | id | Redis cluster ID |
 | port | Redis port |
 | security\_group\_id | Security group ID |
-
 <!-- markdownlint-restore -->
 
 
