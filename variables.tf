@@ -139,6 +139,12 @@ variable "automatic_failover_enabled" {
   description = "Automatic failover (Not available for T1/T2 instances)"
 }
 
+variable "multi_az_enabled" {
+  type        = bool
+  default     = false
+  description = "Multi AZ (Automatic Failover must also be enabled.  If Cluster Mode is enabled, Multi AZ is on by default, and this setting is ignored)"
+}
+
 variable "availability_zones" {
   type        = list(string)
   description = "Availability zone IDs"
