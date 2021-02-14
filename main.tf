@@ -86,7 +86,7 @@ resource "aws_elasticache_replication_group" "default" {
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
-  availability_zones            = var.cluster_mode_enabled ? null : slice(var.availability_zones, 0, var.cluster_size)
+  availability_zones            = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
