@@ -94,69 +94,70 @@ the registry shows many of our inputs as required when in fact they are optional
 The table below correctly indicates which inputs are required.
 
 
+Note that this uses secure defaults. One of the ways this module can trip users up is with `transit_encryption_enabled` which is `true` by default. With this enabled, one does not simply `redis-cli` in without setting up an `stunnel`. Amazon provides [good docs on how to connect with it enabled](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls). If this is not desired behavior, set `transit_encryption_enabled=false`.
 
 For a complete example, see [examples/complete](examples/complete).
 
 For automated tests of the complete example using [bats](https://github.com/bats-core/bats-core) and [Terratest](https://github.com/gruntwork-io/terratest) (which tests and deploys the example on AWS), see [test](test).
 
 ```hcl
-  provider "aws" {
-    region = var.region
-  }
+provider "aws" {
+  region = var.region
+}
 
-  module "vpc" {
-    source = "cloudposse/vpc/aws"
-    # Cloud Posse recommends pinning every module to a specific version
-    # version = "x.x.x"
-    namespace  = var.namespace
-    stage      = var.stage
-    name       = var.name
-    cidr_block = "172.16.0.0/16"
-  }
+module "vpc" {
+  source = "cloudposse/vpc/aws"
+  # Cloud Posse recommends pinning every module to a specific version
+  # version = "x.x.x"
+  namespace  = var.namespace
+  stage      = var.stage
+  name       = var.name
+  cidr_block = "172.16.0.0/16"
+}
 
-  module "subnets" {
-    source = "cloudposse/dynamic-subnets/aws"
-    # Cloud Posse recommends pinning every module to a specific version
-    # version = "x.x.x"
-    availability_zones   = var.availability_zones
-    namespace            = var.namespace
-    stage                = var.stage
-    name                 = var.name
-    vpc_id               = module.vpc.vpc_id
-    igw_id               = module.vpc.igw_id
-    cidr_block           = module.vpc.vpc_cidr_block
-    nat_gateway_enabled  = true
-    nat_instance_enabled = false
-  }
+module "subnets" {
+  source = "cloudposse/dynamic-subnets/aws"
+  # Cloud Posse recommends pinning every module to a specific version
+  # version = "x.x.x"
+  availability_zones   = var.availability_zones
+  namespace            = var.namespace
+  stage                = var.stage
+  name                 = var.name
+  vpc_id               = module.vpc.vpc_id
+  igw_id               = module.vpc.igw_id
+  cidr_block           = module.vpc.vpc_cidr_block
+  nat_gateway_enabled  = true
+  nat_instance_enabled = false
+}
 
-  module "redis" {
-    source = "cloudposse/elasticache-redis/aws"
-    # Cloud Posse recommends pinning every module to a specific version
-    # version = "x.x.x"
-    availability_zones         = var.availability_zones
-    namespace                  = var.namespace
-    stage                      = var.stage
-    name                       = var.name
-    zone_id                    = var.zone_id
-    vpc_id                     = module.vpc.vpc_id
-    allowed_security_groups    = [module.vpc.vpc_default_security_group_id]
-    subnets                    = module.subnets.private_subnet_ids
-    cluster_size               = var.cluster_size
-    instance_type              = var.instance_type
-    apply_immediately          = true
-    automatic_failover_enabled = false
-    engine_version             = var.engine_version
-    family                     = var.family
-    at_rest_encryption_enabled = var.at_rest_encryption_enabled
-    transit_encryption_enabled = var.transit_encryption_enabled
+module "redis" {
+  source = "cloudposse/elasticache-redis/aws"
+  # Cloud Posse recommends pinning every module to a specific version
+  # version = "x.x.x"
+  availability_zones         = var.availability_zones
+  namespace                  = var.namespace
+  stage                      = var.stage
+  name                       = var.name
+  zone_id                    = var.zone_id
+  vpc_id                     = module.vpc.vpc_id
+  allowed_security_groups    = [module.vpc.vpc_default_security_group_id]
+  subnets                    = module.subnets.private_subnet_ids
+  cluster_size               = var.cluster_size
+  instance_type              = var.instance_type
+  apply_immediately          = true
+  automatic_failover_enabled = false
+  engine_version             = var.engine_version
+  family                     = var.family
+  at_rest_encryption_enabled = var.at_rest_encryption_enabled
+  transit_encryption_enabled = var.transit_encryption_enabled
 
-    parameter = [
-      {
-        name  = "notify-keyspace-events"
-        value = "lK"
-      }
-    ]
-  }
+  parameter = [
+    {
+      name  = "notify-keyspace-events"
+      value = "lK"
+    }
+  ]
+}
 ```
 
 
@@ -267,7 +268,7 @@ Available targets:
 | stage | Stage, e.g. 'prod', 'staging', 'dev', OR 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
 | subnets | Subnet IDs | `list(string)` | `[]` | no |
 | tags | Additional tags (e.g. `map('BusinessUnit','XYZ')` | `map(string)` | `{}` | no |
-| transit\_encryption\_enabled | Whether to enable encryption in transit. If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis | `bool` | `null` | no |
+| transit\_encryption\_enabled | Whether to enable encryption in transit. If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis | `bool` | `true` | no |
 | use\_existing\_security\_groups | Flag to enable/disable creation of Security Group in the module. Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into | `bool` | `false` | no |
 | vpc\_id | VPC ID | `string` | n/a | yes |
 | zone\_id | Route53 DNS Zone ID | `string` | `""` | no |
@@ -414,8 +415,8 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
 ### Contributors
 
 <!-- markdownlint-disable -->
-|  [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] | [![Igor Rodionov][goruha_avatar]][goruha_homepage]<br/>[Igor Rodionov][goruha_homepage] | [![Andriy Knysh][aknysh_avatar]][aknysh_homepage]<br/>[Andriy Knysh][aknysh_homepage] | [![Daren Desjardins][darend_avatar]][darend_homepage]<br/>[Daren Desjardins][darend_homepage] | [![Max Moon][MoonMoon1919_avatar]][MoonMoon1919_homepage]<br/>[Max Moon][MoonMoon1919_homepage] | [![Christopher Riley][christopherriley_avatar]][christopherriley_homepage]<br/>[Christopher Riley][christopherriley_homepage] |
-|---|---|---|---|---|---|
+|  [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] | [![Igor Rodionov][goruha_avatar]][goruha_homepage]<br/>[Igor Rodionov][goruha_homepage] | [![Andriy Knysh][aknysh_avatar]][aknysh_homepage]<br/>[Andriy Knysh][aknysh_homepage] | [![Daren Desjardins][darend_avatar]][darend_homepage]<br/>[Daren Desjardins][darend_homepage] | [![Max Moon][MoonMoon1919_avatar]][MoonMoon1919_homepage]<br/>[Max Moon][MoonMoon1919_homepage] | [![Christopher Riley][christopherriley_avatar]][christopherriley_homepage]<br/>[Christopher Riley][christopherriley_homepage] | [![RB][nitrocode_avatar]][nitrocode_homepage]<br/>[RB][nitrocode_homepage] |
+|---|---|---|---|---|---|---|
 <!-- markdownlint-restore -->
 
   [osterman_homepage]: https://github.com/osterman
@@ -430,6 +431,8 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
   [MoonMoon1919_avatar]: https://img.cloudposse.com/150x150/https://github.com/MoonMoon1919.png
   [christopherriley_homepage]: https://github.com/christopherriley
   [christopherriley_avatar]: https://img.cloudposse.com/150x150/https://github.com/christopherriley.png
+  [nitrocode_homepage]: https://github.com/nitrocode
+  [nitrocode_avatar]: https://img.cloudposse.com/150x150/https://github.com/nitrocode.png
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
