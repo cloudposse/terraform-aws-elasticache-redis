@@ -92,7 +92,7 @@ variable "at_rest_encryption_enabled" {
 
 variable "transit_encryption_enabled" {
   type        = bool
-  default     = false
+  default     = null
   description = "Whether to enable encryption in transit. If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis"
 }
 
