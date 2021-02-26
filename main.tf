@@ -95,7 +95,7 @@ resource "aws_elasticache_replication_group" "default" {
   notification_topic_arn        = var.notification_topic_arn
   engine_version                = var.engine_version
   at_rest_encryption_enabled    = var.at_rest_encryption_enabled
-  transit_encryption_enabled    = var.transit_encryption_enabled
+  transit_encryption_enabled    = var.auth_token != null ? coalesce(true, var.transit_encryption_enabled) : var.transit_encryption_enabled
   kms_key_id                    = var.at_rest_encryption_enabled ? var.kms_key_id : null
   snapshot_name                 = var.snapshot_name
   snapshot_arns                 = var.snapshot_arns
