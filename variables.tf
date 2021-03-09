@@ -16,6 +16,12 @@ variable "allowed_security_groups" {
   description = "List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module"
 }
 
+variable "security_group_description" {
+  type        = string
+  description = "The description for the security group."
+  default     = "Security group for Elasticache Redis"
+}
+
 variable "allowed_cidr_blocks" {
   type        = list(string)
   default     = []

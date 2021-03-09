@@ -3,7 +3,7 @@
 #
 resource "aws_security_group" "default" {
   count       = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
-  description = "Security group for Elasticache Redis"
+  description = var.security_group_description
   vpc_id      = var.vpc_id
   name        = module.this.id
   tags        = module.this.tags
