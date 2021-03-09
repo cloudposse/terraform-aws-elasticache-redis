@@ -18,7 +18,7 @@ variable "allowed_security_groups" {
 
 variable "security_group_description" {
   type        = string
-  description = "The description for the security group."
+  description = "The description for the security group. If this is changed, this will cause a create/destroy on the security group resource. Set this to `null` to maintain parity with releases <= `0.34.0`."
   default     = "Security group for Elasticache Redis"
 }
 
