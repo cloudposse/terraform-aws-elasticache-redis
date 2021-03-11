@@ -16,6 +16,12 @@ variable "allowed_security_groups" {
   description = "List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module"
 }
 
+variable "security_group_description" {
+  type        = string
+  description = "The description for the security group. If this is changed, this will cause a create/destroy on the security group resource. Set this to `null` to maintain parity with releases <= `0.34.0`."
+  default     = "Security group for Elasticache Redis"
+}
+
 variable "allowed_cidr_blocks" {
   type        = list(string)
   default     = []
@@ -93,7 +99,7 @@ variable "at_rest_encryption_enabled" {
 variable "transit_encryption_enabled" {
   type        = bool
   default     = true
-  description = "Enable TLS"
+  description = "Whether to enable encryption in transit. If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis"
 }
 
 variable "notification_topic_arn" {
@@ -139,6 +145,12 @@ variable "automatic_failover_enabled" {
   description = "Automatic failover (Not available for T1/T2 instances)"
 }
 
+variable "multi_az_enabled" {
+  type        = bool
+  default     = false
+  description = "Multi AZ (Automatic Failover must also be enabled.  If Cluster Mode is enabled, Multi AZ is on by default, and this setting is ignored)"
+}
+
 variable "availability_zones" {
   type        = list(string)
   description = "Availability zone IDs"
@@ -173,6 +185,19 @@ variable "replication_group_id" {
   type        = string
   description = "Replication group ID with the following constraints: \nA name must contain from 1 to 20 alphanumeric characters or hyphens. \n The first character must be a letter. \n A name cannot end with a hyphen or contain two consecutive hyphens."
   default     = ""
+}
+
+variable "snapshot_arns" {
+  type        = list(string)
+  description = "A single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. Example: arn:aws:s3:::my_bucket/snapshot1.rdb"
+  default     = []
+}
+
+
+variable "snapshot_name" {
+  type        = string
+  description = "The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource."
+  default     = null
 }
 
 variable "snapshot_window" {

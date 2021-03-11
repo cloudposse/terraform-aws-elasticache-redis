@@ -2,10 +2,11 @@
 # Security Group Resources
 #
 resource "aws_security_group" "default" {
-  count  = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
-  vpc_id = var.vpc_id
-  name   = module.this.id
-  tags   = module.this.tags
+  count       = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
+  description = var.security_group_description
+  vpc_id      = var.vpc_id
+  name        = module.this.id
+  tags        = module.this.tags
 }
 
 resource "aws_security_group_rule" "egress" {
@@ -86,16 +87,19 @@ resource "aws_elasticache_replication_group" "default" {
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
-  availability_zones            = var.cluster_mode_enabled ? null : slice(var.availability_zones, 0, var.cluster_size)
+  availability_zones            = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled    = var.automatic_failover_enabled
+  multi_az_enabled              = var.multi_az_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
   security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
   maintenance_window            = var.maintenance_window
   notification_topic_arn        = var.notification_topic_arn
   engine_version                = var.engine_version
   at_rest_encryption_enabled    = var.at_rest_encryption_enabled
-  transit_encryption_enabled    = var.transit_encryption_enabled
+  transit_encryption_enabled    = var.auth_token != null ? coalesce(true, var.transit_encryption_enabled) : var.transit_encryption_enabled
   kms_key_id                    = var.at_rest_encryption_enabled ? var.kms_key_id : null
+  snapshot_name                 = var.snapshot_name
+  snapshot_arns                 = var.snapshot_arns
   snapshot_window               = var.snapshot_window
   snapshot_retention_limit      = var.snapshot_retention_limit
   apply_immediately             = var.apply_immediately
@@ -159,7 +163,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 }
 
 module "dns" {
-  source = "git::https://github.com/cloudposse/terraform-aws-route53-cluster-hostname.git?ref=tags/0.7.0"
+  source  = "cloudposse/route53-cluster-hostname/aws"
+  version = "0.12.0"
 
   enabled  = module.this.enabled && var.zone_id != "" ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
