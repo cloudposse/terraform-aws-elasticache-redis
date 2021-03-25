@@ -5,8 +5,12 @@ resource "aws_security_group" "default" {
   count       = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
   description = var.security_group_description
   vpc_id      = var.vpc_id
-  name        = module.this.id
+  name_prefix = "${module.this.id}${module.this.delimeter}"
   tags        = module.this.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "egress" {
