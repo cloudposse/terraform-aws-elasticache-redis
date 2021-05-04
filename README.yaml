@@ -39,6 +39,12 @@ badges:
     image: "https://slack.cloudposse.com/badge.svg"
     url: "https://slack.cloudposse.com"
 
+# List any related terraform modules that this module may be used with or that this module depends on.
+related:
+  - name: "terraform-null-label"
+    description: "Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention."
+    url: "https://github.com/cloudposse/terraform-null-label"
+
 # Short description of this project
 description: |-
   Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster
