@@ -18,6 +18,11 @@ output "endpoint" {
   description = "Redis primary endpoint"
 }
 
+output "member_clusters" {
+  value       = aws_elasticache_replication_group.default.*.member_clusters
+  description = "Redis cluster members"
+}
+
 output "host" {
   value       = module.dns.hostname
   description = "Redis hostname"
