@@ -4,8 +4,18 @@ output "id" {
 }
 
 output "security_group_id" {
-  value       = join("", aws_security_group.default.*.id)
-  description = "Security group ID"
+  value       = module.security_group.id
+  description = "Redis Security Group ID"
+}
+
+output "security_group_arn" {
+  value       = module.security_group.arn
+  description = "Redis Security Group ARN"
+}
+
+output "security_group_name" {
+  value       = module.security_group.name
+  description = "Redis Security Group name"
 }
 
 output "port" {
