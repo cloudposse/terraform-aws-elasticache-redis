@@ -18,11 +18,6 @@ output "cluster_id" {
   description = "Redis cluster ID"
 }
 
-output "cluster_security_group_id" {
-  value       = module.redis.security_group_id
-  description = "Cluster Security Group ID"
-}
-
 output "cluster_endpoint" {
   value       = module.redis.endpoint
   description = "Redis primary endpoint"
