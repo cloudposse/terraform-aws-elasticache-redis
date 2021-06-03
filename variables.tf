@@ -212,6 +212,12 @@ variable "snapshot_retention_limit" {
   default     = 0
 }
 
+variable "final_snapshot_identifier" {
+  type        = string
+  description = "The name of your final node group (shard) snapshot. ElastiCache creates the snapshot from the primary node in the cluster. If omitted, no final snapshot will be made."
+  default     = null
+}
+
 variable "cluster_mode_enabled" {
   type        = bool
   description = "Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed"
