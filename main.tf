@@ -102,6 +102,7 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_arns                 = var.snapshot_arns
   snapshot_window               = var.snapshot_window
   snapshot_retention_limit      = var.snapshot_retention_limit
+  final_snapshot_identifier     = var.final_snapshot_identifier
   apply_immediately             = var.apply_immediately
 
   tags = module.this.tags
