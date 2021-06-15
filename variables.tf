@@ -1,33 +1,3 @@
-variable "use_existing_security_groups" {
-  type        = bool
-  description = "Flag to enable/disable creation of Security Group in the module. Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into"
-  default     = false
-}
-
-variable "existing_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of existing Security Group IDs to place the cluster into. Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster"
-}
-
-variable "allowed_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module"
-}
-
-variable "security_group_description" {
-  type        = string
-  description = "The description for the security group. If this is changed, this will cause a create/destroy on the security group resource. Set this to `null` to maintain parity with releases <= `0.34.0`."
-  default     = "Security group for Elasticache Redis"
-}
-
-variable "allowed_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = "List of CIDR blocks that are allowed ingress to the cluster's Security Group created in the module"
-}
-
 variable "vpc_id" {
   type        = string
   description = "VPC ID"
@@ -36,6 +6,49 @@ variable "vpc_id" {
 variable "subnets" {
   type        = list(string)
   description = "Subnet IDs"
+  default     = []
+}
+
+variable "security_group_enabled" {
+  type        = bool
+  description = "Whether to create default Security Group for ElastiCache."
+  default     = true
+}
+
+variable "security_group_description" {
+  type        = string
+  default     = "ElastiCache Security Group"
+  description = "The Security Group description."
+}
+
+variable "security_group_use_name_prefix" {
+  type        = bool
+  default     = false
+  description = "Whether to create a default Security Group with unique name beginning with the normalized prefix."
+}
+
+variable "security_group_rules" {
+  type = list(any)
+  default = [
+    {
+      type        = "egress"
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow all outbound traffic"
+    }
+  ]
+  description = <<-EOT
+    A list of maps of Security Group rules. 
+    The values of map is fully complated with `aws_security_group_rule` resource. 
+    To get more info see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule .
+  EOT
+}
+
+variable "security_groups" {
+  description = "A list of Security Group IDs to associate with ElastiCache."
+  type        = list(string)
   default     = []
 }
 
@@ -193,7 +206,6 @@ variable "snapshot_arns" {
   default     = []
 }
 
-
 variable "snapshot_name" {
   type        = string
   description = "The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource."
@@ -240,10 +252,4 @@ variable "cloudwatch_metric_alarms_enabled" {
   type        = bool
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
   default     = false
-}
-
-variable egress_cidr_blocks {
-  type        = list
-  default     = ["0.0.0.0/0"]
-  description = "Outbound traffic address"
 }
