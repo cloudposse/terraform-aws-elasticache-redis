@@ -56,7 +56,7 @@ resource "aws_elasticache_replication_group" "default" {
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
-  parameter_group_name          = var.use_default_parameter_group = false ? join("", aws_elasticache_parameter_group.default.*.name) : "default.redis${var.engine_version}"
+  parameter_group_name          = var.use_default_parameter_group == false ? join("", aws_elasticache_parameter_group.default.*.name) : "default.redis${var.engine_version}"
   availability_zones            = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
