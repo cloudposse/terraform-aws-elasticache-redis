@@ -34,7 +34,7 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = module.this.enabled && var.use_default_parameter_group == false ? 1 : 0
+  count  = module.this.enabled && var.parameter_group == "" ? 1 : 0
   name   = module.this.id
   family = var.family
 
@@ -56,7 +56,7 @@ resource "aws_elasticache_replication_group" "default" {
   node_type                     = var.instance_type
   number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
-  parameter_group_name          = var.use_default_parameter_group == false ? join("", aws_elasticache_parameter_group.default.*.name) : "default.redis${var.engine_version}"
+  parameter_group_name          = var.parameter_group == "" ? join("", aws_elasticache_parameter_group.default.*.name) : var.parameter_group
   availability_zones            = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
