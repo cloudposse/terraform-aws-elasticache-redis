@@ -34,7 +34,7 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = module.this.enabled && use_default_parameter_group == false ? 1 : 0
+  count  = module.this.enabled && var.use_default_parameter_group == false ? 1 : 0
   name   = module.this.id
   family = var.family
 
