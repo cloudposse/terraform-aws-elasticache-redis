@@ -78,6 +78,12 @@ variable "security_groups" {
   default     = []
 }
 
+variable "use_default_parameter_group" {
+  description = "Use the default ElastiCache parameter group resource."
+  type        = bool
+  default     = false
+}
+
 variable "elasticache_subnet_group_name" {
   type        = string
   description = "Subnet group name for the ElastiCache instance"
