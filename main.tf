@@ -61,7 +61,7 @@ resource "aws_elasticache_replication_group" "default" {
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
-  security_group_ids            = var.create_security_group == true && var.security_groups > 0 ? compact(concat(module.security_group.*.id, var.security_groups)) : var.security_groups
+  security_group_ids            = var.create_security_group == true && length(var.security_groups) > 0 ? compact(concat(module.security_group.*.id, var.security_groups)) : var.security_groups
   maintenance_window            = var.maintenance_window
   notification_topic_arn        = var.notification_topic_arn
   engine_version                = var.engine_version
