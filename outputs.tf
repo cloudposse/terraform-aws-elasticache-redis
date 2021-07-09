@@ -4,17 +4,17 @@ output "id" {
 }
 
 output "security_group_id" {
-  value       = local.security_group_enabled == true ? module.security_group.id : var.security_groups
+  value       = var.create_security_group == true ? module.security_group.id : var.security_groups
   description = "Redis Security Group ID"
 }
 
 output "security_group_arn" {
-  value       = local.security_group_enabled == true ? module.security_group.arn : ""
+  value       = var.create_security_group == true ? module.security_group.arn : ""
   description = "Redis Security Group ARN"
 }
 
 output "security_group_name" {
-  value       = local.security_group_enabled == true ? module.security_group.name : ""
+  value       = var.create_security_group == true ? module.security_group.name : ""
   description = "Redis Security Group name"
 }
 
