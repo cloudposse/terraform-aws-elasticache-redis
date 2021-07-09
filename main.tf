@@ -11,18 +11,18 @@ locals {
   )
 
   elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
+  security_group_enabled      = module.this.enabled && var.security_group_enabled
 }
 
 module "security_group" {
   source          = "cloudposse/security-group/aws"
   version         = "0.3.1"
-  count           = var.create_security_group == true ? 1 : 0
   use_name_prefix = var.security_group_use_name_prefix
   rules           = var.security_group_rules
   description     = var.security_group_description
   vpc_id          = var.vpc_id
 
-  enabled = module.this.enabled
+  enabled = local.security_group_enabled
   context = module.this.context
 }
 
@@ -60,7 +60,7 @@ resource "aws_elasticache_replication_group" "default" {
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
-  security_group_ids            = var.create_security_group == true ? compact(concat(module.security_group.*.id, var.security_groups)) : var.security_groups
+  security_group_ids            = compact(concat(module.security_group.*.id, var.security_groups))
   maintenance_window            = var.maintenance_window
   notification_topic_arn        = var.notification_topic_arn
   engine_version                = var.engine_version
