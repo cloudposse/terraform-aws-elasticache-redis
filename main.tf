@@ -11,7 +11,6 @@ locals {
   )
 
   elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
-  security_group_enabled      = module.this.enabled && var.security_group_enabled
 }
 
 module "security_group" {
@@ -23,7 +22,7 @@ module "security_group" {
   description     = var.security_group_description
   vpc_id          = var.vpc_id
 
-  enabled = local.security_group_enabled
+  enabled = module.this.enabled
   context = module.this.context
 }
 
