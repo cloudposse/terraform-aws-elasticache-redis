@@ -72,12 +72,6 @@ variable "security_group_rules" {
   EOT
 }
 
-variable "security_group_enabled" {
-  description = "Boolean that decides whether or not to create a security group for ElastiCache. Set to `false` if you're using existing security groups that are supplied to the module via the `security_groups` variable."
-  type        = bool
-  default     = true
-}
-
 variable "security_groups" {
   description = "A list of Security Group IDs to associate with ElastiCache."
   type        = list(string)
