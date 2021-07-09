@@ -4,17 +4,17 @@ output "id" {
 }
 
 output "security_group_id" {
-  value       = concat(var.security_groups, module.security_group.id)
+  value       = var.security_group_enabled ? concat(var.security_groups, module.security_group.id) : var.security_groups
   description = "Redis Security Group ID"
 }
 
 output "security_group_arn" {
-  value       = concat(var.security_groups, module.security_group.arn)
+  value       = var.security_group_enabled ? concat(var.security_groups, module.security_group.arn) : var.security_groups
   description = "Redis Security Group ARN"
 }
 
 output "security_group_name" {
-  value       = concat(var.security_groups, module.security_group.name)
+  value       = var.security_group_enabled ? concat(var.security_groups, module.security_group.name) : var.security_groups
   description = "Redis Security Group name"
 }
 
