@@ -1,5 +1,5 @@
 locals {
-  elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
+  elasticache_subnet_group_name = var.existing_elasticache_subnet_group_name != "" ? var.existing_elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
 
   # if !cluster, then node_count = replica cluster_size, if cluster then node_count = shard*(replica + 1)
   # Why doing this 'The "count" value depends on resource attributes that cannot be determined until apply'. So pre-calculating
@@ -28,7 +28,7 @@ module "security_group" {
 
 resource "aws_elasticache_subnet_group" "default" {
   count      = module.this.enabled && length(var.subnets) > 0 ? 1 : 0
-  name       = var.elasticache_subnet_group_name == "" ? module.this.id : var.elasticache_subnet_group_name
+  name       = var.existing_elasticache_subnet_group_name == "" ? module.this.id : var.existing_elasticache_subnet_group_name
   subnet_ids = var.subnets
 }
 

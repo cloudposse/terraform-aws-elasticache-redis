@@ -84,9 +84,9 @@ variable "parameter_group" {
   default     = ""
 }
 
-variable "elasticache_subnet_group_name" {
+variable "existing_elasticache_subnet_group_name" {
   type        = string
-  description = "Subnet group name for the ElastiCache instance"
+  description = "Existing subnet group name for the ElastiCache instance"
   default     = ""
 }
 
