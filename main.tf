@@ -27,8 +27,8 @@ module "security_group" {
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  count      = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
-  name       = module.this.id
+  count      = module.this.enabled && length(var.subnets) > 0 ? 1 : 0
+  name       = var.elasticache_subnet_group_name == "" ? module.this.id : var.elasticache_subnet_group_name
   subnet_ids = var.subnets
 }
 
