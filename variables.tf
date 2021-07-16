@@ -70,6 +70,7 @@ variable "security_group_rules" {
       to_port     = 65535
       protocol    = "-1"
       cidr_blocks = ["0.0.0.0/0"]
+      source_security_group_id = ""
       description = "Allow all outbound traffic"
     }
   ]
