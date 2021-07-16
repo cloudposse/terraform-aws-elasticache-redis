@@ -54,7 +54,15 @@ variable "security_group_use_name_prefix" {
 }
 
 variable "security_group_rules" {
-  type = list(any)
+  type = list(object({
+    type        = string
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = list(string)
+    source_security_group_id = string
+    description = string
+  }))
   default = [
     {
       type        = "egress"
