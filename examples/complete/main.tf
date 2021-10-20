@@ -31,6 +31,7 @@ module "redis" {
   availability_zones               = var.availability_zones
   zone_id                          = var.zone_id
   vpc_id                           = module.vpc.vpc_id
+  allowed_security_groups          = [module.vpc.vpc_default_security_group_id]
   subnets                          = module.subnets.private_subnet_ids
   cluster_size                     = var.cluster_size
   instance_type                    = var.instance_type
@@ -41,27 +42,6 @@ module "redis" {
   at_rest_encryption_enabled       = var.at_rest_encryption_enabled
   transit_encryption_enabled       = var.transit_encryption_enabled
   cloudwatch_metric_alarms_enabled = var.cloudwatch_metric_alarms_enabled
-
-  security_group_rules = [
-    {
-      type                     = "egress"
-      from_port                = 0
-      to_port                  = 65535
-      protocol                 = "-1"
-      cidr_blocks              = ["0.0.0.0/0"]
-      source_security_group_id = null
-      description              = "Allow all outbound traffic"
-    },
-    {
-      type                     = "ingress"
-      from_port                = 0
-      to_port                  = 65535
-      protocol                 = "-1"
-      cidr_blocks              = []
-      source_security_group_id = module.vpc.vpc_default_security_group_id
-      description              = "Allow all inbound traffic from trusted Security Groups"
-    },
-  ]
 
   parameter = [
     {
