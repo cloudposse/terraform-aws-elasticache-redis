@@ -18,8 +18,8 @@ module "security_group" {
   source  = "cloudposse/security-group/aws"
   version = "0.4.1"
 
-  rules           = var.security_group_rules
-  vpc_id          = var.vpc_id
+  rules  = var.security_group_rules
+  vpc_id = var.vpc_id
 
   enabled = local.security_group_enabled
   context = module.this.context
