@@ -4,8 +4,13 @@ output "id" {
 }
 
 output "security_group_id" {
-  value       = join("", aws_security_group.default.*.id)
-  description = "Security group ID"
+  value       = module.aws_security_group.id
+  description = "The ID of the created security group"
+}
+
+output "security_group_name" {
+  value       = module.aws_security_group.name
+  description = "The name of the created security group"
 }
 
 output "port" {

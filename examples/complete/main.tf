@@ -4,7 +4,7 @@ provider "aws" {
 
 module "vpc" {
   source  = "cloudposse/vpc/aws"
-  version = "0.18.1"
+  version = "0.28.0"
 
   cidr_block = "172.16.0.0/16"
 
@@ -13,7 +13,7 @@ module "vpc" {
 
 module "subnets" {
   source  = "cloudposse/dynamic-subnets/aws"
-  version = "0.33.0"
+  version = "0.39.7"
 
   availability_zones   = var.availability_zones
   vpc_id               = module.vpc.vpc_id
@@ -43,12 +43,18 @@ module "redis" {
   transit_encryption_enabled       = var.transit_encryption_enabled
   cloudwatch_metric_alarms_enabled = var.cloudwatch_metric_alarms_enabled
 
+  # Verify that we can safely change security groups (name changes forces new sg)
+  security_group_create_before_destroy = true
+  security_group_name                  = length(var.sg_name) > 0 ? [var.sg_name] : []
+
   parameter = [
     {
       name  = "notify-keyspace-events"
       value = "lK"
     }
   ]
+
+  security_group_delete_timeout = "5m"
 
   context = module.this.context
 }

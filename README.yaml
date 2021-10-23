@@ -10,12 +10,11 @@ name: terraform-aws-elasticache-redis
 # Tags of this project
 tags:
   - aws
-  - terraform
-  - terraform-modules
-  - databases
-  - redis
-  - elasticache
   - cache
+  - elasticache
+  - elasticache-redis
+  - terraform
+  - terraform-module
 
 # Categories of this project
 categories:
@@ -41,9 +40,13 @@ badges:
 
 # List any related terraform modules that this module may be used with or that this module depends on.
 related:
+  - name: "terraform-aws-security-group"
+    description: "Terraform module to provision an AWS Security Group."
+    url: "https://github.com/cloudposse/terraform-aws-security-group"
   - name: "terraform-null-label"
     description: "Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention."
     url: "https://github.com/cloudposse/terraform-null-label"
+
 
 # Short description of this project
 description: |-
@@ -51,7 +54,19 @@ description: |-
 
 # How to use this project
 usage: |-
-  Note that this uses secure defaults. One of the ways this module can trip users up is with `transit_encryption_enabled` which is `true` by default. With this enabled, one does not simply `redis-cli` in without setting up an `stunnel`. Amazon provides [good docs on how to connect with it enabled](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls). If this is not desired behavior, set `transit_encryption_enabled=false`.
+  Note that this uses secure defaults. One of the ways this module can trip users up is with `transit_encryption_enabled`
+  which is `true` by default. With this enabled, one does not simply `redis-cli` in without setting up an `stunnel`.
+  Amazon provides [good documentation on how to connect with it enabled](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls).
+  If this is not desired behavior, set `transit_encryption_enabled=false`.
+
+  This module creates, by default, a new security group for the Elasticache Redis Cluster. When necessary, it will
+  replace that security group with a new one. In order to allow terraform to fully manage the security group, you
+  should not place any other resources in (or associate any other resources with) the security group this module
+  creates. Also, in order to keep things from breaking when this module replaces the security group, you should
+  not reference the created security group anywhere else (such as in rules in other security groups). If you
+  want to associate the cluster with a more stable security group that you can reference elsewhere, create that security group
+  outside this module (perhaps with [terraform-aws-security-group](https://github.com/cloudposse/terraform-aws-security-group))
+  and pass the security group ID in via `associated_security_group_ids`.
 
   For a complete example, see [examples/complete](examples/complete).
 
@@ -62,42 +77,49 @@ usage: |-
     region = var.region
   }
 
-  module "vpc" {
-    source = "cloudposse/vpc/aws"
+  module "this" {
+    source  = "cloudposse/label/null"
     # Cloud Posse recommends pinning every module to a specific version
     # version = "x.x.x"
     namespace  = var.namespace
     stage      = var.stage
     name       = var.name
+  }
+
+  module "vpc" {
+    source = "cloudposse/vpc/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
+
     cidr_block = "172.16.0.0/16"
+
+    context = module.this.context
   }
 
   module "subnets" {
     source = "cloudposse/dynamic-subnets/aws"
     # Cloud Posse recommends pinning every module to a specific version
     # version = "x.x.x"
+
     availability_zones   = var.availability_zones
-    namespace            = var.namespace
-    stage                = var.stage
-    name                 = var.name
     vpc_id               = module.vpc.vpc_id
     igw_id               = module.vpc.igw_id
     cidr_block           = module.vpc.vpc_cidr_block
     nat_gateway_enabled  = true
     nat_instance_enabled = false
+
+    context = module.this.context
   }
 
   module "redis" {
     source = "cloudposse/elasticache-redis/aws"
     # Cloud Posse recommends pinning every module to a specific version
     # version = "x.x.x"
+
     availability_zones         = var.availability_zones
-    namespace                  = var.namespace
-    stage                      = var.stage
-    name                       = var.name
     zone_id                    = var.zone_id
     vpc_id                     = module.vpc.vpc_id
-    allowed_security_groups    = [module.vpc.vpc_default_security_group_id]
+    allowed_security_group_ids = [module.vpc.vpc_default_security_group_id]
     subnets                    = module.subnets.private_subnet_ids
     cluster_size               = var.cluster_size
     instance_type              = var.instance_type
@@ -114,6 +136,8 @@ usage: |-
         value = "lK"
       }
     ]
+
+    context = module.this.context
   }
   ```
 

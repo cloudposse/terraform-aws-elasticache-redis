@@ -10,7 +10,8 @@ stage = "test"
 
 name = "redis-test"
 
-instance_type = "cache.t2.micro"
+# Using a large instance vs a micro shaves 5-10 minutes off the run time of the test
+instance_type = "cache.m6g.large"
 
 cluster_size = 1
 

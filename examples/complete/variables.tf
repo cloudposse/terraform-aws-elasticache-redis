@@ -47,3 +47,9 @@ variable "cloudwatch_metric_alarms_enabled" {
   type        = bool
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
 }
+
+variable "sg_name" {
+  type        = string
+  default     = ""
+  description = "Name to give to created security group"
+}

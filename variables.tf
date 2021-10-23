@@ -1,32 +1,4 @@
-variable "use_existing_security_groups" {
-  type        = bool
-  description = "Flag to enable/disable creation of Security Group in the module. Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into"
-  default     = false
-}
 
-variable "existing_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of existing Security Group IDs to place the cluster into. Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster"
-}
-
-variable "allowed_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module"
-}
-
-variable "security_group_description" {
-  type        = string
-  description = "The description for the security group. If this is changed, this will cause a create/destroy on the security group resource. Set this to `null` to maintain parity with releases <= `0.34.0`."
-  default     = "Security group for Elasticache Redis"
-}
-
-variable "allowed_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = "List of CIDR blocks that are allowed ingress to the cluster's Security Group created in the module"
-}
 
 variable "vpc_id" {
   type        = string
@@ -99,7 +71,10 @@ variable "at_rest_encryption_enabled" {
 variable "transit_encryption_enabled" {
   type        = bool
   default     = true
-  description = "Whether to enable encryption in transit. If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis"
+  description = <<-EOT
+    Set `true` to enable encryption in transit. Forced `true` if `var.auth_token` is set.
+    If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis.
+    EOT
 }
 
 variable "notification_topic_arn" {
@@ -242,8 +217,3 @@ variable "cloudwatch_metric_alarms_enabled" {
   default     = false
 }
 
-variable egress_cidr_blocks {
-  type        = list
-  default     = ["0.0.0.0/0"]
-  description = "Outbound traffic address"
-}

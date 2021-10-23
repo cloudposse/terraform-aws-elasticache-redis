@@ -1,45 +1,68 @@
 #
 # Security Group Resources
 #
-resource "aws_security_group" "default" {
-  count       = module.this.enabled && var.use_existing_security_groups == false ? 1 : 0
-  description = var.security_group_description
-  vpc_id      = var.vpc_id
-  name        = module.this.id
-  tags        = module.this.tags
+locals {
+  enabled = module.this.enabled
+
+  legacy_egress_rule = local.use_legacy_egress ? {
+    key         = "legacy-egress"
+    type        = "egress"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = var.egress_cidr_blocks
+    description = "Allow outbound traffic from existing cidr blocks"
+  } : null
+
+  legacy_cidr_ingress_rule = length(var.allowed_cidr_blocks) == 0 ? null : {
+    key         = "legacy-cidr-ingress"
+    type        = "ingress"
+    from_port   = var.port
+    to_port     = var.port
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks
+    description = "Allow inbound traffic from CIDR blocks"
+  }
+
+  sg_rules = {
+    legacy = merge(local.legacy_egress_rule, local.legacy_cidr_ingress_rule),
+    extra  = var.additional_security_group_rules
+  }
 }
 
-resource "aws_security_group_rule" "egress" {
-  count             = module.this.enabled && var.use_existing_security_groups == false && length(var.egress_cidr_blocks) > 0 ? 1 : 0
-  description       = "Allow outbound traffic from existing cidr blocks"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = var.egress_cidr_blocks
-  security_group_id = join("", aws_security_group.default.*.id)
-  type              = "egress"
-}
+module "aws_security_group" {
+  source  = "cloudposse/security-group/aws"
+  version = "0.4.2"
 
-resource "aws_security_group_rule" "ingress_security_groups" {
-  count                    = module.this.enabled && var.use_existing_security_groups == false ? length(var.allowed_security_groups) : 0
-  description              = "Allow inbound traffic from existing Security Groups"
-  from_port                = var.port
-  to_port                  = var.port
-  protocol                 = "tcp"
-  source_security_group_id = var.allowed_security_groups[count.index]
-  security_group_id        = join("", aws_security_group.default.*.id)
-  type                     = "ingress"
-}
+  allow_all_egress    = local.allow_all_egress
+  security_group_name = var.security_group_name
+  rules_map           = local.sg_rules
+  rule_matrix = [{
+    key                       = "in"
+    source_security_group_ids = local.allowed_security_group_ids
+    cidr_blocks               = var.allowed_cidr_blocks
+    rules = [{
+      key         = "in"
+      type        = "ingress"
+      from_port   = var.port
+      to_port     = var.port
+      protocol    = "tcp"
+      description = "Selectively allow inbound traffic"
+    }]
+  }]
 
-resource "aws_security_group_rule" "ingress_cidr_blocks" {
-  count             = module.this.enabled && var.use_existing_security_groups == false && length(var.allowed_cidr_blocks) > 0 ? 1 : 0
-  description       = "Allow inbound traffic from CIDR blocks"
-  from_port         = var.port
-  to_port           = var.port
-  protocol          = "tcp"
-  cidr_blocks       = var.allowed_cidr_blocks
-  security_group_id = join("", aws_security_group.default.*.id)
-  type              = "ingress"
+  vpc_id = var.vpc_id
+
+  security_group_description = local.security_group_description
+
+  create_before_destroy = var.security_group_create_before_destroy
+
+  security_group_create_timeout = var.security_group_create_timeout
+  security_group_delete_timeout = var.security_group_delete_timeout
+
+
+  enabled = local.enabled && local.create_security_group
+  context = module.this.context
 }
 
 locals {
@@ -91,19 +114,22 @@ resource "aws_elasticache_replication_group" "default" {
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
-  security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
-  maintenance_window            = var.maintenance_window
-  notification_topic_arn        = var.notification_topic_arn
-  engine_version                = var.engine_version
-  at_rest_encryption_enabled    = var.at_rest_encryption_enabled
-  transit_encryption_enabled    = var.auth_token != null ? coalesce(true, var.transit_encryption_enabled) : var.transit_encryption_enabled
-  kms_key_id                    = var.at_rest_encryption_enabled ? var.kms_key_id : null
-  snapshot_name                 = var.snapshot_name
-  snapshot_arns                 = var.snapshot_arns
-  snapshot_window               = var.snapshot_window
-  snapshot_retention_limit      = var.snapshot_retention_limit
-  final_snapshot_identifier     = var.final_snapshot_identifier
-  apply_immediately             = var.apply_immediately
+  # It would be nice to remove duplicate security group IDs, if there are any, using `compact`,
+  # but that causes problems, and having duplicates does not seem to cause problems.
+  # See https://github.com/hashicorp/terraform/issues/29799
+  security_group_ids         = concat(local.associated_security_group_ids, [module.aws_security_group.id])
+  maintenance_window         = var.maintenance_window
+  notification_topic_arn     = var.notification_topic_arn
+  engine_version             = var.engine_version
+  at_rest_encryption_enabled = var.at_rest_encryption_enabled
+  transit_encryption_enabled = var.transit_encryption_enabled || var.auth_token != null
+  kms_key_id                 = var.at_rest_encryption_enabled ? var.kms_key_id : null
+  snapshot_name              = var.snapshot_name
+  snapshot_arns              = var.snapshot_arns
+  snapshot_window            = var.snapshot_window
+  snapshot_retention_limit   = var.snapshot_retention_limit
+  final_snapshot_identifier  = var.final_snapshot_identifier
+  apply_immediately          = var.apply_immediately
 
   tags = module.this.tags
 
