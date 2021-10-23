@@ -68,6 +68,9 @@ usage: |-
   outside this module (perhaps with [terraform-aws-security-group](https://github.com/cloudposse/terraform-aws-security-group))
   and pass the security group ID in via `associated_security_group_ids`.
 
+  **Note about `zone_id`**: Previously, `zone_id` was a string. This caused problems (see [#82](https://github.com/cloudposse/terraform-aws-elasticache-redis/issues/82)).
+  Now `zone_id` should be supplied as a list of string, either empty or with exactly 1 zone ID in order to avoid the problem.
+
   For a complete example, see [examples/complete](examples/complete).
 
   For automated tests of the complete example using [bats](https://github.com/bats-core/bats-core) and [Terratest](https://github.com/gruntwork-io/terratest) (which tests and deploys the example on AWS), see [test](test).

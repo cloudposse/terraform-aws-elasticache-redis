@@ -133,9 +133,13 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  type        = string
-  default     = ""
-  description = "Route53 DNS Zone ID"
+  type        = any
+  default     = []
+  description = <<-EOT
+    Route53 DNS Zone ID as list of string (0 or 1 items). If empty, no custom DNS name will be published.
+    If the list contains a single Zone ID, a custom DNS name will be pulished in that zone.
+    Can also be a plain string, but that use is DEPRECATED because of Terraform issues.
+    EOT
 }
 
 variable "dns_subdomain" {

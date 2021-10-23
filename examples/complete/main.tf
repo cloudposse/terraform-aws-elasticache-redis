@@ -25,11 +25,20 @@ module "subnets" {
   context = module.this.context
 }
 
+# Create a zone in order to validate fix for https://github.com/cloudposse/terraform-aws-elasticache-redis/issues/82
+resource "aws_route53_zone" "private" {
+  name = format("elasticache-redis-terratest-%s.testing.cloudposse.co", try(module.this.attributes[0], "default"))
+
+  vpc {
+    vpc_id = module.vpc.vpc_id
+  }
+}
+
 module "redis" {
   source = "../../"
 
   availability_zones               = var.availability_zones
-  zone_id                          = var.zone_id
+  zone_id                          = [aws_route53_zone.private.id]
   vpc_id                           = module.vpc.vpc_id
   allowed_security_groups          = [module.vpc.vpc_default_security_group_id]
   subnets                          = module.subnets.private_subnet_ids

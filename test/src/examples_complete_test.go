@@ -54,7 +54,8 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	clusterHost := terraform.Output(t, terraformOptions, "cluster_host")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-redis-test-"+randId+".testing.cloudposse.co", clusterHost)
+	// assert.Equal(t, "eg-test-redis-test-"+randId+".testing.cloudposse.co", clusterHost)
+	assert.Equal(t, "eg-test-redis-test-"+randId+".elasticache-redis-terratest-"+randId+".testing.cloudposse.co", clusterHost)
 
 	// Run `terraform output` to get the value of an output variable
 	clusterId := terraform.Output(t, terraformOptions, "cluster_id")
