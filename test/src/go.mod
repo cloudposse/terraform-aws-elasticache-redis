@@ -1,8 +1,8 @@
 module github.com/cloudposse/terraform-aws-elasticache-redis
 
-go 1.14
+go 1.16
 
 require (
-	github.com/gruntwork-io/terratest v0.34.7
+	github.com/gruntwork-io/terratest v0.33.0
 	github.com/stretchr/testify v1.5.1
 )

@@ -1,3 +1,5 @@
+
+
 variable "vpc_id" {
   type        = string
   description = "VPC ID"
@@ -6,49 +8,6 @@ variable "vpc_id" {
 variable "subnets" {
   type        = list(string)
   description = "Subnet IDs"
-  default     = []
-}
-
-variable "security_group_enabled" {
-  type        = bool
-  description = "Whether to create default Security Group for ElastiCache."
-  default     = true
-}
-
-variable "security_group_description" {
-  type        = string
-  default     = "ElastiCache Security Group"
-  description = "The Security Group description."
-}
-
-variable "security_group_use_name_prefix" {
-  type        = bool
-  default     = false
-  description = "Whether to create a default Security Group with unique name beginning with the normalized prefix."
-}
-
-variable "security_group_rules" {
-  type = list(any)
-  default = [
-    {
-      type        = "egress"
-      from_port   = 0
-      to_port     = 65535
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "Allow all outbound traffic"
-    }
-  ]
-  description = <<-EOT
-    A list of maps of Security Group rules. 
-    The values of map is fully complated with `aws_security_group_rule` resource. 
-    To get more info see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule .
-  EOT
-}
-
-variable "security_groups" {
-  description = "A list of Security Group IDs to associate with ElastiCache."
-  type        = list(string)
   default     = []
 }
 
@@ -112,7 +71,10 @@ variable "at_rest_encryption_enabled" {
 variable "transit_encryption_enabled" {
   type        = bool
   default     = true
-  description = "Whether to enable encryption in transit. If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis"
+  description = <<-EOT
+    Set `true` to enable encryption in transit. Forced `true` if `var.auth_token` is set.
+    If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis.
+    EOT
 }
 
 variable "notification_topic_arn" {
@@ -171,9 +133,13 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  type        = string
-  default     = ""
-  description = "Route53 DNS Zone ID"
+  type        = any
+  default     = []
+  description = <<-EOT
+    Route53 DNS Zone ID as list of string (0 or 1 items). If empty, no custom DNS name will be published.
+    If the list contains a single Zone ID, a custom DNS name will be pulished in that zone.
+    Can also be a plain string, but that use is DEPRECATED because of Terraform issues.
+    EOT
 }
 
 variable "dns_subdomain" {
@@ -205,6 +171,7 @@ variable "snapshot_arns" {
   description = "A single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. Example: arn:aws:s3:::my_bucket/snapshot1.rdb"
   default     = []
 }
+
 
 variable "snapshot_name" {
   type        = string
@@ -253,3 +220,4 @@ variable "cloudwatch_metric_alarms_enabled" {
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
   default     = false
 }
+

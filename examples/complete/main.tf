@@ -4,7 +4,7 @@ provider "aws" {
 
 module "vpc" {
   source  = "cloudposse/vpc/aws"
-  version = "0.18.1"
+  version = "0.28.0"
 
   cidr_block = "172.16.0.0/16"
 
@@ -13,7 +13,7 @@ module "vpc" {
 
 module "subnets" {
   source  = "cloudposse/dynamic-subnets/aws"
-  version = "0.33.0"
+  version = "0.39.7"
 
   availability_zones   = var.availability_zones
   vpc_id               = module.vpc.vpc_id
@@ -25,12 +25,22 @@ module "subnets" {
   context = module.this.context
 }
 
+# Create a zone in order to validate fix for https://github.com/cloudposse/terraform-aws-elasticache-redis/issues/82
+resource "aws_route53_zone" "private" {
+  name = format("elasticache-redis-terratest-%s.testing.cloudposse.co", try(module.this.attributes[0], "default"))
+
+  vpc {
+    vpc_id = module.vpc.vpc_id
+  }
+}
+
 module "redis" {
   source = "../../"
 
   availability_zones               = var.availability_zones
-  zone_id                          = var.zone_id
+  zone_id                          = [aws_route53_zone.private.id]
   vpc_id                           = module.vpc.vpc_id
+  allowed_security_groups          = [module.vpc.vpc_default_security_group_id]
   subnets                          = module.subnets.private_subnet_ids
   cluster_size                     = var.cluster_size
   instance_type                    = var.instance_type
@@ -42,26 +52,9 @@ module "redis" {
   transit_encryption_enabled       = var.transit_encryption_enabled
   cloudwatch_metric_alarms_enabled = var.cloudwatch_metric_alarms_enabled
 
-  security_group_rules = [
-    {
-      type                     = "egress"
-      from_port                = 0
-      to_port                  = 65535
-      protocol                 = "-1"
-      cidr_blocks              = ["0.0.0.0/0"]
-      source_security_group_id = null
-      description              = "Allow all outbound traffic"
-    },
-    {
-      type                     = "ingress"
-      from_port                = 0
-      to_port                  = 65535
-      protocol                 = "-1"
-      cidr_blocks              = []
-      source_security_group_id = module.vpc.vpc_default_security_group_id
-      description              = "Allow all inbound traffic from trusted Security Groups"
-    },
-  ]
+  # Verify that we can safely change security groups (name changes forces new SG)
+  security_group_create_before_destroy = true
+  security_group_name                  = length(var.sg_name) > 0 ? [var.sg_name] : []
 
   parameter = [
     {
@@ -69,6 +62,8 @@ module "redis" {
       value = "lK"
     }
   ]
+
+  security_group_delete_timeout = "5m"
 
   context = module.this.context
 }
