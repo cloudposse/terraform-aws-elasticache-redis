@@ -45,7 +45,16 @@ variable "egress_cidr_blocks" {
     Historical default: ["0.0.0.0/0"]
     EOT
 }
+
 locals {
-  use_legacy_egress = var.egress_cidr_blocks != null && var.egress_cidr_blocks != ["0.0.0.0/0"] && var.allow_all_egress != true
-  allow_all_egress  = var.allow_all_egress == null ? !local.use_legacy_egress : var.allow_all_egress
+  # Use the legacy egress rule unless:
+  # - var.egress_cidr_blocks is null, which means use the default, which is allow all egress
+  # - var.allow_all_egress is true, which explicitly means allow all egress
+  # - var.egress_cidr_blocks is exactly ["0.0.0.0/0"], which we interpret to mean "allow all egress"
+  use_legacy_egress = !(var.egress_cidr_blocks == null || var.allow_all_egress == true || (
+    try(length(var.egress_cidr_blocks), 0) == 1 && try(var.egress_cidr_blocks[0], "") == "0.0.0.0/0")
+  )
+
+  # If var.allow_all_egress is null, default to true unless some alternate legacy rule was provided
+  allow_all_egress = var.allow_all_egress == null ? !local.use_legacy_egress : var.allow_all_egress
 }

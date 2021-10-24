@@ -40,7 +40,7 @@ output "host" {
 
 output "arn" {
   value       = join("", aws_elasticache_replication_group.default.*.arn)
-  description = "Redis cluster ARN"
+  description = "Elasticache Replication Group ARN"
 }
 
 output "engine_version_actual" {

@@ -98,8 +98,9 @@ which is `true` by default. With this enabled, one does not simply `redis-cli` i
 Amazon provides [good documentation on how to connect with it enabled](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls).
 If this is not desired behavior, set `transit_encryption_enabled=false`.
 
-This module creates, by default, a new security group for the Elasticache Redis Cluster. When necessary, it will
-replace that security group with a new one. In order to allow terraform to fully manage the security group, you
+This module creates, by default, a new security group for the Elasticache Redis Cluster. When a configuration
+change (for example, a different security group name) cannot be applied to the security group, Terraform will
+replace that security group with a new one with the new configuration. In order to allow Terraform to fully manage the security group, you
 should not place any other resources in (or associate any other resources with) the security group this module
 creates. Also, in order to keep things from breaking when this module replaces the security group, you should
 not reference the created security group anywhere else (such as in rules in other security groups). If you
@@ -108,7 +109,7 @@ outside this module (perhaps with [terraform-aws-security-group](https://github.
 and pass the security group ID in via `associated_security_group_ids`.
 
 **Note about `zone_id`**: Previously, `zone_id` was a string. This caused problems (see [#82](https://github.com/cloudposse/terraform-aws-elasticache-redis/issues/82)).
-Now `zone_id` should be supplied as a list of string, either empty or with exactly 1 zone ID in order to avoid the problem.
+Now `zone_id` should be supplied as a `list(string)`, either empty or with exactly 1 zone ID in order to avoid the problem.
 
 For a complete example, see [examples/complete](examples/complete).
 
@@ -313,7 +314,7 @@ Available targets:
 
 | Name | Description |
 |------|-------------|
-| <a name="output_arn"></a> [arn](#output\_arn) | Redis cluster ARN |
+| <a name="output_arn"></a> [arn](#output\_arn) | Elasticache Replication Group ARN |
 | <a name="output_cluster_enabled"></a> [cluster\_enabled](#output\_cluster\_enabled) | Indicates if cluster mode is enabled |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | Redis primary or configuration endpoint, whichever is appropriate for the given cluster mode |
 | <a name="output_engine_version_actual"></a> [engine\_version\_actual](#output\_engine\_version\_actual) | The running version of the cache engine |

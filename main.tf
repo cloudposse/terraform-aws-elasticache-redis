@@ -11,7 +11,7 @@ locals {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = var.egress_cidr_blocks
-    description = "Allow outbound traffic from existing cidr blocks"
+    description = "Allow outbound traffic to existing CIDR blocks"
   } : null
 
   legacy_cidr_ingress_rule = length(var.allowed_cidr_blocks) == 0 ? null : {

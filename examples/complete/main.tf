@@ -52,7 +52,7 @@ module "redis" {
   transit_encryption_enabled       = var.transit_encryption_enabled
   cloudwatch_metric_alarms_enabled = var.cloudwatch_metric_alarms_enabled
 
-  # Verify that we can safely change security groups (name changes forces new sg)
+  # Verify that we can safely change security groups (name changes forces new SG)
   security_group_create_before_destroy = true
   security_group_name                  = length(var.sg_name) > 0 ? [var.sg_name] : []
 

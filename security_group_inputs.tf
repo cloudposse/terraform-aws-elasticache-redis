@@ -1,19 +1,5 @@
 # security_group_inputs Version: 1
-#
-# Copy this file from https://github.com/cloudposse/terraform-aws-security-group/blob/master/exports/security_group_inputs.tf
-# and EDIT IT TO SUIT YOUR PROJECT. Update the version number above if you update this file from a later version.
-#
-# This file provides the standard inputs that all Cloud Posse Open Source
-# Terraform module that create AWS Security Groups should implement.
-# This file does NOT provide implementation of the inputs, as that
-# of course varies with each module.
-#
-# This file documents, but does not declare, the standard outputs modules should create,
-# again because the implementation will vary with modules.
-#
-# Unlike null-label context.tf, this file cannot be automatically updated
-# because of the tight integration with the module using it.
-#
+##
 
 
 variable "create_security_group" {
