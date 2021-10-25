@@ -197,7 +197,7 @@ module "dns" {
   enabled  = module.this.enabled && length(var.zone_id) > 0 ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
   ttl      = 60
-  zone_id  = try(var.zone_id[0], var.zone_id)
+  zone_id  = try(var.zone_id[0], tostring(var.zone_id), "")
   records  = var.cluster_mode_enabled ? [join("", aws_elasticache_replication_group.default.*.configuration_endpoint_address)] : [join("", aws_elasticache_replication_group.default.*.primary_endpoint_address)]
 
   context = module.this.context
