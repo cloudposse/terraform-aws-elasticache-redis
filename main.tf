@@ -34,6 +34,8 @@ module "aws_security_group" {
   source  = "cloudposse/security-group/aws"
   version = "0.4.2"
 
+  enabled = local.create_security_group
+
   allow_all_egress    = local.allow_all_egress
   security_group_name = var.security_group_name
   rules_map           = local.sg_rules
@@ -61,7 +63,6 @@ module "aws_security_group" {
   security_group_delete_timeout = var.security_group_delete_timeout
 
 
-  enabled = local.enabled && local.create_security_group
   context = module.this.context
 }
 
@@ -114,10 +115,10 @@ resource "aws_elasticache_replication_group" "default" {
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
-  # It would be nice to remove duplicate security group IDs, if there are any, using `compact`,
+  # It would be nice to remove null or duplicate security group IDs, if there are any, using `compact`,
   # but that causes problems, and having duplicates does not seem to cause problems.
   # See https://github.com/hashicorp/terraform/issues/29799
-  security_group_ids         = concat(local.associated_security_group_ids, [module.aws_security_group.id])
+  security_group_ids         = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
   maintenance_window         = var.maintenance_window
   notification_topic_arn     = var.notification_topic_arn
   engine_version             = var.engine_version

@@ -9,7 +9,7 @@ variable "create_security_group" {
 }
 
 locals {
-  create_security_group = var.use_existing_security_groups == null ? var.create_security_group : !var.use_existing_security_groups
+  create_security_group = local.enabled && (var.use_existing_security_groups == null ? var.create_security_group : !var.use_existing_security_groups)
 }
 
 variable "associated_security_group_ids" {
