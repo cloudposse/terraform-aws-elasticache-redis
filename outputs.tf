@@ -24,7 +24,7 @@ output "endpoint" {
 }
 
 output "reader_endpoint_address" {
-  value       = join("", aws_elasticache_replication_group.default.*.reader_endpoint_address)
+  value       = var.cluster_mode_enabled ? null : join("", aws_elasticache_replication_group.default.*.reader_endpoint_address)
   description = "The address of the endpoint for the reader node in the replication group, if the cluster mode is disabled."
 }
 
