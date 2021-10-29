@@ -93,6 +93,9 @@ the registry shows many of our inputs as required when in fact they are optional
 The table below correctly indicates which inputs are required.
 
 
+_**Disruptive changes introduced at version 0.41.0**. If upgrading from an earlier version, see
+[migration notes](https://github.com/cloudposse/terraform-aws-elasticache-redis/blob/master/docs/migration-notes-0.41.0.md) for details._
+
 Note that this uses secure defaults. One of the ways this module can trip users up is with `transit_encryption_enabled`
 which is `true` by default. With this enabled, one does not simply `redis-cli` in without setting up an `stunnel`.
 Amazon provides [good documentation on how to connect with it enabled](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls).
