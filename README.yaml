@@ -53,7 +53,13 @@ description: |-
   Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster
 
 # How to use this project
+# Note: use absolute rather than relative URLs because Hashicorp will copy the README to
+# its Terraform Registry website but will not fix relative URLs in the process, leading
+# to broken links in the official Terraform documentation.
 usage: |-
+  _**Disruptive changes introduced at version 0.41.0**. If upgrading from an earlier version, see
+  [migration notes](https://github.com/cloudposse/terraform-aws-elasticache-redis/blob/master/docs/migration-notes-0.41.0.md) for details._
+
   Note that this uses secure defaults. One of the ways this module can trip users up is with `transit_encryption_enabled`
   which is `true` by default. With this enabled, one does not simply `redis-cli` in without setting up an `stunnel`.
   Amazon provides [good documentation on how to connect with it enabled](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls).
