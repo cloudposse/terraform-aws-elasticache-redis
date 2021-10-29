@@ -14,7 +14,7 @@ the new `security_group_create_before_destroy` input at the default value of `tr
 
 **If these consequences are acceptable**, then you do not need to take any special actions to upgrade to the newer version of this module.
 
-**If you need the security group ID to remain stable** over time, for example because you want to reference the ID elsewhere, then you should not have this this module managing the security group, and should have already set `use_existing_security_groups = true`. If you failed to do that before but now want that option:
+**If you need the security group ID to remain stable** over time, for example because you want to reference the ID elsewhere, then you should not have this module managing the security group, and should have already set `use_existing_security_groups = true`. If you failed to do that before but now want that option:
 
 - Update the reference to this module to point to the current version.
 - Replace the existing `use_existing_security_groups` input, if any, with the new `create_security_group` input and set it to  `false`.

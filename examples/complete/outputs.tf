@@ -19,15 +19,18 @@ output "cluster_id" {
 }
 
 output "cluster_arn" {
-  value = module.redis.arn
+  value       = module.redis.arn
+  description = "Elasticache Replication Group ARN"
 }
 
 output "cluster_enabled" {
-  value = module.redis.cluster_enabled
+  value       = module.redis.cluster_enabled
+  description = "Indicates if cluster mode is enabled"
 }
 
 output "engine_version_actual" {
-  value = module.redis.engine_version_actual
+  value       = module.redis.engine_version_actual
+  description = "The running version of the cache engine"
 }
 
 output "cluster_security_group_id" {
