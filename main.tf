@@ -82,15 +82,17 @@ locals {
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  count      = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
-  name       = module.this.id
-  subnet_ids = var.subnets
+  count       = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
+  name        = module.this.id
+  description = "Elasticache subnet group for ${module.this.id}"
+  subnet_ids  = var.subnets
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = module.this.enabled ? 1 : 0
-  name   = module.this.id
-  family = var.family
+  count       = module.this.enabled ? 1 : 0
+  name        = module.this.id
+  description = "Elasticache parameter group for ${module.this.id}"
+  family      = var.family
 
   dynamic "parameter" {
     for_each = var.cluster_mode_enabled ? concat([{ name = "cluster-enabled", value = "yes" }], var.parameter) : var.parameter
