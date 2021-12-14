@@ -96,7 +96,7 @@ resource "aws_elasticache_parameter_group" "default" {
     for_each = var.cluster_mode_enabled ? concat([{ name = "cluster-enabled", value = "yes" }], var.parameter) : var.parameter
     content {
       name  = parameter.value.name
-      value = parameter.value.value
+      value = tostring(parameter.value.value)
     }
   }
 }
