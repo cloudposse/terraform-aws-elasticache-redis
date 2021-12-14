@@ -82,21 +82,23 @@ locals {
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  count      = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
-  name       = module.this.id
-  subnet_ids = var.subnets
+  count       = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
+  name        = module.this.id
+  description = "Elasticache subnet group for ${module.this.id}"
+  subnet_ids  = var.subnets
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count  = module.this.enabled ? 1 : 0
-  name   = module.this.id
-  family = var.family
+  count       = module.this.enabled ? 1 : 0
+  name        = module.this.id
+  description = "Elasticache parameter group for ${module.this.id}"
+  family      = var.family
 
   dynamic "parameter" {
     for_each = var.cluster_mode_enabled ? concat([{ name = "cluster-enabled", value = "yes" }], var.parameter) : var.parameter
     content {
       name  = parameter.value.name
-      value = parameter.value.value
+      value = tostring(parameter.value.value)
     }
   }
 }
@@ -112,7 +114,7 @@ resource "aws_elasticache_replication_group" "default" {
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
   availability_zones            = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
-  automatic_failover_enabled    = var.automatic_failover_enabled
+  automatic_failover_enabled    = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
   subnet_group_name             = local.elasticache_subnet_group_name
   # It would be nice to remove null or duplicate security group IDs, if there are any, using `compact`,
