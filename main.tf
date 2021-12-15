@@ -62,7 +62,6 @@ module "aws_security_group" {
   security_group_create_timeout = var.security_group_create_timeout
   security_group_delete_timeout = var.security_group_delete_timeout
 
-
   context = module.this.context
 }
 
@@ -91,7 +90,7 @@ resource "aws_elasticache_subnet_group" "default" {
 resource "aws_elasticache_parameter_group" "default" {
   count       = module.this.enabled ? 1 : 0
   name        = module.this.id
-  description = "Elasticache parameter group for ${module.this.id}"
+  description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group for ${module.this.id}"
   family      = var.family
 
   dynamic "parameter" {
@@ -100,6 +99,13 @@ resource "aws_elasticache_parameter_group" "default" {
       name  = parameter.value.name
       value = tostring(parameter.value.value)
     }
+  }
+
+  # Ignore changes to the description since it will try to recreate the resource
+  lifecycle {
+    ignore_changes = [
+      description,
+    ]
   }
 }
 
