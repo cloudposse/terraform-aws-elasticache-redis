@@ -94,6 +94,7 @@ resource "random_id" "redis_pg_name" {
   count = module.this.enabled ? 1 : 0
 
   keepers = {
+    family      = var.family
     description = local.pg_description
   }
 
