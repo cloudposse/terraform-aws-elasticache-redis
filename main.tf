@@ -62,7 +62,6 @@ module "aws_security_group" {
   security_group_create_timeout = var.security_group_create_timeout
   security_group_delete_timeout = var.security_group_delete_timeout
 
-
   context = module.this.context
 }
 
@@ -100,6 +99,13 @@ resource "aws_elasticache_parameter_group" "default" {
       name  = parameter.value.name
       value = tostring(parameter.value.value)
     }
+  }
+
+  # Ignore changes to the description since it will try to recreate the resource
+  lifecycle {
+    ignore_changes = [
+      description,
+    ]
   }
 }
 
