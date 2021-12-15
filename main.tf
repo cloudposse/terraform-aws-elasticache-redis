@@ -105,7 +105,7 @@ resource "random_id" "redis_pg_name" {
 resource "aws_elasticache_parameter_group" "default" {
   count       = module.this.enabled ? 1 : 0
   name        = random_id.redis_pg_name[0].hex
-  description = var.parameter_group_description != null ? var.parameter_group_description : local.pg_description
+  description = local.pg_description
   family      = var.family
 
   dynamic "parameter" {

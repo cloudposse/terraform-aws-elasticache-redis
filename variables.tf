@@ -220,9 +220,3 @@ variable "cloudwatch_metric_alarms_enabled" {
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
   default     = false
 }
-
-variable "parameter_group_description" {
-  type        = string
-  default     = null
-  description = "Description of the parameter group"
-}
