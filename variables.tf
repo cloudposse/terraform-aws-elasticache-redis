@@ -224,5 +224,5 @@ variable "cloudwatch_metric_alarms_enabled" {
 variable "parameter_group_description" {
   type        = string
   default     = null
-  description = "Description of the parameter group"
+  description = "Managed by Terraform"
 }
