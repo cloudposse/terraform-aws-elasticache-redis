@@ -28,6 +28,8 @@ locals {
     legacy = merge(local.legacy_egress_rule, local.legacy_cidr_ingress_rule),
     extra  = var.additional_security_group_rules
   }
+
+  pg_description = "Elasticache parameter group for ${module.this.id}"
 }
 
 module "aws_security_group" {
@@ -88,10 +90,22 @@ resource "aws_elasticache_subnet_group" "default" {
   subnet_ids  = var.subnets
 }
 
+resource "random_id" "redis_pg_name" {
+  count = module.this.enabled ? 1 : 0
+
+  keepers = {
+    description = local.pg_description
+  }
+
+  prefix = "${module.this.id}${module.this.delimiter}"
+
+  byte_length = 2
+}
+
 resource "aws_elasticache_parameter_group" "default" {
   count       = module.this.enabled ? 1 : 0
-  name        = module.this.id
-  description = "Elasticache parameter group for ${module.this.id}"
+  name        = random_id.redis_pg_name[0].hex
+  description = var.parameter_group_description != null ? var.parameter_group_description : local.pg_description
   family      = var.family
 
   dynamic "parameter" {
@@ -100,6 +114,10 @@ resource "aws_elasticache_parameter_group" "default" {
       name  = parameter.value.name
       value = tostring(parameter.value.value)
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
