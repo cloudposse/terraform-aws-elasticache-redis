@@ -101,6 +101,8 @@ resource "aws_elasticache_parameter_group" "default" {
     }
   }
 
+  tags = module.this.tags
+
   # Ignore changes to the description since it will try to recreate the resource
   lifecycle {
     ignore_changes = [
