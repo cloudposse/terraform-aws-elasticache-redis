@@ -101,6 +101,9 @@ resource "aws_elasticache_parameter_group" "default" {
     }
   }
 
+
+  tags = module.this.tags
+
   # Ignore changes to the description since it will try to recreate the resource
   lifecycle {
     ignore_changes = [
@@ -174,6 +177,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   alarm_actions = var.alarm_actions
   ok_actions    = var.ok_actions
   depends_on    = [aws_elasticache_replication_group.default]
+
+  tags = module.this.tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
@@ -196,6 +201,8 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   alarm_actions = var.alarm_actions
   ok_actions    = var.ok_actions
   depends_on    = [aws_elasticache_replication_group.default]
+
+  tags = module.this.tags
 }
 
 module "dns" {
