@@ -200,6 +200,11 @@ variable "replication_group_id" {
   default     = ""
 }
 
+variable "replication_group_description" {
+  type        = string
+  description = "(Required) A user-created description for the replication group."
+}
+
 variable "snapshot_arns" {
   type        = list(string)
   description = "A single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. Example: arn:aws:s3:::my_bucket/snapshot1.rdb"
@@ -252,4 +257,15 @@ variable "cloudwatch_metric_alarms_enabled" {
   type        = bool
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
   default     = false
+}
+
+variable "parameter_group_description" {
+  type        = string
+  default     = null
+  description = "Managed by Terraform"
+}
+
+variable parameter_group_name {
+  type = string
+  description = "(Optional) The name of the parameter group to associate with this replication group. If this argument is omitted, the default cache parameter group for the specified engine is used. To enable \"cluster mode\", i.e. data sharding, use a parameter group that has the parameter cluster-enabled set to true."
 }
