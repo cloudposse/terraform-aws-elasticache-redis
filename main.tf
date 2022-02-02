@@ -85,6 +85,7 @@ resource "aws_elasticache_subnet_group" "default" {
   name        = module.this.id
   description = "Elasticache subnet group for ${module.this.id}"
   subnet_ids  = var.subnets
+  tags        = module.this.tags
 }
 
 resource "aws_elasticache_parameter_group" "default" {
