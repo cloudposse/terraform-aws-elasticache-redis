@@ -116,17 +116,17 @@ resource "aws_elasticache_parameter_group" "default" {
 resource "aws_elasticache_replication_group" "default" {
   count = module.this.enabled ? 1 : 0
 
-  auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
-  replication_group_id          = var.replication_group_id == "" ? module.this.id : var.replication_group_id
-  replication_group_description = module.this.id
-  node_type                     = var.instance_type
-  number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
-  port                          = var.port
-  parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
-  availability_zones            = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
-  automatic_failover_enabled    = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
-  multi_az_enabled              = var.multi_az_enabled
-  subnet_group_name             = local.elasticache_subnet_group_name
+  auth_token                 = var.transit_encryption_enabled ? var.auth_token : null
+  replication_group_id       = var.replication_group_id == "" ? module.this.id : var.replication_group_id
+  description                = module.this.id
+  node_type                  = var.instance_type
+  num_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
+  port                       = var.port
+  parameter_group_name       = join("", aws_elasticache_parameter_group.default.*.name)
+  availability_zones         = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
+  automatic_failover_enabled = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
+  multi_az_enabled           = var.multi_az_enabled
+  subnet_group_name          = local.elasticache_subnet_group_name
   # It would be nice to remove null or duplicate security group IDs, if there are any, using `compact`,
   # but that causes problems, and having duplicates does not seem to cause problems.
   # See https://github.com/hashicorp/terraform/issues/29799
