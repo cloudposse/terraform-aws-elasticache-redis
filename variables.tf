@@ -219,6 +219,12 @@ variable "cloudwatch_metric_alarms_enabled" {
   default     = false
 }
 
+variable "parameter_group_name" {
+  type        = string
+  default     = ""
+  description = "Parameter Group name. If not provided, it will use the module name"
+}
+
 variable "parameter_group_description" {
   type        = string
   default     = null
