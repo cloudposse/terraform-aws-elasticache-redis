@@ -118,9 +118,9 @@ resource "aws_elasticache_replication_group" "default" {
 
   auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
   replication_group_id          = var.replication_group_id == "" ? module.this.id : var.replication_group_id
-  replication_group_description = module.this.id
+  description                   = module.this.id
   node_type                     = var.instance_type
-  number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
+  num_cache_clusters            = var.cluster_mode_enabled ? null : var.cluster_size
   port                          = var.port
   parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
   availability_zones            = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
@@ -146,13 +146,8 @@ resource "aws_elasticache_replication_group" "default" {
 
   tags = module.this.tags
 
-  dynamic "cluster_mode" {
-    for_each = var.cluster_mode_enabled ? ["true"] : []
-    content {
-      replicas_per_node_group = var.cluster_mode_replicas_per_node_group
-      num_node_groups         = var.cluster_mode_num_node_groups
-    }
-  }
+  num_node_groups            = var.cluster_mode_enabled ? var.cluster_mode_num_node_groups : null
+  replicas_per_node_group    = var.cluster_mode_enabled ? var.cluster_mode_replicas_per_node_group : null
 }
 
 #
