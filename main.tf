@@ -32,7 +32,7 @@ locals {
 
 module "aws_security_group" {
   source  = "cloudposse/security-group/aws"
-  version = "0.4.3"
+  version = "1.0.1"
 
   enabled = local.create_security_group
 
