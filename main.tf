@@ -102,6 +102,15 @@ resource "aws_elasticache_parameter_group" "default" {
     }
   }
 
+  dynamic "log_delivery" {
+    for_each = var.log_delivery != null ? [true] : null
+    content {
+      destination      = lookup(var.log_delivery, "destination", null)
+      destination_type = lookup(var.log_delivery, "destination_type", null)
+      log_format       = lookup(var.log_delivery, "log_format", null)
+      log_type         = lookup(var.log_delivery, "log_type", null)
+    }
+  }
 
   tags = module.this.tags
 
