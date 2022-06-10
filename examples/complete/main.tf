@@ -34,6 +34,14 @@ resource "aws_route53_zone" "private" {
   }
 }
 
+module "cloudwatch_logs" {
+  source  = "cloudposse/cloudwatch-logs/aws"
+  # Cloud Posse recommends pinning every module to a specific version
+  # version = "x.x.x"
+
+  context = module.this.context
+}
+
 module "redis" {
   source = "../../"
 
@@ -64,6 +72,15 @@ module "redis" {
   ]
 
   security_group_delete_timeout = "5m"
+
+  log_delivery_configuration = [
+    {
+      destination      = module.cloudwatch_logs.log_group_name
+      destination_type = "cloudwatch-logs"
+      log_format       = "json"
+      log_type         = "engine-log"
+    }
+  ]
 
   context = module.this.context
 }
