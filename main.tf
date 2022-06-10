@@ -143,7 +143,6 @@ resource "aws_elasticache_replication_group" "default" {
   final_snapshot_identifier  = var.final_snapshot_identifier
   apply_immediately          = var.apply_immediately
 
-  # 1/2 potential log delivery
   dynamic "log_delivery_configuration" {
     for_each = var.log_delivery_configuration
 
