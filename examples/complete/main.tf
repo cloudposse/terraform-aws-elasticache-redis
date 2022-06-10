@@ -35,7 +35,7 @@ resource "aws_route53_zone" "private" {
 }
 
 module "cloudwatch_logs" {
-  source  = "cloudposse/cloudwatch-logs/aws"
+  source = "cloudposse/cloudwatch-logs/aws"
   # Cloud Posse recommends pinning every module to a specific version
   # version = "x.x.x"
 
