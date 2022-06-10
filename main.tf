@@ -103,12 +103,22 @@ resource "aws_elasticache_parameter_group" "default" {
   }
 
   dynamic "log_delivery" {
-    for_each = var.log_delivery != null ? [true] : null
+    for_each = var.log_delivery != null ? try(var.log_delivery[0], {}) : {}
     content {
-      destination      = lookup(var.log_delivery, "destination", null)
-      destination_type = lookup(var.log_delivery, "destination_type", null)
-      log_format       = lookup(var.log_delivery, "log_format", null)
-      log_type         = lookup(var.log_delivery, "log_type", null)
+      destination      = lookup(log_delivery.value, "destination", null)
+      destination_type = lookup(log_delivery.value, "destination_type", null)
+      log_format       = lookup(log_delivery.value, "log_format", null)
+      log_type         = lookup(log_delivery.value, "log_type", null)
+    }
+  }
+
+  dynamic "log_delivery" {
+    for_each = var.log_delivery != null ? try(var.log_delivery[1], {}) : {}
+    content {
+      destination      = lookup(log_delivery.value, "destination", null)
+      destination_type = lookup(log_delivery.value, "destination_type", null)
+      log_format       = lookup(log_delivery.value, "log_format", null)
+      log_type         = lookup(log_delivery.value, "log_type", null)
     }
   }
 
