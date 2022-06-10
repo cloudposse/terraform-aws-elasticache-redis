@@ -226,7 +226,7 @@ variable "parameter_group_description" {
 }
 
 variable "log_delivery" {
-  type        = list(map)
+  type        = list(map(any))
   default     = []
   description = "The log_delivery_configuration block allows the streaming of Redis SLOWLOG or Redis Engine Log to CloudWatch Logs or Kinesis Data Firehose. Max of 2 blocks."
 }
