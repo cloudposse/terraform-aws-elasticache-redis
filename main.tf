@@ -102,26 +102,6 @@ resource "aws_elasticache_parameter_group" "default" {
     }
   }
 
-  dynamic "log_delivery" {
-    for_each = var.log_delivery != null ? try(var.log_delivery[0], {}) : {}
-    content {
-      destination      = lookup(log_delivery.value, "destination", null)
-      destination_type = lookup(log_delivery.value, "destination_type", null)
-      log_format       = lookup(log_delivery.value, "log_format", null)
-      log_type         = lookup(log_delivery.value, "log_type", null)
-    }
-  }
-
-  dynamic "log_delivery" {
-    for_each = var.log_delivery != null ? try(var.log_delivery[1], {}) : {}
-    content {
-      destination      = lookup(log_delivery.value, "destination", null)
-      destination_type = lookup(log_delivery.value, "destination_type", null)
-      log_format       = lookup(log_delivery.value, "log_format", null)
-      log_type         = lookup(log_delivery.value, "log_type", null)
-    }
-  }
-
   tags = module.this.tags
 
   # Ignore changes to the description since it will try to recreate the resource
@@ -162,6 +142,28 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_retention_limit   = var.snapshot_retention_limit
   final_snapshot_identifier  = var.final_snapshot_identifier
   apply_immediately          = var.apply_immediately
+
+  # 1/2 potential log_delivery
+  dynamic "log_delivery" {
+    for_each = var.log_delivery != null ? try(var.log_delivery[0], {}) : {}
+    content {
+      destination      = lookup(log_delivery.value, "destination", null)
+      destination_type = lookup(log_delivery.value, "destination_type", null)
+      log_format       = lookup(log_delivery.value, "log_format", null)
+      log_type         = lookup(log_delivery.value, "log_type", null)
+    }
+  }
+
+  # 2/2 potential log_delivery
+  dynamic "log_delivery" {
+    for_each = var.log_delivery != null ? try(var.log_delivery[1], {}) : {}
+    content {
+      destination      = lookup(log_delivery.value, "destination", null)
+      destination_type = lookup(log_delivery.value, "destination_type", null)
+      log_format       = lookup(log_delivery.value, "log_format", null)
+      log_type         = lookup(log_delivery.value, "log_type", null)
+    }
+  }
 
   tags = module.this.tags
 
