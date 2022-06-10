@@ -143,25 +143,25 @@ resource "aws_elasticache_replication_group" "default" {
   final_snapshot_identifier  = var.final_snapshot_identifier
   apply_immediately          = var.apply_immediately
 
-  # 1/2 potential log_delivery
-  dynamic "log_delivery" {
-    for_each = var.log_delivery != null ? try(var.log_delivery[0], {}) : {}
+  # 1/2 potential log delivery
+  dynamic "log_delivery_configuration" {
+    for_each = var.log_delivery != null ? try(var.log_delivery_configuration[0], {}) : {}
     content {
-      destination      = lookup(log_delivery.value, "destination", null)
-      destination_type = lookup(log_delivery.value, "destination_type", null)
-      log_format       = lookup(log_delivery.value, "log_format", null)
-      log_type         = lookup(log_delivery.value, "log_type", null)
+      destination      = lookup(log_delivery_configuration.value, "destination", null)
+      destination_type = lookup(log_delivery_configuration.value, "destination_type", null)
+      log_format       = lookup(log_delivery_configuration.value, "log_format", null)
+      log_type         = lookup(log_delivery_configuration.value, "log_type", null)
     }
   }
 
-  # 2/2 potential log_delivery
-  dynamic "log_delivery" {
-    for_each = var.log_delivery != null ? try(var.log_delivery[1], {}) : {}
+  # 2/2 potential log delivery
+  dynamic "log_delivery_configuration" {
+    for_each = var.log_delivery != null ? try(var.log_delivery_configuration[1], {}) : {}
     content {
-      destination      = lookup(log_delivery.value, "destination", null)
-      destination_type = lookup(log_delivery.value, "destination_type", null)
-      log_format       = lookup(log_delivery.value, "log_format", null)
-      log_type         = lookup(log_delivery.value, "log_type", null)
+      destination      = lookup(log_delivery_configuration.value, "destination", null)
+      destination_type = lookup(log_delivery_configuration.value, "destination_type", null)
+      log_format       = lookup(log_delivery_configuration.value, "log_format", null)
+      log_type         = lookup(log_delivery_configuration.value, "log_type", null)
     }
   }
 
