@@ -1,5 +1,3 @@
-
-
 variable "vpc_id" {
   type        = string
   description = "VPC ID"
@@ -225,4 +223,10 @@ variable "parameter_group_description" {
   type        = string
   default     = null
   description = "Managed by Terraform"
+}
+
+variable "log_delivery_configuration" {
+  type        = list(map(any))
+  default     = []
+  description = "The log_delivery_configuration block allows the streaming of Redis SLOWLOG or Redis Engine Log to CloudWatch Logs or Kinesis Data Firehose. Max of 2 blocks."
 }

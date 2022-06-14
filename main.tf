@@ -102,7 +102,6 @@ resource "aws_elasticache_parameter_group" "default" {
     }
   }
 
-
   tags = module.this.tags
 
   # Ignore changes to the description since it will try to recreate the resource
@@ -143,6 +142,17 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_retention_limit   = var.snapshot_retention_limit
   final_snapshot_identifier  = var.final_snapshot_identifier
   apply_immediately          = var.apply_immediately
+
+  dynamic "log_delivery_configuration" {
+    for_each = var.log_delivery_configuration
+
+    content {
+      destination      = lookup(log_delivery_configuration.value, "destination", null)
+      destination_type = lookup(log_delivery_configuration.value, "destination_type", null)
+      log_format       = lookup(log_delivery_configuration.value, "log_format", null)
+      log_type         = lookup(log_delivery_configuration.value, "log_type", null)
+    }
+  }
 
   tags = module.this.tags
 
