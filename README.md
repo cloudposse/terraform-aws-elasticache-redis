@@ -220,7 +220,6 @@ Available targets:
 
 | Name | Version |
 |------|---------|
-
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.18 |
 
 ## Modules
