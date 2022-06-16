@@ -315,9 +315,6 @@ Available targets:
 | <a name="input_use_existing_security_groups"></a> [use\_existing\_security\_groups](#input\_use\_existing\_security\_groups) | DEPRECATED: Use `create_security_group` instead.<br>Historical description: Flag to enable/disable creation of Security Group in the module.<br>Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into.<br>Historical default: `false` | `bool` | `null` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | n/a | yes |
 | <a name="input_zone_id"></a> [zone\_id](#input\_zone\_id) | Route53 DNS Zone ID as list of string (0 or 1 items). If empty, no custom DNS name will be published.<br>If the list contains a single Zone ID, a custom DNS name will be pulished in that zone.<br>Can also be a plain string, but that use is DEPRECATED because of Terraform issues. | `any` | `[]` | no |
-| <a name="input_description"></a> [description](#input\_description) | Description. If not provided, it will be a simple string | `string` | `""` | no |
-
-
 
 ## Outputs
 
