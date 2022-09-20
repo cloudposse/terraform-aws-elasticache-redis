@@ -77,7 +77,7 @@ locals {
     var.cluster_size
   )
 
-  elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
+  elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
 }
 
 resource "aws_elasticache_subnet_group" "default" {
