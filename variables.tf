@@ -115,7 +115,7 @@ variable "apply_immediately" {
 variable "data_tiering_enabled" {
   type        = bool
   default     = false
-  description = "Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type. See: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#data_tiering_enabled"
+  description = "Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type."
 }
 
 variable "automatic_failover_enabled" {
