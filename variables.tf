@@ -236,3 +236,9 @@ variable "description" {
   default     = null
   description = "Description of elasticache replication group"
 }
+
+variable "user_group_ids" {
+  type        = list(string)
+  default     = []
+  description = "User Group ID to associate with the replication group"
+}
