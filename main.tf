@@ -143,6 +143,7 @@ resource "aws_elasticache_replication_group" "default" {
   final_snapshot_identifier  = var.final_snapshot_identifier
   apply_immediately          = var.apply_immediately
   data_tiering_enabled       = var.data_tiering_enabled
+  auto_minor_version_upgrade = var.auto_minor_version_upgrade
 
   dynamic "log_delivery_configuration" {
     for_each = var.log_delivery_configuration
