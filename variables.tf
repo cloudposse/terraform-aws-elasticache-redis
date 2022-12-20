@@ -245,7 +245,7 @@ variable "description" {
 
 variable "user_group_ids" {
   type        = list(string)
-  default     = []
+  default     = null
   description = "User Group ID to associate with the replication group"
 }
 
