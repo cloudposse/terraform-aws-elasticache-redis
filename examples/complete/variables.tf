@@ -38,11 +38,6 @@ variable "transit_encryption_enabled" {
   description = "Enable TLS"
 }
 
-variable "zone_id" {
-  type        = string
-  description = "Route53 DNS Zone ID"
-}
-
 variable "cloudwatch_metric_alarms_enabled" {
   type        = bool
   description = "Boolean flag to enable/disable CloudWatch metrics alarms"
