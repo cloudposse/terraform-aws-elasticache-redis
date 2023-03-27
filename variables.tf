@@ -41,7 +41,7 @@ variable "instance_type" {
 
 variable "family" {
   type        = string
-  default     = "redis4[0]"
+  default     = "redis4.0"
   description = "Redis family"
 }
 
