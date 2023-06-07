@@ -78,6 +78,8 @@ locals {
   )
 
   elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
+
+  parameter_group_name = join("", var.parameter_group_create_before_destroy ? aws_elasticache_parameter_group.cbd[*].name : aws_elasticache_parameter_group.default[*].name)
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -88,8 +90,41 @@ resource "aws_elasticache_subnet_group" "default" {
   tags        = module.this.tags
 }
 
+resource "random_id" "cache_version_change_forces_new_parameter_group" {
+  count       = module.this.enabled && var.parameter_group_create_before_destroy ? 1 : 0
+  byte_length = 8
+  keepers = {
+    family = var.family
+  }
+}
+
+resource "aws_elasticache_parameter_group" "cbd" {
+  count       = module.this.enabled && var.parameter_group_create_before_destroy ? 1 : 0
+  name        = "${module.this.id}-${random_id.cache_version_change_forces_new_parameter_group[0].dec}"
+  description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group for ${module.this.id}"
+  family      = var.family
+
+  dynamic "parameter" {
+    for_each = var.cluster_mode_enabled ? concat([{ name = "cluster-enabled", value = "yes" }], var.parameter) : var.parameter
+    content {
+      name  = parameter.value.name
+      value = tostring(parameter.value.value)
+    }
+  }
+
+  tags = module.this.tags
+
+  # Ignore changes to the description since it will try to recreate the resource
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      description,
+    ]
+  }
+}
+
 resource "aws_elasticache_parameter_group" "default" {
-  count       = module.this.enabled ? 1 : 0
+  count       = module.this.enabled && !var.parameter_group_create_before_destroy ? 1 : 0
   name        = module.this.id
   description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group for ${module.this.id}"
   family      = var.family
@@ -121,7 +156,7 @@ resource "aws_elasticache_replication_group" "default" {
   node_type                   = var.instance_type
   num_cache_clusters          = var.cluster_mode_enabled ? null : var.cluster_size
   port                        = var.port
-  parameter_group_name        = join("", aws_elasticache_parameter_group.default[*].name)
+  parameter_group_name        = local.parameter_group_name
   preferred_cache_cluster_azs = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled  = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
   multi_az_enabled            = var.multi_az_enabled

@@ -254,3 +254,12 @@ variable "auto_minor_version_upgrade" {
   default     = null
   description = "Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported if the engine version is 6 or higher."
 }
+
+variable "parameter_group_create_before_destroy" {
+  type        = bool
+  description = <<-EOT
+    Set `true` to enable terraform `create_before_destroy` behavior on the created parameter group.
+    Note that changing this value will cause the parameter group to be replaced.
+    EOT
+  default     = true
+}
