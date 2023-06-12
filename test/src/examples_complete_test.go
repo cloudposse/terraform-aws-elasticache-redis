@@ -54,10 +54,27 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	clusterHost := terraform.Output(t, terraformOptions, "cluster_host")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-redis-test-"+randId+".testing.cloudposse.co", clusterHost)
+	// assert.Equal(t, "eg-test-redis-test-"+randId+".testing.cloudposse.co", clusterHost)
+	assert.Equal(t, "eg-test-redis-test-"+randId+".elasticache-redis-terratest-"+randId+".testing.cloudposse.co", clusterHost)
 
 	// Run `terraform output` to get the value of an output variable
 	clusterId := terraform.Output(t, terraformOptions, "cluster_id")
 	// Verify we're getting back the outputs we expect
 	assert.Equal(t, "eg-test-redis-test-"+randId, clusterId)
+
+
+	terraformOptions.Vars = map[string]interface{}{
+		"attributes": attributes,
+		"sg_name": "changed",
+	}
+
+	terraformOptions.Parallelism = 1
+
+	// This will run `terraform apply` and fail the test if there are any errors
+	// We are checking to make sure that changing the security group name
+	// does not fail with a dependency error.
+	terraform.Apply(t, terraformOptions)
+
+	// Restore parallelism for destroy operation
+	terraformOptions.Parallelism = 10
 }

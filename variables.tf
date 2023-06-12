@@ -1,27 +1,3 @@
-variable "use_existing_security_groups" {
-  type        = bool
-  description = "Flag to enable/disable creation of Security Group in the module. Set to `true` to disable Security Group creation and provide a list of existing security Group IDs in `existing_security_groups` to place the cluster into"
-  default     = false
-}
-
-variable "existing_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of existing Security Group IDs to place the cluster into. Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster"
-}
-
-variable "allowed_security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of Security Group IDs that are allowed ingress to the cluster's Security Group created in the module"
-}
-
-variable "allowed_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = "List of CIDR blocks that are allowed ingress to the cluster's Security Group created in the module"
-}
-
 variable "vpc_id" {
   type        = string
   description = "VPC ID"
@@ -93,7 +69,10 @@ variable "at_rest_encryption_enabled" {
 variable "transit_encryption_enabled" {
   type        = bool
   default     = true
-  description = "Enable TLS"
+  description = <<-EOT
+    Set `true` to enable encryption in transit. Forced `true` if `var.auth_token` is set.
+    If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis.
+    EOT
 }
 
 variable "notification_topic_arn" {
@@ -133,10 +112,22 @@ variable "apply_immediately" {
   description = "Apply changes immediately"
 }
 
+variable "data_tiering_enabled" {
+  type        = bool
+  default     = false
+  description = "Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type."
+}
+
 variable "automatic_failover_enabled" {
   type        = bool
   default     = false
   description = "Automatic failover (Not available for T1/T2 instances)"
+}
+
+variable "multi_az_enabled" {
+  type        = bool
+  default     = false
+  description = "Multi AZ (Automatic Failover must also be enabled.  If Cluster Mode is enabled, Multi AZ is on by default, and this setting is ignored)"
 }
 
 variable "availability_zones" {
@@ -146,9 +137,13 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  type        = string
-  default     = ""
-  description = "Route53 DNS Zone ID"
+  type        = any
+  default     = []
+  description = <<-EOT
+    Route53 DNS Zone ID as list of string (0 or 1 items). If empty, no custom DNS name will be published.
+    If the list contains a single Zone ID, a custom DNS name will be pulished in that zone.
+    Can also be a plain string, but that use is DEPRECATED because of Terraform issues.
+    EOT
 }
 
 variable "dns_subdomain" {
@@ -200,6 +195,12 @@ variable "snapshot_retention_limit" {
   default     = 0
 }
 
+variable "final_snapshot_identifier" {
+  type        = string
+  description = "The name of your final node group (shard) snapshot. ElastiCache creates the snapshot from the primary node in the cluster. If omitted, no final snapshot will be made."
+  default     = null
+}
+
 variable "cluster_mode_enabled" {
   type        = bool
   description = "Flag to enable/disable creation of a native redis cluster. `automatic_failover_enabled` must be set to `true`. Only 1 `cluster_mode` block is allowed"
@@ -224,8 +225,32 @@ variable "cloudwatch_metric_alarms_enabled" {
   default     = false
 }
 
-variable egress_cidr_blocks {
-  type        = list
-  default     = ["0.0.0.0/0"]
-  description = "Outbound traffic address"
+variable "parameter_group_description" {
+  type        = string
+  default     = null
+  description = "Managed by Terraform"
+}
+
+variable "log_delivery_configuration" {
+  type        = list(map(any))
+  default     = []
+  description = "The log_delivery_configuration block allows the streaming of Redis SLOWLOG or Redis Engine Log to CloudWatch Logs or Kinesis Data Firehose. Max of 2 blocks."
+}
+
+variable "description" {
+  type        = string
+  default     = null
+  description = "Description of elasticache replication group"
+}
+
+variable "user_group_ids" {
+  type        = list(string)
+  default     = null
+  description = "User Group ID to associate with the replication group"
+}
+
+variable "auto_minor_version_upgrade" {
+  type        = bool
+  default     = null
+  description = "Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported if the engine version is 6 or higher."
 }
