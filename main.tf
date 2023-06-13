@@ -4,6 +4,9 @@
 locals {
   enabled = module.this.enabled
 
+  create_random_auth_token = local.enabled && var.create_random_auth_token
+  auth_token               = local.create_random_auth_token ? random_password.auth_token[0].result : var.auth_token
+
   legacy_egress_rule = local.use_legacy_egress ? {
     key         = "legacy-egress"
     type        = "egress"
@@ -28,6 +31,13 @@ locals {
     legacy = merge(local.legacy_egress_rule, local.legacy_cidr_ingress_rule),
     extra  = var.additional_security_group_rules
   }
+}
+
+resource "random_password" "auth_token" {
+  count = local.create_random_auth_token ? 1 : 0
+
+  length  = var.random_auth_token_length
+  special = false
 }
 
 module "aws_security_group" {
@@ -115,7 +125,7 @@ resource "aws_elasticache_parameter_group" "default" {
 resource "aws_elasticache_replication_group" "default" {
   count = module.this.enabled ? 1 : 0
 
-  auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
+  auth_token                  = var.transit_encryption_enabled ? local.auth_token : null
   replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
   description                 = coalesce(var.description, module.this.id)
   node_type                   = var.instance_type
@@ -134,7 +144,7 @@ resource "aws_elasticache_replication_group" "default" {
   notification_topic_arn     = var.notification_topic_arn
   engine_version             = var.engine_version
   at_rest_encryption_enabled = var.at_rest_encryption_enabled
-  transit_encryption_enabled = var.transit_encryption_enabled || var.auth_token != null
+  transit_encryption_enabled = var.transit_encryption_enabled || local.auth_token != null
   kms_key_id                 = var.at_rest_encryption_enabled ? var.kms_key_id : null
   snapshot_name              = var.snapshot_name
   snapshot_arns              = var.snapshot_arns

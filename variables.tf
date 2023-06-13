@@ -158,6 +158,18 @@ variable "auth_token" {
   default     = null
 }
 
+variable "create_random_auth_token" {
+  type        = bool
+  description = "Flag to enable/disable creation of random auth_token. If this is set it takes precedence over `auth_token`"
+  default     = false
+}
+
+variable "random_auth_token_length" {
+  type        = number
+  description = "The length of the random auth token to be created (must be 16–128)"
+  default     = 30
+}
+
 variable "kms_key_id" {
   type        = string
   description = "The ARN of the key that you wish to use if encrypting at rest. If not supplied, uses service managed encryption. `at_rest_encryption_enabled` must be set to `true`"

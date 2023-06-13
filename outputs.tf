@@ -52,3 +52,9 @@ output "cluster_enabled" {
   value       = join("", aws_elasticache_replication_group.default[*].cluster_enabled)
   description = "Indicates if cluster mode is enabled"
 }
+
+output "auth_token" {
+  value       = random_password.auth_token[0].result
+  description = "Password used to access a password protected server"
+  sensitive   = true
+}
