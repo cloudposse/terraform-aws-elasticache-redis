@@ -90,7 +90,7 @@ resource "aws_elasticache_subnet_group" "default" {
 
 resource "aws_elasticache_parameter_group" "default" {
   count       = module.this.enabled ? 1 : 0
-  name        = module.this.id
+  name        = "${module.this.id}-${var.engine_version}"
   description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group for ${module.this.id}"
   family      = var.family
 
@@ -109,36 +109,13 @@ resource "aws_elasticache_parameter_group" "default" {
     ignore_changes = [
       description,
     ]
+    create_before_destroy = true
   }
 }
 
 resource "aws_elasticache_replication_group" "default" {
   count = module.this.enabled ? 1 : 0
 
-<<<<<<< HEAD
-  auth_token                    = var.transit_encryption_enabled ? var.auth_token : null
-  replication_group_id          = var.replication_group_id == "" ? module.this.id : var.replication_group_id
-  replication_group_description = module.this.id
-  node_type                     = var.instance_type
-  number_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
-  port                          = var.port
-  parameter_group_name          = join("", aws_elasticache_parameter_group.default.*.name)
-  availability_zones            = length(var.availability_zones) == 0 ? null : slice(var.availability_zones, 0, var.cluster_size)
-  automatic_failover_enabled    = var.automatic_failover_enabled
-  subnet_group_name             = local.elasticache_subnet_group_name
-  security_group_ids            = var.use_existing_security_groups ? var.existing_security_groups : [join("", aws_security_group.default.*.id)]
-  maintenance_window            = var.maintenance_window
-  notification_topic_arn        = var.notification_topic_arn
-  engine_version                = var.engine_version
-  at_rest_encryption_enabled    = var.at_rest_encryption_enabled
-  transit_encryption_enabled    = var.transit_encryption_enabled
-  kms_key_id                    = var.at_rest_encryption_enabled ? var.kms_key_id : null
-  snapshot_name                 = var.snapshot_name
-  snapshot_arns                 = var.snapshot_arns
-  snapshot_window               = var.snapshot_window
-  snapshot_retention_limit      = var.snapshot_retention_limit
-  apply_immediately             = var.apply_immediately
-=======
   auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
   replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
   description                 = coalesce(var.description, module.this.id)
@@ -179,7 +156,6 @@ resource "aws_elasticache_replication_group" "default" {
       log_type         = lookup(log_delivery_configuration.value, "log_type", null)
     }
   }
->>>>>>> 6d2fef2260147eaf5650d9c660fb9da892dc81cf
 
   tags = module.this.tags
 
