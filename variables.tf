@@ -254,3 +254,9 @@ variable "auto_minor_version_upgrade" {
   default     = null
   description = "Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported if the engine version is 6 or higher."
 }
+
+variable "global_replication_group_id" {
+  type        = string
+  default     = null
+  description = "The name of the Global Datastore to associate to the redis cluster"
+}
