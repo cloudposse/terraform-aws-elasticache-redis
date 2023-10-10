@@ -66,7 +66,7 @@ module "aws_security_group" {
 }
 
 locals {
-  elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default.*.name)
+  elasticache_subnet_group_name = var.elasticache_subnet_group_name != "" ? var.elasticache_subnet_group_name : join("", aws_elasticache_subnet_group.default[*].name)
 
   # if !cluster, then node_count = replica cluster_size, if cluster then node_count = shard*(replica + 1)
   # Why doing this 'The "count" value depends on resource attributes that cannot be determined until apply'. So pre-calculating
@@ -77,7 +77,7 @@ locals {
     var.cluster_size
   )
 
-  elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default.0.member_clusters) : []
+  elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -115,17 +115,17 @@ resource "aws_elasticache_parameter_group" "default" {
 resource "aws_elasticache_replication_group" "default" {
   count = module.this.enabled ? 1 : 0
 
-  auth_token                 = var.transit_encryption_enabled ? var.auth_token : null
-  replication_group_id       = var.replication_group_id == "" ? module.this.id : var.replication_group_id
-  description                = coalesce(var.description, module.this.id)
-  node_type                  = var.instance_type
-  num_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
-  port                       = var.port
-  parameter_group_name       = join("", aws_elasticache_parameter_group.default.*.name)
-  availability_zones         = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
-  automatic_failover_enabled = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
-  multi_az_enabled           = var.multi_az_enabled
-  subnet_group_name          = local.elasticache_subnet_group_name
+  auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
+  replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
+  description                 = coalesce(var.description, module.this.id)
+  node_type                   = var.instance_type
+  num_cache_clusters          = var.cluster_mode_enabled ? null : var.cluster_size
+  port                        = var.port
+  parameter_group_name        = join("", aws_elasticache_parameter_group.default[*].name)
+  preferred_cache_cluster_azs = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
+  automatic_failover_enabled  = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
+  multi_az_enabled            = var.multi_az_enabled
+  subnet_group_name           = local.elasticache_subnet_group_name
   # It would be nice to remove null or duplicate security group IDs, if there are any, using `compact`,
   # but that causes problems, and having duplicates does not seem to cause problems.
   # See https://github.com/hashicorp/terraform/issues/29799
@@ -142,6 +142,8 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_retention_limit   = var.snapshot_retention_limit
   final_snapshot_identifier  = var.final_snapshot_identifier
   apply_immediately          = var.apply_immediately
+  data_tiering_enabled       = var.data_tiering_enabled
+  auto_minor_version_upgrade = var.auto_minor_version_upgrade
 
   dynamic "log_delivery_configuration" {
     for_each = var.log_delivery_configuration
@@ -220,7 +222,7 @@ module "dns" {
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
   ttl      = 60
   zone_id  = try(var.zone_id[0], tostring(var.zone_id), "")
-  records  = var.cluster_mode_enabled ? [join("", compact(aws_elasticache_replication_group.default.*.configuration_endpoint_address))] : [join("", compact(aws_elasticache_replication_group.default.*.primary_endpoint_address))]
+  records  = var.cluster_mode_enabled ? [join("", compact(aws_elasticache_replication_group.default[*].configuration_endpoint_address))] : [join("", compact(aws_elasticache_replication_group.default[*].primary_endpoint_address))]
 
   context = module.this.context
 }
