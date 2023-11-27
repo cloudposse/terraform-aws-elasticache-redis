@@ -231,6 +231,12 @@ variable "parameter_group_description" {
   description = "Managed by Terraform"
 }
 
+variable "parameter_group_name" {
+  type        = string
+  default     = null
+  description = "Override the default parameter group name"
+}
+
 variable "log_delivery_configuration" {
   type        = list(map(any))
   default     = []
