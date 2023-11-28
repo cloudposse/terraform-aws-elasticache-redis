@@ -45,6 +45,12 @@ variable "family" {
   description = "Redis family"
 }
 
+variable "parameter_group_name" {
+  type        = string
+  default     = ""
+  description = "Existing parameter group to use. (note: parameter list will go unused)"
+}
+
 variable "parameter" {
   type = list(object({
     name  = string
