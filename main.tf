@@ -78,6 +78,12 @@ locals {
   )
 
   elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
+
+  parameter_group_name = (
+    var.parameter_group_name != null ? var.parameter_group_name : (
+      var.create_parameter_group ? "${module.this.id}-${var.family}" : "default.${var.family}"
+    )
+  )
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -89,8 +95,8 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count       = module.this.enabled ? 1 : 0
-  name        = var.parameter_group_name != null ? var.parameter_group_name : "${module.this.id}-${var.family}"
+  count       = module.this.enabled && var.create_parameter_group ? 1 : 0
+  name        = local.parameter_group_name
   description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group for ${module.this.id}"
   family      = var.family
 
@@ -103,7 +109,7 @@ resource "aws_elasticache_parameter_group" "default" {
   }
 
   tags = module.this.tags
-  
+
   lifecycle {
     create_before_destroy = true
 
@@ -123,7 +129,7 @@ resource "aws_elasticache_replication_group" "default" {
   node_type                   = var.instance_type
   num_cache_clusters          = var.cluster_mode_enabled ? null : var.cluster_size
   port                        = var.port
-  parameter_group_name        = join("", aws_elasticache_parameter_group.default[*].name)
+  parameter_group_name        = local.parameter_group_name # join("", aws_elasticache_parameter_group.default[*].name)
   preferred_cache_cluster_azs = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled  = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
   multi_az_enabled            = var.multi_az_enabled
@@ -163,6 +169,10 @@ resource "aws_elasticache_replication_group" "default" {
   num_node_groups         = var.cluster_mode_enabled ? var.cluster_mode_num_node_groups : null
   replicas_per_node_group = var.cluster_mode_enabled ? var.cluster_mode_replicas_per_node_group : null
   user_group_ids          = var.user_group_ids
+
+  depends_on = [
+    aws_elasticache_parameter_group.default
+  ]
 }
 
 #

@@ -225,6 +225,12 @@ variable "cloudwatch_metric_alarms_enabled" {
   default     = false
 }
 
+variable "create_parameter_group" {
+  type        = bool
+  default     = true
+  description = "Whether new parameter group should be created. Set to false if you want to use existing parameter group"
+}
+
 variable "parameter_group_description" {
   type        = string
   default     = null
