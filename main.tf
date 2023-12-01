@@ -97,7 +97,7 @@ resource "aws_elasticache_subnet_group" "default" {
 resource "aws_elasticache_parameter_group" "default" {
   count       = module.this.enabled && var.create_parameter_group ? 1 : 0
   name        = local.parameter_group_name
-  description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group for ${module.this.id}"
+  description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group ${local.parameter_group_name}"
   family      = var.family
 
   dynamic "parameter" {
