@@ -77,7 +77,7 @@ locals {
     var.cluster_size
   )
 
-  elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
+  elasticache_member_clusters = local.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
 
   parameter_group_name = (
     var.parameter_group_name != null ? var.parameter_group_name : (
@@ -87,7 +87,7 @@ locals {
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  count       = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
+  count       = local.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
   name        = module.this.id
   description = "Elasticache subnet group for ${module.this.id}"
   subnet_ids  = var.subnets
@@ -95,7 +95,7 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count       = module.this.enabled && var.create_parameter_group ? 1 : 0
+  count       = local.enabled && var.create_parameter_group ? 1 : 0
   name        = local.parameter_group_name
   description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group ${local.parameter_group_name}"
   family      = var.family
@@ -121,7 +121,7 @@ resource "aws_elasticache_parameter_group" "default" {
 }
 
 resource "aws_elasticache_replication_group" "default" {
-  count = module.this.enabled ? 1 : 0
+  count = local.enabled ? 1 : 0
 
   auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
   replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
@@ -179,7 +179,7 @@ resource "aws_elasticache_replication_group" "default" {
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
-  count               = module.this.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
+  count               = local.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
@@ -203,7 +203,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
-  count               = module.this.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
+  count               = local.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
@@ -230,7 +230,7 @@ module "dns" {
   source  = "cloudposse/route53-cluster-hostname/aws"
   version = "0.12.2"
 
-  enabled  = module.this.enabled && length(var.zone_id) > 0 ? true : false
+  enabled  = local.enabled && length(var.zone_id) > 0 ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
   ttl      = 60
   zone_id  = try(var.zone_id[0], tostring(var.zone_id), "")
