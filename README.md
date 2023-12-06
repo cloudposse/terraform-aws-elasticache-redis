@@ -198,7 +198,7 @@ Available targets:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aws_security_group"></a> [aws\_security\_group](#module\_aws\_security\_group) | cloudposse/security-group/aws | 1.0.1 |
+| <a name="module_aws_security_group"></a> [aws\_security\_group](#module\_aws\_security\_group) | cloudposse/security-group/aws | 2.2.0 |
 | <a name="module_dns"></a> [dns](#module\_dns) | cloudposse/route53-cluster-hostname/aws | 0.12.2 |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
