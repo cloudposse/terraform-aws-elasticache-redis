@@ -36,6 +36,8 @@ module "aws_security_group" {
 
   enabled = local.create_security_group
 
+  target_security_group_id = var.target_security_group_id
+
   allow_all_egress    = local.allow_all_egress
   security_group_name = var.security_group_name
   rules_map           = local.sg_rules
@@ -58,6 +60,9 @@ module "aws_security_group" {
   security_group_description = local.security_group_description
 
   create_before_destroy = var.security_group_create_before_destroy
+  preserve_security_group_id = var.preserve_security_group_id
+  inline_rules_enabled = var.inline_rules_enabled
+  revoke_rules_on_delete = var.revoke_rules_on_delete
 
   security_group_create_timeout = var.security_group_create_timeout
   security_group_delete_timeout = var.security_group_delete_timeout
