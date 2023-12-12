@@ -1,0 +1,25 @@
+version: 2
+
+registries:
+  getflex:
+    type: terraform-registry
+    url: https://app.terraform.io/getflex
+    token: ${{ secrets.TF_API_TOKEN }}
+
+updates:
+  - package-ecosystem: "terraform"
+    directory: "/"
+    registries:
+      - getflex
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "terraform"
+    directory: "examples"
+    registries:
+      - getflex
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

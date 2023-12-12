@@ -1,21 +1,17 @@
-## what
+# JIRA
+https://getflex.atlassian.net/browse/XX-NNN
 
-<!--
-- Describe high-level what changed as a result of these commits (i.e. in plain-english, what do these changes mean?)
-- Use bullet points to be concise and to the point.
--->
+# Summary
+_A short summary of the change_
 
-## why
+# Checklist
+- [ ] This change has been documented.
+- [ ] This change has been tested.
+- [ ] The security impacts of this change have been considered.
+- [ ] Owners of related services are aware of this change.
+- [ ] This change follows the guidelines outlined in:
+    - [Production Deployments](https://getflex.atlassian.net/wiki/spaces/INFRA/pages/59867331/Production+deployments);
+    - [Peer Reviews](https://getflex.atlassian.net/wiki/spaces/INFRA/pages/58687500/Peer+Reviews);
+    - [Operational Readiness](https://getflex.atlassian.net/wiki/spaces/INFRA/pages/59867265/Operational+Readiness).
 
-<!--
-- Provide the justifications for the changes (e.g. business case). 
-- Describe why these changes were made (e.g. why do these commits fix the problem?)
-- Use bullet points to be concise and to the point.
--->
-
-## references
-
-<!--
-- Link to any supporting github issues or helpful documentation to add some context (e.g. stackoverflow). 
-- Use `closes #123`, if this PR closes a GitHub issue `#123`
--->
+- For new pull requests in Pagerduty service, please add the following reviewers:[Infra Engineering Team](https://github.com/orgs/flexapp/teams/infra-eng-team).

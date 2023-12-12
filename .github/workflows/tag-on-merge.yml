@@ -1,0 +1,28 @@
+name: Create Tag on merge
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  tag_merge:
+    # Run if a push to main.  Stops pushes to non-main branches from being tagged
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+
+      - name: Output release number
+        id: output_release_number
+        run: echo "::set-output name=new_tag::${{ steps.tag_version.outputs.new_tag }}"
+
+      - name: Output changelog
+        id: output_changelog
+        run: echo "::set-output name=changelog::${{ steps.tag_version.outputs.changelog }}"
