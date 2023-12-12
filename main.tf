@@ -180,6 +180,15 @@ resource "aws_elasticache_replication_group" "default" {
   depends_on = [
     aws_elasticache_parameter_group.default
   ]
+
+  lifecycle {
+    ignore_changes = [
+      num_node_groups,
+      replicas_per_node_group,
+      node_type,
+    ]
+  }
+
 }
 
 #
