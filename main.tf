@@ -59,10 +59,10 @@ module "aws_security_group" {
 
   security_group_description = local.security_group_description
 
-  create_before_destroy = var.security_group_create_before_destroy
+  create_before_destroy      = var.security_group_create_before_destroy
   preserve_security_group_id = var.preserve_security_group_id
-  inline_rules_enabled = var.inline_rules_enabled
-  revoke_rules_on_delete = var.revoke_rules_on_delete
+  inline_rules_enabled       = var.inline_rules_enabled
+  revoke_rules_on_delete     = var.revoke_rules_on_delete
 
   security_group_create_timeout = var.security_group_create_timeout
   security_group_delete_timeout = var.security_group_delete_timeout
