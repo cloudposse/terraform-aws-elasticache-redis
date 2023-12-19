@@ -182,6 +182,15 @@ resource "aws_elasticache_replication_group" "default" {
   replicas_per_node_group = var.cluster_mode_enabled ? var.cluster_mode_replicas_per_node_group : null
   user_group_ids          = var.user_group_ids
 
+  # When importing an aws_elasticache_replication_group resource the attribute
+  # security_group_names is imported as null. More details:
+  # https://github.com/hashicorp/terraform-provider-aws/issues/32835
+  lifecycle {
+    ignore_changes = [
+      security_group_names,
+    ]
+  }
+
   depends_on = [
     aws_elasticache_parameter_group.default
   ]
