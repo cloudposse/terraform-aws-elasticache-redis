@@ -37,15 +37,18 @@ locals {
   allowed_security_group_ids = concat(var.allowed_security_groups, var.allowed_security_group_ids)
 }
 
-
 variable "security_group_name" {
   type        = list(string)
-  default     = []
   description = <<-EOT
-    The name to assign to the created security group. Must be unique within the VPC.
+    The name to assign to the security group. Must be unique within the VPC.
     If not provided, will be derived from the `null-label.context` passed in.
     If `create_before_destroy` is true, will be used as a name prefix.
     EOT
+  default     = []
+  validation {
+    condition     = length(var.security_group_name) < 2
+    error_message = "Only 1 security group name can be provided."
+  }
 }
 
 variable "security_group_description" {
@@ -109,4 +112,55 @@ variable "additional_security_group_rules" {
     for `security_group_id` which will be ignored, and the optional "key" which, if provided, must be unique and known at "plan" time.
     To get more info see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule .
     EOT
+}
+
+# Security Group Inputs (v2)
+variable "target_security_group_id" {
+  type        = list(string)
+  description = <<-EOT
+    The ID of an existing Security Group to which Security Group rules will be assigned.
+    The Security Group's name and description will not be changed.
+    Not compatible with `inline_rules_enabled` or `revoke_rules_on_delete`.
+    If not provided (the default), this module will create a security group.
+    EOT
+  default     = []
+  validation {
+    condition     = length(var.target_security_group_id) < 2
+    error_message = "Only 1 security group can be targeted."
+  }
+}
+
+variable "preserve_security_group_id" {
+  type        = bool
+  description = <<-EOT
+    When `false` and `create_before_destroy` is `true`, changes to security group rules
+    cause a new security group to be created with the new rules, and the existing security group is then
+    replaced with the new one, eliminating any service interruption.
+    When `true` or when changing the value (from `false` to `true` or from `true` to `false`),
+    existing security group rules will be deleted before new ones are created, resulting in a service interruption,
+    but preserving the security group itself.
+    **NOTE:** Setting this to `true` does not guarantee the security group will never be replaced,
+    it only keeps changes to the security group rules from triggering a replacement.
+    See the README for further discussion.
+    EOT
+  default     = false
+}
+
+variable "revoke_rules_on_delete" {
+  type        = bool
+  description = <<-EOT
+    Instruct Terraform to revoke all of the Security Group's attached ingress and egress rules before deleting
+    the security group itself. This is normally not needed.
+    EOT
+  default     = false
+}
+
+variable "inline_rules_enabled" {
+  type        = bool
+  description = <<-EOT
+    NOT RECOMMENDED. Create rules "inline" instead of as separate `aws_security_group_rule` resources.
+    See [#20046](https://github.com/hashicorp/terraform-provider-aws/issues/20046) for one of several issues with inline rules.
+    See [this post](https://github.com/hashicorp/terraform-provider-aws/pull/9032#issuecomment-639545250) for details on the difference between inline rules and rule resources.
+    EOT
+  default     = false
 }

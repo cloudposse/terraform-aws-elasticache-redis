@@ -42,9 +42,11 @@ resource "random_password" "auth_token" {
 
 module "aws_security_group" {
   source  = "cloudposse/security-group/aws"
-  version = "1.0.1"
+  version = "2.2.0"
 
   enabled = local.create_security_group
+
+  target_security_group_id = var.target_security_group_id
 
   allow_all_egress    = local.allow_all_egress
   security_group_name = var.security_group_name
@@ -67,7 +69,10 @@ module "aws_security_group" {
 
   security_group_description = local.security_group_description
 
-  create_before_destroy = var.security_group_create_before_destroy
+  create_before_destroy      = var.security_group_create_before_destroy
+  preserve_security_group_id = var.preserve_security_group_id
+  inline_rules_enabled       = var.inline_rules_enabled
+  revoke_rules_on_delete     = var.revoke_rules_on_delete
 
   security_group_create_timeout = var.security_group_create_timeout
   security_group_delete_timeout = var.security_group_delete_timeout
@@ -87,11 +92,24 @@ locals {
     var.cluster_size
   )
 
-  elasticache_member_clusters = module.this.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
+  elasticache_member_clusters = local.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
+
+  # The name of the parameter group can’t include "."
+  safe_family = replace(var.family, ".", "-")
+
+  parameter_group_name = (
+    var.parameter_group_name != null ? var.parameter_group_name : (
+      var.create_parameter_group
+      ?
+      "${module.this.id}-${local.safe_family}" # The name of the new parameter group to be created
+      :
+      "default.${var.family}" # Default parameter group name created by AWS
+    )
+  )
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  count       = module.this.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
+  count       = local.enabled && var.elasticache_subnet_group_name == "" && length(var.subnets) > 0 ? 1 : 0
   name        = module.this.id
   description = "Elasticache subnet group for ${module.this.id}"
   subnet_ids  = var.subnets
@@ -99,9 +117,9 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count       = module.this.enabled ? 1 : 0
-  name        = module.this.id
-  description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group for ${module.this.id}"
+  count       = local.enabled && var.create_parameter_group ? 1 : 0
+  name        = local.parameter_group_name
+  description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group ${local.parameter_group_name}"
   family      = var.family
 
   dynamic "parameter" {
@@ -114,8 +132,10 @@ resource "aws_elasticache_parameter_group" "default" {
 
   tags = module.this.tags
 
-  # Ignore changes to the description since it will try to recreate the resource
   lifecycle {
+    create_before_destroy = true
+
+    # Ignore changes to the description since it will try to recreate the resource
     ignore_changes = [
       description,
     ]
@@ -123,7 +143,7 @@ resource "aws_elasticache_parameter_group" "default" {
 }
 
 resource "aws_elasticache_replication_group" "default" {
-  count = module.this.enabled ? 1 : 0
+  count = local.enabled ? 1 : 0
 
   auth_token                  = var.transit_encryption_enabled ? local.auth_token : null
   replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
@@ -131,7 +151,7 @@ resource "aws_elasticache_replication_group" "default" {
   node_type                   = var.instance_type
   num_cache_clusters          = var.cluster_mode_enabled ? null : var.cluster_size
   port                        = var.port
-  parameter_group_name        = join("", aws_elasticache_parameter_group.default[*].name)
+  parameter_group_name        = local.parameter_group_name
   preferred_cache_cluster_azs = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled  = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
   multi_az_enabled            = var.multi_az_enabled
@@ -171,13 +191,26 @@ resource "aws_elasticache_replication_group" "default" {
   num_node_groups         = var.cluster_mode_enabled ? var.cluster_mode_num_node_groups : null
   replicas_per_node_group = var.cluster_mode_enabled ? var.cluster_mode_replicas_per_node_group : null
   user_group_ids          = var.user_group_ids
+
+  # When importing an aws_elasticache_replication_group resource the attribute
+  # security_group_names is imported as null. More details:
+  # https://github.com/hashicorp/terraform-provider-aws/issues/32835
+  lifecycle {
+    ignore_changes = [
+      security_group_names,
+    ]
+  }
+
+  depends_on = [
+    aws_elasticache_parameter_group.default
+  ]
 }
 
 #
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
-  count               = module.this.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
+  count               = local.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
@@ -201,7 +234,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
-  count               = module.this.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
+  count               = local.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
@@ -228,7 +261,7 @@ module "dns" {
   source  = "cloudposse/route53-cluster-hostname/aws"
   version = "0.12.2"
 
-  enabled  = module.this.enabled && length(var.zone_id) > 0 ? true : false
+  enabled  = local.enabled && length(var.zone_id) > 0 ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
   ttl      = 60
   zone_id  = try(var.zone_id[0], tostring(var.zone_id), "")
