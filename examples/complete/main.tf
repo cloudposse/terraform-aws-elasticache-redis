@@ -36,7 +36,7 @@ resource "aws_route53_zone" "private" {
 
 module "cloudwatch_logs" {
   source  = "cloudposse/cloudwatch-logs/aws"
-  version = "0.6.5"
+  version = "0.6.8"
 
   context = module.this.context
 }
