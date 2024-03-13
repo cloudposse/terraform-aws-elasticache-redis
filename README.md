@@ -1,6 +1,6 @@
 
 <!-- markdownlint-disable -->
-# terraform-aws-elasticache-redis<a href="https://cpco.io/homepage"><img align="right" src="https://cloudposse.com/logo-300x69.svg" width="150" /></a> [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg)](https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
+# terraform-aws-elasticache-redis<a href="https://cpco.io/homepage"><img align="right" src="https://cloudposse.com/logo-300x69.svg" width="150" /></a> [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge)](https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest) [![Last Updated](https://img.shields.io/github/last-commit/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge)](https://github.com/cloudposse/terraform-aws-elasticache-redis/commits) [![Slack Community](https://slack.cloudposse.com/for-the-badge.svg)](https://slack.cloudposse.com)
 <!-- markdownlint-restore -->
 
 
@@ -193,7 +193,7 @@ Available targets:
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_aws_security_group"></a> [aws\_security\_group](#module\_aws\_security\_group) | cloudposse/security-group/aws | 2.2.0 |
-| <a name="module_dns"></a> [dns](#module\_dns) | cloudposse/route53-cluster-hostname/aws | 0.12.2 |
+| <a name="module_dns"></a> [dns](#module\_dns) | cloudposse/route53-cluster-hostname/aws | 0.13.0 |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
 ## Resources

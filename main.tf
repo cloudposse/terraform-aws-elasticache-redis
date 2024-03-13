@@ -164,7 +164,7 @@ resource "aws_elasticache_replication_group" "default" {
   notification_topic_arn     = var.notification_topic_arn
   engine_version             = var.engine_version
   at_rest_encryption_enabled = var.at_rest_encryption_enabled
-  transit_encryption_enabled = var.transit_encryption_enabled || local.auth_token != null
+  transit_encryption_enabled = var.transit_encryption_enabled
   kms_key_id                 = var.at_rest_encryption_enabled ? var.kms_key_id : null
   snapshot_name              = var.snapshot_name
   snapshot_arns              = var.snapshot_arns
@@ -259,7 +259,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 
 module "dns" {
   source  = "cloudposse/route53-cluster-hostname/aws"
-  version = "0.12.2"
+  version = "0.13.0"
 
   enabled  = local.enabled && length(var.zone_id) > 0 ? true : false
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
