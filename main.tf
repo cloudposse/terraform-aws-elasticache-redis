@@ -2,7 +2,9 @@
 # Security Group Resources
 #
 locals {
-  enabled = module.this.enabled
+  enabled                    = module.this.enabled
+  create_normal_instance     = local.enabled && !var.serverless_enabled
+  create_serverless_instance = local.enabled && var.serverless_enabled
 
   legacy_egress_rule = local.use_legacy_egress ? {
     key         = "legacy-egress"
@@ -132,8 +134,9 @@ resource "aws_elasticache_parameter_group" "default" {
   }
 }
 
+# Create a "normal" Elasticache instance (single node or cluster)
 resource "aws_elasticache_replication_group" "default" {
-  count = local.enabled ? 1 : 0
+  count = local.create_normal_instance ? 1 : 0
 
   auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
   replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
@@ -190,6 +193,42 @@ resource "aws_elasticache_replication_group" "default" {
       security_group_names,
     ]
   }
+
+  depends_on = [
+    aws_elasticache_parameter_group.default
+  ]
+}
+
+# Create a Serverless Redis instance
+resource "aws_elasticache_serverless_cache" "default" {
+  count = local.create_serverless_instance ? 1 : 0
+
+  name   = var.replication_group_id == "" ? module.this.id : var.replication_group_id
+  engine = "redis"
+
+  kms_key_id         = var.at_rest_encryption_enabled ? var.kms_key_id : null
+  subnet_ids         = var.subnets
+  security_group_ids = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
+
+  daily_snapshot_time      = var.serverless_snapshot_time
+  description              = var.description
+  major_engine_version     = var.serverless_major_engine_version
+  snapshot_retention_limit = var.snapshot_retention_limit
+  user_group_id            = var.serverless_user_group_id
+
+  cache_usage_limits {
+    data_storage {
+      minimum = lookup(var.serverless_cache_usage_limits, "data_storage_min", null)
+      maximum = lookup(var.serverless_cache_usage_limits, "data_storage_max", null)
+      unit    = lookup(var.serverless_cache_usage_limits, "data_storage_unit", "GB")
+    }
+    ecpu_per_second {
+      minimum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_min", null)
+      maximum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_max", null)
+    }
+  }
+
+  tags = module.this.tags
 
   depends_on = [
     aws_elasticache_parameter_group.default
