@@ -106,15 +106,17 @@ locals {
     join("", aws_elasticache_serverless_cache.default[*].arn)
   )
 
-  endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].endpoint, null)
+  endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].endpoint.0.address, null)
   endpoint_cluster    = try(aws_elasticache_replication_group.default[0].configuration_endpoint_address, null)
   endpoint_instance   = try(aws_elasticache_replication_group.default[0].primary_endpoint_address, null)
-  endpoint_address    = coalesce(local.endpoint_serverless.0.address, local.endpoint_cluster, local.endpoint_instance)
+  # Use the serverless endpoint if serverless mode is enabled, otherwise use the cluster endpoint, otherwise use the instance endpoint
+  endpoint_address    = coalesce(local.endpoint_serverless, local.endpoint_cluster, local.endpoint_instance)
 
-  reader_endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].reader_endpoint, null)
+  reader_endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].reader_endpoint.0.address, null)
   reader_endpoint_cluster    = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
   reader_endpoint_instance   = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
-  reader_endpoint_address    = coalesce(local.reader_endpoint_serverless.0.address, local.reader_endpoint_cluster, local.reader_endpoint_instance)
+  # Use the serverless reader endpoint if serverless mode is enabled, otherwise use the cluster reader endpoint, otherwise use the instance reader endpoint
+  reader_endpoint_address    = coalesce(local.reader_endpoint_serverless, local.reader_endpoint_cluster, local.reader_endpoint_instance)
 }
 
 resource "aws_elasticache_subnet_group" "default" {
