@@ -84,7 +84,7 @@ locals {
     var.cluster_size
   )
 
-  elasticache_member_clusters = local.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
+  elasticache_member_clusters = local.create_normal_instance ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
 
   # The name of the parameter group can’t include "."
   safe_family = replace(var.family, ".", "-")
