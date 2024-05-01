@@ -15,8 +15,8 @@ serverless_enabled = true
 serverless_major_engine_version = "7"
 
 serverless_cache_usage_limits = {
-  data_storage_max = 10
-  data_storage_unit = "GB"
+  data_storage_max    = 10
+  data_storage_unit   = "GB"
   ecpu_per_second_max = 5000
 }
 

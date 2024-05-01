@@ -19,14 +19,12 @@ output "port" {
 }
 
 output "endpoint" {
-  value = var.cluster_mode_enabled ? join("", compact(aws_elasticache_replication_group.default[*].configuration_endpoint_address)) : local.create_serverless_instance && can(aws_elasticache_serverless_cache.default[0]) ? join("", compact(aws_elasticache_serverless_cache.default[*].endpoint)) : join("", compact(aws_elasticache_replication_group.default[*].primary_endpoint_address))
-
-
+  value       = local.endpoint_address
   description = "Redis primary, configuration or serverless endpoint , whichever is appropriate for the given configuration"
 }
 
 output "reader_endpoint_address" {
-  value = local.create_normal_instance ? join("", compact(aws_elasticache_replication_group.default[*].reader_endpoint_address)) : local.create_serverless_instance && can(aws_elasticache_serverless_cache.default[0]) ? join("", compact([aws_elasticache_serverless_cache.default[*].reader_endpoint])) : ""
+  value       = local.reader_endpoint_address
   description = "The address of the endpoint for the reader node in the replication group, if the cluster mode is disabled or serverless is being used."
 }
 
@@ -42,7 +40,7 @@ output "host" {
 }
 
 output "arn" {
-  value       = local.create_normal_instance ? join("", aws_elasticache_replication_group.default[*].arn) : join("", aws_elasticache_serverless_cache.default[*].arn)
+  value       = local.arn
   description = "Elasticache Replication Group ARN"
 }
 

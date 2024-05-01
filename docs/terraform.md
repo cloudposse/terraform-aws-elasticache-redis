@@ -126,7 +126,7 @@
 |------|-------------|
 | arn | Elasticache Replication Group ARN |
 | cluster\_enabled | Indicates if cluster mode is enabled |
-| endpoint | Redis primary, configuration or serverless endpoint , whichever is appropriate for the given cluster mode |
+| endpoint | Redis primary, configuration or serverless endpoint , whichever is appropriate for the given configuration |
 | engine\_version\_actual | The running version of the cache engine |
 | host | Redis hostname |
 | id | Redis cluster ID |
