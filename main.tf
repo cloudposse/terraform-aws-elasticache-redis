@@ -106,22 +106,15 @@ locals {
     join("", aws_elasticache_serverless_cache.default[*].arn)
   )
 
-  endpoint_address = (
-    # If cluster mode is enabled, use the configuration endpoint address
-    var.cluster_mode_enabled ? join("", compact(aws_elasticache_replication_group.default[*].configuration_endpoint_address)) :
-    # If serverless mode is enabled, use the serverless endpoint address
-    local.create_serverless_instance && can(aws_elasticache_serverless_cache.default[0]) ? join("", compact(aws_elasticache_serverless_cache.default[*].endpoint)) :
-    # Otherwise, use the primary endpoint address
-    join("", compact(aws_elasticache_replication_group.default[*].primary_endpoint_address))
-  )
+  endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].endpoint, null)
+  endpoint_cluster    = try(aws_elasticache_replication_group.default[0].configuration_endpoint_address, null)
+  endpoint_instance   = try(aws_elasticache_replication_group.default[0].primary_endpoint_address, null)
+  endpoint_address    = coalesce(local.endpoint_serverless.0.address, local.endpoint_cluster, local.endpoint_instance)
 
-  reader_endpoint_address = (
-    # If cluster mode is enabled, use the reader endpoint address
-    local.create_normal_instance ? join("", compact(aws_elasticache_replication_group.default[*].reader_endpoint_address)) :
-    # If serverless mode is enabled, use the reader endpoint address
-    local.create_serverless_instance && can(aws_elasticache_serverless_cache.default[0]) ? join("", compact([aws_elasticache_serverless_cache.default[*].reader_endpoint]))
-    : ""
-  )
+  reader_endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].reader_endpoint, null)
+  reader_endpoint_cluster    = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
+  reader_endpoint_instance   = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
+  reader_endpoint_address    = coalesce(local.reader_endpoint_serverless.0.address, local.reader_endpoint_cluster, local.reader_endpoint_instance)
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -318,7 +311,7 @@ module "dns" {
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
   ttl      = 60
   zone_id  = try(var.zone_id[0], tostring(var.zone_id), "")
-  records  = [local.endpoint_address]
+  records = [local.endpoint_address]
 
   context = module.this.context
 }

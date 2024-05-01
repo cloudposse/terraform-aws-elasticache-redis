@@ -13,11 +13,6 @@ output "vpc_cidr" {
   description = "VPC CIDR"
 }
 
-output "cluster_id" {
-  value       = module.redis.id
-  description = "Redis cluster ID"
-}
-
 output "serverless_arn" {
   value       = module.redis.arn
   description = "Elasticache Replication Group ARN"
@@ -38,7 +33,7 @@ output "cluster_reader_endpoint_address" {
   description = "Redis non-cluster reader endpoint"
 }
 
-output "cluster_host" {
+output "serverless_host" {
   value       = module.redis.host
   description = "Redis hostname"
 }
