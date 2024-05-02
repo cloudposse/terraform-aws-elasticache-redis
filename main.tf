@@ -110,13 +110,13 @@ locals {
   endpoint_cluster    = try(aws_elasticache_replication_group.default[0].configuration_endpoint_address, null)
   endpoint_instance   = try(aws_elasticache_replication_group.default[0].primary_endpoint_address, null)
   # Use the serverless endpoint if serverless mode is enabled, otherwise use the cluster endpoint, otherwise use the instance endpoint
-  endpoint_address    = coalesce(local.endpoint_serverless, local.endpoint_cluster, local.endpoint_instance)
+  endpoint_address = coalesce(local.endpoint_serverless, local.endpoint_cluster, local.endpoint_instance)
 
   reader_endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].reader_endpoint.0.address, null)
   reader_endpoint_cluster    = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
   reader_endpoint_instance   = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
   # Use the serverless reader endpoint if serverless mode is enabled, otherwise use the cluster reader endpoint, otherwise use the instance reader endpoint
-  reader_endpoint_address    = coalesce(local.reader_endpoint_serverless, local.reader_endpoint_cluster, local.reader_endpoint_instance)
+  reader_endpoint_address = coalesce(local.reader_endpoint_serverless, local.reader_endpoint_cluster, local.reader_endpoint_instance)
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -235,21 +235,24 @@ resource "aws_elasticache_serverless_cache" "default" {
   snapshot_retention_limit = var.snapshot_retention_limit
   user_group_id            = var.serverless_user_group_id
 
-  cache_usage_limits {
-    dynamic "data_storage" {
-      for_each = var.serverless_cache_usage_limits["data_storage_min"] != null || var.serverless_cache_usage_limits["data_storage_max"] != null ? [1] : []
-      content {
-      minimum = lookup(var.serverless_cache_usage_limits, "data_storage_min", null)
-      maximum = lookup(var.serverless_cache_usage_limits, "data_storage_max", null)
-      unit    = lookup(var.serverless_cache_usage_limits, "data_storage_unit", "GB")
+  dynamic "cache_usage_limits" {
+    for_each = var.serverless_cache_usage_limits != {} ? [1] : []
+    content {
+      dynamic "data_storage" {
+        for_each = var.serverless_cache_usage_limits["data_storage_min"] != null || var.serverless_cache_usage_limits["data_storage_max"] != null ? [1] : []
+        content {
+          minimum = lookup(var.serverless_cache_usage_limits, "data_storage_min", null)
+          maximum = lookup(var.serverless_cache_usage_limits, "data_storage_max", null)
+          unit    = lookup(var.serverless_cache_usage_limits, "data_storage_unit", "GB")
+        }
       }
-    }
 
-    dynamic "ecpu_per_second" {
-      for_each = var.serverless_cache_usage_limits["ecpu_per_second_min"] != null || var.serverless_cache_usage_limits["ecpu_per_second_max"] != null ? [1] : []
-      content {
-      minimum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_min", null)
-      maximum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_max", null)
+      dynamic "ecpu_per_second" {
+        for_each = var.serverless_cache_usage_limits["ecpu_per_second_min"] != null || var.serverless_cache_usage_limits["ecpu_per_second_max"] != null ? [1] : []
+        content {
+          minimum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_min", null)
+          maximum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_max", null)
+        }
       }
     }
   }
@@ -320,7 +323,7 @@ module "dns" {
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
   ttl      = 60
   zone_id  = try(var.zone_id[0], tostring(var.zone_id), "")
-  records = [local.endpoint_address]
+  records  = [local.endpoint_address]
 
   context = module.this.context
 }
