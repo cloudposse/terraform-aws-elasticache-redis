@@ -293,7 +293,7 @@ variable "serverless_user_group_id" {
 }
 
 variable "serverless_cache_usage_limits" {
-  type        = map(string)
+  type        = map(any)
   default     = {}
   description = "The usage limits for the serverless cache"
 }

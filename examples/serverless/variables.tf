@@ -19,12 +19,9 @@ variable "serverless_major_engine_version" {
 }
 
 variable "serverless_cache_usage_limits" {
-  type = object({
-    data_storage_max    = number
-    data_storage_unit   = string
-    ecpu_per_second_max = number
-  })
+  type        = map(any)
   description = "Serverless cache usage limits"
+  default     = {}
 }
 
 variable "at_rest_encryption_enabled" {

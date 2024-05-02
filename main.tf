@@ -236,22 +236,23 @@ resource "aws_elasticache_serverless_cache" "default" {
   user_group_id            = var.serverless_user_group_id
 
   dynamic "cache_usage_limits" {
-    for_each = var.serverless_cache_usage_limits != {} ? [1] : []
+    for_each = try([var.serverless_cache_usage_limits], [])
     content {
+
       dynamic "data_storage" {
-        for_each = var.serverless_cache_usage_limits["data_storage_min"] != null || var.serverless_cache_usage_limits["data_storage_max"] != null ? [1] : []
+        for_each = try([cache_usage_limits.value.data_storage], [])
         content {
-          minimum = lookup(var.serverless_cache_usage_limits, "data_storage_min", null)
-          maximum = lookup(var.serverless_cache_usage_limits, "data_storage_max", null)
-          unit    = lookup(var.serverless_cache_usage_limits, "data_storage_unit", "GB")
+          maximum = try(data_storage.value.maximum, null)
+          minimum = try(data_storage.value.minimum, null)
+          unit    = try(data_storage.value.unit, "GB")
         }
       }
 
       dynamic "ecpu_per_second" {
-        for_each = var.serverless_cache_usage_limits["ecpu_per_second_min"] != null || var.serverless_cache_usage_limits["ecpu_per_second_max"] != null ? [1] : []
+        for_each = try([cache_usage_limits.value.ecpu_per_second], [])
         content {
-          minimum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_min", null)
-          maximum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_max", null)
+          maximum = try(ecpu_per_second.value.maximum, null)
+          minimum = try(ecpu_per_second.value.minimum, null)
         }
       }
     }

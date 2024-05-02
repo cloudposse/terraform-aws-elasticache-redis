@@ -15,9 +15,12 @@ serverless_enabled = true
 serverless_major_engine_version = "7"
 
 serverless_cache_usage_limits = {
-  data_storage_max    = 1
-  data_storage_unit   = "GB"
-  ecpu_per_second_max = 5000
+  data_storage = {
+    maximum = 1
+  }
+  ecpu_per_second = {
+    maximum = 5000
+  }
 }
 
 at_rest_encryption_enabled = false
