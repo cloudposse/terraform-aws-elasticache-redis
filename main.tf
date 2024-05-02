@@ -230,20 +230,27 @@ resource "aws_elasticache_serverless_cache" "default" {
   security_group_ids = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
 
   daily_snapshot_time      = var.serverless_snapshot_time
-  description              = var.description
+  description              = coalesce(var.description, module.this.id)
   major_engine_version     = var.serverless_major_engine_version
   snapshot_retention_limit = var.snapshot_retention_limit
   user_group_id            = var.serverless_user_group_id
 
   cache_usage_limits {
-    data_storage {
+    dynamic "data_storage" {
+      for_each = var.serverless_cache_usage_limits["data_storage_min"] != null || var.serverless_cache_usage_limits["data_storage_max"] != null ? [1] : []
+      content {
       minimum = lookup(var.serverless_cache_usage_limits, "data_storage_min", null)
       maximum = lookup(var.serverless_cache_usage_limits, "data_storage_max", null)
       unit    = lookup(var.serverless_cache_usage_limits, "data_storage_unit", "GB")
+      }
     }
-    ecpu_per_second {
+
+    dynamic "ecpu_per_second" {
+      for_each = var.serverless_cache_usage_limits["ecpu_per_second_min"] != null || var.serverless_cache_usage_limits["ecpu_per_second_max"] != null ? [1] : []
+      content {
       minimum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_min", null)
       maximum = lookup(var.serverless_cache_usage_limits, "ecpu_per_second_max", null)
+      }
     }
   }
 
