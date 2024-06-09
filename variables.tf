@@ -171,6 +171,17 @@ variable "auth_token" {
   default     = null
 }
 
+variable "auth_token_update_strategy" {
+  type        = string
+  description = "Strategy to use when updating the auth_token. Valid values are `SET`, `ROTATE`, and `DELETE`. Defaults to `ROTATE`."
+  default     = "ROTATE"
+
+  validation {
+    condition     = contains(["set", "rotate", "delete"], lower(var.auth_token_update_strategy))
+    error_message = "Valid values for auth_token_update_strategy are `SET`, `ROTATE`, and `DELETE`."
+  }
+}
+
 variable "kms_key_id" {
   type        = string
   description = "The ARN of the key that you wish to use if encrypting at rest. If not supplied, uses service managed encryption. `at_rest_encryption_enabled` must be set to `true`"
