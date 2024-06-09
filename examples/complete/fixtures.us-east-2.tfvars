@@ -15,9 +15,9 @@ instance_type = "cache.m6g.large"
 
 cluster_size = 1
 
-family = "redis6.x"
+family = "redis7.x"
 
-engine_version = "6.x"
+engine_version = "7.x"
 
 at_rest_encryption_enabled = false
 
