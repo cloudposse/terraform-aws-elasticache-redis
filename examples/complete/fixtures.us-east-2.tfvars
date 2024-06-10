@@ -17,7 +17,7 @@ cluster_size = 1
 
 family = "redis7"
 
-engine_version = "7.2"
+engine_version = "7"
 
 at_rest_encryption_enabled = false
 
