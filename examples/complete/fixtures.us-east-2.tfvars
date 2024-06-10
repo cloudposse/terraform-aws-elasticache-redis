@@ -15,7 +15,7 @@ instance_type = "cache.m6g.large"
 
 cluster_size = 1
 
-family = "redis7.2"
+family = "redis7"
 
 engine_version = "7.2"
 
