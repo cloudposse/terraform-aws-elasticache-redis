@@ -112,7 +112,7 @@ locals {
   # Use the serverless endpoint if serverless mode is enabled, otherwise use the cluster endpoint, otherwise use the instance endpoint
   endpoint_address = coalesce(local.endpoint_serverless, local.endpoint_cluster, local.endpoint_instance)
 
-  reader_endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].reader_endpoint.0.address, null)
+  reader_endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].reader_endpoint[0].address, null)
   reader_endpoint_cluster    = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
   reader_endpoint_instance   = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
   # Use the serverless reader endpoint if serverless mode is enabled, otherwise use the cluster reader endpoint, otherwise use the instance reader endpoint
