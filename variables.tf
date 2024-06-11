@@ -277,3 +277,34 @@ variable "auto_minor_version_upgrade" {
   default     = null
   description = "Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported if the engine version is 6 or higher."
 }
+
+# Add boolean to create a serverless cluster
+variable "serverless_enabled" {
+  type        = bool
+  default     = false
+  description = "Flag to enable/disable creation of a serverless redis cluster"
+}
+
+variable "serverless_major_engine_version" {
+  type        = string
+  default     = "7"
+  description = "The major version of the engine to use for the serverless cluster"
+}
+
+variable "serverless_snapshot_time" {
+  type        = string
+  default     = "06:00"
+  description = "The daily time that snapshots will be created from the serverless cache."
+}
+
+variable "serverless_user_group_id" {
+  type        = string
+  default     = null
+  description = "User Group ID to associate with the replication group"
+}
+
+variable "serverless_cache_usage_limits" {
+  type        = map(any)
+  default     = {}
+  description = "The usage limits for the serverless cache"
+}
