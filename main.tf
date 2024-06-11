@@ -106,7 +106,7 @@ locals {
     join("", aws_elasticache_serverless_cache.default[*].arn)
   )
 
-  endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].endpoint.0.address, null)
+  endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].endpoint[0].address, null)
   endpoint_cluster    = try(aws_elasticache_replication_group.default[0].configuration_endpoint_address, null)
   endpoint_instance   = try(aws_elasticache_replication_group.default[0].primary_endpoint_address, null)
   # Use the serverless endpoint if serverless mode is enabled, otherwise use the cluster endpoint, otherwise use the instance endpoint
