@@ -8,16 +8,16 @@ name: terraform-aws-elasticache-redis
 
 # Tags of this project
 tags:
-  - aws
-  - cache
-  - elasticache
-  - elasticache-redis
-  - terraform
-  - terraform-module
+- aws
+- cache
+- elasticache
+- elasticache-redis
+- terraform
+- terraform-module
 
 # Categories of this project
 categories:
-  - terraform-modules/databases
+- terraform-modules/databases
 
 # Logo for this project
 #logo: docs/logo.png
@@ -30,29 +30,29 @@ github_repo: cloudposse/terraform-aws-elasticache-redis
 
 # Badges to display
 badges:
-  - name: Latest Release
-    image: https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
-    url: https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest
-  - name: Last Updated
-    image: https://img.shields.io/github/last-commit/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
-    url: https://github.com/cloudposse/terraform-aws-elasticache-redis/commits
-  - name: Slack Community
-    image: https://slack.cloudposse.com/for-the-badge.svg
-    url: https://slack.cloudposse.com
+- name: Latest Release
+  image: https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
+  url: https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest
+- name: Last Updated
+  image: https://img.shields.io/github/last-commit/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
+  url: https://github.com/cloudposse/terraform-aws-elasticache-redis/commits
+- name: Slack Community
+  image: https://slack.cloudposse.com/for-the-badge.svg
+  url: https://slack.cloudposse.com
 
 # List any related terraform modules that this module may be used with or that this module depends on.
 related:
-  - name: "terraform-aws-security-group"
-    description: "Terraform module to provision an AWS Security Group."
-    url: "https://github.com/cloudposse/terraform-aws-security-group"
-  - name: "terraform-null-label"
-    description: "Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention."
-    url: "https://github.com/cloudposse/terraform-null-label"
+- name: "terraform-aws-security-group"
+  description: "Terraform module to provision an AWS Security Group."
+  url: "https://github.com/cloudposse/terraform-aws-security-group"
+- name: "terraform-null-label"
+  description: "Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention."
+  url: "https://github.com/cloudposse/terraform-null-label"
 
 
 # Short description of this project
 description: |-
-  Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster
+  Terraform module to provision an [`ElastiCache`](https://aws.amazon.com/elasticache/) Redis Cluster or Serverless instance.
 
 # How to use this project
 # Note: use absolute rather than relative URLs because Hashicorp will copy the README to
@@ -67,8 +67,8 @@ usage: |-
   Amazon provides [good documentation on how to connect with it enabled](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls).
   If this is not desired behavior, set `transit_encryption_enabled=false`.
 
-  This module creates, by default, a new security group for the Elasticache Redis Cluster. When a configuration
-  change (for example, a different security group name) cannot be applied to the security group, Terraform will
+  This module creates, by default, a new security group for the Elasticache Redis Cluster / Serverless Instance.
+  When a configuration change (for example, a different security group name) cannot be applied to the security group, Terraform will
   replace that security group with a new one with the new configuration. In order to allow Terraform to fully manage the security group, you
   should not place any other resources in (or associate any other resources with) the security group this module
   creates. Also, in order to keep things from breaking when this module replaces the security group, you should
@@ -80,7 +80,7 @@ usage: |-
   **Note about `zone_id`**: Previously, `zone_id` was a string. This caused problems (see [#82](https://github.com/cloudposse/terraform-aws-elasticache-redis/issues/82)).
   Now `zone_id` should be supplied as a `list(string)`, either empty or with exactly 1 zone ID in order to avoid the problem.
 
-  For a complete example, see [examples/complete](examples/complete).
+  For a complete example, see [examples/complete](examples/complete) or [examples/serverless](examples/serverless).
 
   For automated tests of the complete example using [bats](https://github.com/bats-core/bats-core) and [Terratest](https://github.com/gruntwork-io/terratest) (which tests and deploys the example on AWS), see [test](test).
 
@@ -154,11 +154,11 @@ usage: |-
   ```
 
 examples: |-
-  Review the [complete example](examples/complete) to see how to use this module.
+  Review the [complete example](examples/complete) or [serverless example](examples/serverless) to see how to use this module.
 
 include:
-  - "docs/targets.md"
-  - "docs/terraform.md"
+- "docs/targets.md"
+- "docs/terraform.md"
 
 # Contributors to this project
 contributors: []

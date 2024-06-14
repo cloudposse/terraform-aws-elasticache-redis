@@ -2,7 +2,9 @@
 # Security Group Resources
 #
 locals {
-  enabled = module.this.enabled
+  enabled                    = module.this.enabled
+  create_normal_instance     = local.enabled && !var.serverless_enabled
+  create_serverless_instance = local.enabled && var.serverless_enabled
 
   legacy_egress_rule = local.use_legacy_egress ? {
     key         = "legacy-egress"
@@ -82,7 +84,7 @@ locals {
     var.cluster_size
   )
 
-  elasticache_member_clusters = local.enabled ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
+  elasticache_member_clusters = local.create_normal_instance ? tolist(aws_elasticache_replication_group.default[0].member_clusters) : []
 
   # The name of the parameter group can’t include "."
   safe_family = replace(var.family, ".", "-")
@@ -96,6 +98,25 @@ locals {
       "default.${var.family}" # Default parameter group name created by AWS
     )
   )
+
+  arn = (
+    # If cluster mode is enabled, use the ARN of the replication group
+    local.create_normal_instance ? join("", aws_elasticache_replication_group.default[*].arn) :
+    # If serverless mode is enabled, use the ARN of the serverless cache
+    join("", aws_elasticache_serverless_cache.default[*].arn)
+  )
+
+  endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].endpoint[0].address, null)
+  endpoint_cluster    = try(aws_elasticache_replication_group.default[0].configuration_endpoint_address, null)
+  endpoint_instance   = try(aws_elasticache_replication_group.default[0].primary_endpoint_address, null)
+  # Use the serverless endpoint if serverless mode is enabled, otherwise use the cluster endpoint, otherwise use the instance endpoint
+  endpoint_address = coalesce(local.endpoint_serverless, local.endpoint_cluster, local.endpoint_instance)
+
+  reader_endpoint_serverless = try(aws_elasticache_serverless_cache.default[0].reader_endpoint[0].address, null)
+  reader_endpoint_cluster    = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
+  reader_endpoint_instance   = try(aws_elasticache_replication_group.default[0].reader_endpoint_address, null)
+  # Use the serverless reader endpoint if serverless mode is enabled, otherwise use the cluster reader endpoint, otherwise use the instance reader endpoint
+  reader_endpoint_address = coalesce(local.reader_endpoint_serverless, local.reader_endpoint_cluster, local.reader_endpoint_instance)
 }
 
 resource "aws_elasticache_subnet_group" "default" {
@@ -132,8 +153,9 @@ resource "aws_elasticache_parameter_group" "default" {
   }
 }
 
+# Create a "normal" Elasticache instance (single node or cluster)
 resource "aws_elasticache_replication_group" "default" {
-  count = local.enabled ? 1 : 0
+  count = local.create_normal_instance ? 1 : 0
 
   auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
   auth_token_update_strategy  = var.auth_token_update_strategy
@@ -198,11 +220,58 @@ resource "aws_elasticache_replication_group" "default" {
   ]
 }
 
+# Create a Serverless Redis instance
+resource "aws_elasticache_serverless_cache" "default" {
+  count = local.create_serverless_instance ? 1 : 0
+
+  name   = var.replication_group_id == "" ? module.this.id : var.replication_group_id
+  engine = "redis"
+
+  kms_key_id         = var.at_rest_encryption_enabled ? var.kms_key_id : null
+  subnet_ids         = var.subnets
+  security_group_ids = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
+
+  daily_snapshot_time      = var.serverless_snapshot_time
+  description              = coalesce(var.description, module.this.id)
+  major_engine_version     = var.serverless_major_engine_version
+  snapshot_retention_limit = var.snapshot_retention_limit
+  user_group_id            = var.serverless_user_group_id
+
+  dynamic "cache_usage_limits" {
+    for_each = try([var.serverless_cache_usage_limits], [])
+    content {
+
+      dynamic "data_storage" {
+        for_each = try([cache_usage_limits.value.data_storage], [])
+        content {
+          maximum = try(data_storage.value.maximum, null)
+          minimum = try(data_storage.value.minimum, null)
+          unit    = try(data_storage.value.unit, "GB")
+        }
+      }
+
+      dynamic "ecpu_per_second" {
+        for_each = try([cache_usage_limits.value.ecpu_per_second], [])
+        content {
+          maximum = try(ecpu_per_second.value.maximum, null)
+          minimum = try(ecpu_per_second.value.minimum, null)
+        }
+      }
+    }
+  }
+
+  tags = module.this.tags
+
+  depends_on = [
+    aws_elasticache_parameter_group.default
+  ]
+}
+
 #
 # CloudWatch Resources
 #
 resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
-  count               = local.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
+  count               = local.create_normal_instance && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-cpu-utilization"
   alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
@@ -226,7 +295,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cache_memory" {
-  count               = local.enabled && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
+  count               = local.create_normal_instance && var.cloudwatch_metric_alarms_enabled ? local.member_clusters_count : 0
   alarm_name          = "${element(local.elasticache_member_clusters, count.index)}-freeable-memory"
   alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
@@ -257,7 +326,7 @@ module "dns" {
   dns_name = var.dns_subdomain != "" ? var.dns_subdomain : module.this.id
   ttl      = 60
   zone_id  = try(var.zone_id[0], tostring(var.zone_id), "")
-  records  = var.cluster_mode_enabled ? [join("", compact(aws_elasticache_replication_group.default[*].configuration_endpoint_address))] : [join("", compact(aws_elasticache_replication_group.default[*].primary_endpoint_address))]
+  records  = [local.endpoint_address]
 
   context = module.this.context
 }
