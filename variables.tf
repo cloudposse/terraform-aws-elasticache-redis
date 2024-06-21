@@ -77,15 +77,10 @@ variable "transit_encryption_enabled" {
 
 variable "transit_encryption_mode" {
   type        = string
-  default     = "preferred"
+  default     = null
   description = <<-EOT
     A setting that enables clients to migrate to in-transit encryption with no downtime. Valid values are `preferred` and `required`. When enabling encryption on an existing replication group, this must first be set to `preferred` before setting it to `required` in a subsequent apply. See the TransitEncryptionMode field in the [CreateReplicationGroup](https://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateReplicationGroup.html) API documentation for additional details."
     EOT
-
-  validation {
-    condition     = lower(var.transit_encryption_mode) == "preferred" || lower(var.transit_encryption_mode) == "required"
-    error_message = "The transit_encryption_mode must be either `preferred` (Default) or `required`"
-  }
 }
 
 variable "notification_topic_arn" {
