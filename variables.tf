@@ -75,6 +75,14 @@ variable "transit_encryption_enabled" {
     EOT
 }
 
+variable "transit_encryption_mode" {
+  type        = string
+  default     = null
+  description = <<-EOT
+    A setting that enables clients to migrate to in-transit encryption with no downtime. Valid values are `preferred` and `required`. When enabling encryption on an existing replication group, this must first be set to `preferred` before setting it to `required` in a subsequent apply. See the TransitEncryptionMode field in the [CreateReplicationGroup](https://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateReplicationGroup.html) API documentation for additional details."
+    EOT
+}
+
 variable "notification_topic_arn" {
   type        = string
   default     = ""
@@ -156,6 +164,17 @@ variable "auth_token" {
   type        = string
   description = "Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars"
   default     = null
+}
+
+variable "auth_token_update_strategy" {
+  type        = string
+  description = "Strategy to use when updating the auth_token. Valid values are `SET`, `ROTATE`, and `DELETE`. Defaults to `ROTATE`."
+  default     = "ROTATE"
+
+  validation {
+    condition     = contains(["set", "rotate", "delete"], lower(var.auth_token_update_strategy))
+    error_message = "Valid values for auth_token_update_strategy are `SET`, `ROTATE`, and `DELETE`."
+  }
 }
 
 variable "kms_key_id" {
@@ -265,4 +284,35 @@ variable "auto_minor_version_upgrade" {
   type        = bool
   default     = null
   description = "Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported if the engine version is 6 or higher."
+}
+
+# Add boolean to create a serverless cluster
+variable "serverless_enabled" {
+  type        = bool
+  default     = false
+  description = "Flag to enable/disable creation of a serverless redis cluster"
+}
+
+variable "serverless_major_engine_version" {
+  type        = string
+  default     = "7"
+  description = "The major version of the engine to use for the serverless cluster"
+}
+
+variable "serverless_snapshot_time" {
+  type        = string
+  default     = "06:00"
+  description = "The daily time that snapshots will be created from the serverless cache."
+}
+
+variable "serverless_user_group_id" {
+  type        = string
+  default     = null
+  description = "User Group ID to associate with the replication group"
+}
+
+variable "serverless_cache_usage_limits" {
+  type        = map(any)
+  default     = {}
+  description = "The usage limits for the serverless cache"
 }

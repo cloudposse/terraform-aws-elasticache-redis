@@ -15,14 +15,12 @@ instance_type = "cache.m6g.large"
 
 cluster_size = 1
 
-family = "redis6.x"
+family = "redis7"
 
-engine_version = "6.x"
+engine_version = "7.0"
 
 at_rest_encryption_enabled = false
 
 transit_encryption_enabled = true
-
-zone_id = "Z3SO0TKDDQ0RGG"
 
 cloudwatch_metric_alarms_enabled = false
