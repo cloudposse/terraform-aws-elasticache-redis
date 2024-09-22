@@ -169,6 +169,7 @@ resource "aws_elasticache_replication_group" "default" {
   automatic_failover_enabled  = var.cluster_mode_enabled ? true : var.automatic_failover_enabled
   multi_az_enabled            = var.multi_az_enabled
   subnet_group_name           = local.elasticache_subnet_group_name
+  network_type                = var.network_type
   # It would be nice to remove null or duplicate security group IDs, if there are any, using `compact`,
   # but that causes problems, and having duplicates does not seem to cause problems.
   # See https://github.com/hashicorp/terraform/issues/29799
