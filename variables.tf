@@ -36,7 +36,7 @@ variable "cluster_size" {
 variable "port" {
   type        = number
   default     = 6379
-  description = "Redis port"
+  description = "Port number on which the cache nodes will accept connections"
 }
 
 variable "instance_type" {
@@ -48,7 +48,7 @@ variable "instance_type" {
 variable "family" {
   type        = string
   default     = "redis4.0"
-  description = "Redis family"
+  description = "The family of the ElastiCache parameter group"
 }
 
 variable "parameter" {
@@ -60,10 +60,16 @@ variable "parameter" {
   description = "A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another"
 }
 
+variable "engine" {
+  type        = string
+  default     = "redis"
+  description = "Name of the cache engine"
+}
+
 variable "engine_version" {
   type        = string
   default     = "4.0.10"
-  description = "Redis engine version"
+  description = "Version number of the cache engine"
 }
 
 variable "at_rest_encryption_enabled" {

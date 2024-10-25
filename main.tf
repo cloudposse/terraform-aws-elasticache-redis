@@ -176,6 +176,7 @@ resource "aws_elasticache_replication_group" "default" {
   security_group_ids         = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
   maintenance_window         = var.maintenance_window
   notification_topic_arn     = var.notification_topic_arn
+  engine                     = var.engine
   engine_version             = var.engine_version
   at_rest_encryption_enabled = var.at_rest_encryption_enabled
   transit_encryption_enabled = var.transit_encryption_enabled
@@ -221,12 +222,12 @@ resource "aws_elasticache_replication_group" "default" {
   ]
 }
 
-# Create a Serverless Redis instance
+# Create a Serverless Redis/Valkey instance
 resource "aws_elasticache_serverless_cache" "default" {
   count = local.create_serverless_instance ? 1 : 0
 
   name   = var.replication_group_id == "" ? module.this.id : var.replication_group_id
-  engine = "redis"
+  engine = var.engine
 
   kms_key_id         = var.at_rest_encryption_enabled ? var.kms_key_id : null
   subnet_ids         = var.subnets
