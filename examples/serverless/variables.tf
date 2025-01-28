@@ -34,3 +34,9 @@ variable "sg_name" {
   default     = ""
   description = "Name to give to created security group"
 }
+
+variable "serverless_snapshot_arns_to_restore" {
+  type        = list(string)
+  default     = []
+  description = "The list of ARN(s) of the snapshot that the new serverless cache will be created from. Available for Redis only."
+}
