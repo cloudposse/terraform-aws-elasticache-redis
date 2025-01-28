@@ -328,3 +328,9 @@ variable "serverless_cache_usage_limits" {
   default     = {}
   description = "The usage limits for the serverless cache"
 }
+
+variable "serverless_snapshot_arns_to_restore" {
+  type        = list(string)
+  default     = []
+  description = "Optional list of snapshot ARNs to restore for serverless ElastiCache."
+}

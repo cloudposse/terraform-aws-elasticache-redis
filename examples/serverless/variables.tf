@@ -34,3 +34,9 @@ variable "sg_name" {
   default     = ""
   description = "Name to give to created security group"
 }
+
+variable "serverless_snapshot_arns_to_restore" {
+  type        = list(string)
+  default     = []
+  description = "Optional list of snapshot ARNs to restore for serverless ElastiCache."
+}

@@ -26,4 +26,3 @@ serverless_cache_usage_limits = {
 at_rest_encryption_enabled = false
 
 zone_id = "Z3SO0TKDDQ0RGG"
-

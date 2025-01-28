@@ -296,6 +296,7 @@ Available targets:
 | <a name="input_user_group_ids"></a> [user\_group\_ids](#input\_user\_group\_ids) | User Group ID to associate with the replication group | `list(string)` | `null` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | n/a | yes |
 | <a name="input_zone_id"></a> [zone\_id](#input\_zone\_id) | Route53 DNS Zone ID as list of string (0 or 1 items). If empty, no custom DNS name will be published.<br/>If the list contains a single Zone ID, a custom DNS name will be pulished in that zone.<br/>Can also be a plain string, but that use is DEPRECATED because of Terraform issues. | `any` | `[]` | no |
+| serverless_snapshot_arns_to_restore   | Optional list of snapshot ARNs to restore for serverless Redis | list(string)| `[]`    | no       |
 
 ## Outputs
 

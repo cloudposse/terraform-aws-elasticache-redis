@@ -52,7 +52,7 @@ module "redis" {
   serverless_major_engine_version = var.serverless_major_engine_version
   at_rest_encryption_enabled      = var.at_rest_encryption_enabled
   serverless_cache_usage_limits   = var.serverless_cache_usage_limits
-
+  serverless_snapshot_arns_to_restore = var.serverless_snapshot_arns_to_restore
   # Verify that we can safely change security groups (name changes forces new SG)
   security_group_create_before_destroy = true
   security_group_name                  = length(var.sg_name) > 0 ? [var.sg_name] : []

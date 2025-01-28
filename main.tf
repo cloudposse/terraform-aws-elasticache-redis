@@ -234,6 +234,7 @@ resource "aws_elasticache_serverless_cache" "default" {
   security_group_ids = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
 
   daily_snapshot_time      = var.serverless_snapshot_time
+  snapshot_arns_to_restore = var.serverless_snapshot_arns_to_restore
   description              = coalesce(var.description, module.this.id)
   major_engine_version     = var.serverless_major_engine_version
   snapshot_retention_limit = var.snapshot_retention_limit
