@@ -332,5 +332,5 @@ variable "serverless_cache_usage_limits" {
 variable "serverless_snapshot_arns_to_restore" {
   type        = list(string)
   default     = []
-  description = "Optional list of snapshot ARNs to restore for serverless ElastiCache."
+  description = "The list of ARN(s) of the snapshot that the new serverless cache will be created from. Available for Redis only."
 }
