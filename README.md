@@ -279,6 +279,7 @@ Available targets:
 | <a name="input_serverless_cache_usage_limits"></a> [serverless\_cache\_usage\_limits](#input\_serverless\_cache\_usage\_limits) | The usage limits for the serverless cache | `map(any)` | `{}` | no |
 | <a name="input_serverless_enabled"></a> [serverless\_enabled](#input\_serverless\_enabled) | Flag to enable/disable creation of a serverless redis cluster | `bool` | `false` | no |
 | <a name="input_serverless_major_engine_version"></a> [serverless\_major\_engine\_version](#input\_serverless\_major\_engine\_version) | The major version of the engine to use for the serverless cluster | `string` | `"7"` | no |
+| <a name="input_serverless_snapshot_arns_to_restore"></a> [serverless\_snapshot\_arns\_to\_restore](#input\_serverless\_snapshot\_arns\_to\_restore) | The list of ARN(s) of the snapshot that the new serverless cache will be created from. Available for Redis only. | `list(string)` | `[]` | no |
 | <a name="input_serverless_snapshot_time"></a> [serverless\_snapshot\_time](#input\_serverless\_snapshot\_time) | The daily time that snapshots will be created from the serverless cache. | `string` | `"06:00"` | no |
 | <a name="input_serverless_user_group_id"></a> [serverless\_user\_group\_id](#input\_serverless\_user\_group\_id) | User Group ID to associate with the replication group | `string` | `null` | no |
 | <a name="input_snapshot_arns"></a> [snapshot\_arns](#input\_snapshot\_arns) | A single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. Example: arn:aws:s3:::my\_bucket/snapshot1.rdb | `list(string)` | `[]` | no |
@@ -296,7 +297,6 @@ Available targets:
 | <a name="input_user_group_ids"></a> [user\_group\_ids](#input\_user\_group\_ids) | User Group ID to associate with the replication group | `list(string)` | `null` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | n/a | yes |
 | <a name="input_zone_id"></a> [zone\_id](#input\_zone\_id) | Route53 DNS Zone ID as list of string (0 or 1 items). If empty, no custom DNS name will be published.<br/>If the list contains a single Zone ID, a custom DNS name will be pulished in that zone.<br/>Can also be a plain string, but that use is DEPRECATED because of Terraform issues. | `any` | `[]` | no |
-| <a name="input_serverless_snapshot_arns_to_restore"></a> [serverless_snapshot_arns_to_restore](#input\_serverless\_snapshot\_arns\_to\_restore) | The list of ARN(s) of the snapshot that the new serverless cache will be created from. Available for Redis only. | `list(string)` | `[]` | no |
 
 ## Outputs
 
