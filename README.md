@@ -161,8 +161,6 @@ Review the [complete example](examples/complete) or [serverless example](example
 <!-- markdownlint-disable -->
 ## Makefile Targets
 ```text
-Available targets:
-
 ```
 <!-- markdownlint-restore -->
 <!-- markdownlint-disable -->
