@@ -5,6 +5,14 @@ locals {
   enabled                    = module.this.enabled
   create_normal_instance     = local.enabled && !var.serverless_enabled
   create_serverless_instance = local.enabled && var.serverless_enabled
+  create_parameter_group     = var.global_replication_group_id == null ? var.create_parameter_group : false
+  engine                     = var.global_replication_group_id == null ? var.engine : null
+  engine_version             = var.global_replication_group_id == null ? var.engine_version : null
+  instance_type              = var.global_replication_group_id == null ? var.instance_type : null
+  num_node_groups            = (var.global_replication_group_id == null && var.cluster_mode_enabled) ? var.cluster_mode_num_node_groups : null
+  transit_encryption_enabled = var.global_replication_group_id == null ? var.transit_encryption_enabled : null
+  at_rest_encryption_enabled = var.global_replication_group_id == null ? var.at_rest_encryption_enabled : null
+  snapshot_arns              = var.global_replication_group_id == null ? var.snapshot_arns : null
 
   legacy_egress_rule = local.use_legacy_egress ? {
     key         = "legacy-egress"
@@ -89,14 +97,11 @@ locals {
   # The name of the parameter group can’t include "."
   safe_family = replace(var.family, ".", "-")
 
-  parameter_group_name = (
-    var.parameter_group_name != null ? var.parameter_group_name : (
-      var.create_parameter_group
-      ?
-      "${module.this.id}-${local.safe_family}" # The name of the new parameter group to be created
-      :
-      "default.${var.family}" # Default parameter group name created by AWS
-    )
+  parameter_group_name = var.global_replication_group_id != null ? null : coalesce(
+    var.parameter_group_name,
+    var.create_parameter_group ?
+    "${module.this.id}-${local.safe_family}" # The name of the new parameter group to be created
+    : "default.${var.family}"                # Default parameter group name created by AWS
   )
 
   arn = (
@@ -128,7 +133,7 @@ resource "aws_elasticache_subnet_group" "default" {
 }
 
 resource "aws_elasticache_parameter_group" "default" {
-  count       = local.enabled && var.create_parameter_group ? 1 : 0
+  count       = local.enabled && local.create_parameter_group ? 1 : 0
   name        = local.parameter_group_name
   description = var.parameter_group_description != null ? var.parameter_group_description : "Elasticache parameter group ${local.parameter_group_name}"
   family      = var.family
@@ -161,7 +166,7 @@ resource "aws_elasticache_replication_group" "default" {
   auth_token_update_strategy  = var.auth_token_update_strategy
   replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
   description                 = coalesce(var.description, module.this.id)
-  node_type                   = var.instance_type
+  node_type                   = local.instance_type
   num_cache_clusters          = var.cluster_mode_enabled ? null : var.cluster_size
   port                        = var.port
   parameter_group_name        = local.parameter_group_name
@@ -173,23 +178,24 @@ resource "aws_elasticache_replication_group" "default" {
   # It would be nice to remove null or duplicate security group IDs, if there are any, using `compact`,
   # but that causes problems, and having duplicates does not seem to cause problems.
   # See https://github.com/hashicorp/terraform/issues/29799
-  security_group_ids         = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
-  maintenance_window         = var.maintenance_window
-  notification_topic_arn     = var.notification_topic_arn
-  engine                     = var.engine
-  engine_version             = var.engine_version
-  at_rest_encryption_enabled = var.at_rest_encryption_enabled
-  transit_encryption_enabled = var.transit_encryption_enabled
-  transit_encryption_mode    = var.transit_encryption_mode
-  kms_key_id                 = var.at_rest_encryption_enabled ? var.kms_key_id : null
-  snapshot_name              = var.snapshot_name
-  snapshot_arns              = var.snapshot_arns
-  snapshot_window            = var.snapshot_window
-  snapshot_retention_limit   = var.snapshot_retention_limit
-  final_snapshot_identifier  = var.final_snapshot_identifier
-  apply_immediately          = var.apply_immediately
-  data_tiering_enabled       = var.data_tiering_enabled
-  auto_minor_version_upgrade = var.auto_minor_version_upgrade
+  security_group_ids          = local.create_security_group ? concat(local.associated_security_group_ids, [module.aws_security_group.id]) : local.associated_security_group_ids
+  maintenance_window          = var.maintenance_window
+  notification_topic_arn      = var.notification_topic_arn
+  engine                      = local.engine
+  engine_version              = local.engine_version
+  at_rest_encryption_enabled  = local.at_rest_encryption_enabled
+  transit_encryption_enabled  = local.transit_encryption_enabled
+  transit_encryption_mode     = var.transit_encryption_mode
+  kms_key_id                  = var.at_rest_encryption_enabled ? var.kms_key_id : null
+  snapshot_name               = var.snapshot_name
+  snapshot_arns               = local.snapshot_arns
+  snapshot_window             = var.snapshot_window
+  snapshot_retention_limit    = var.snapshot_retention_limit
+  final_snapshot_identifier   = var.final_snapshot_identifier
+  apply_immediately           = var.apply_immediately
+  data_tiering_enabled        = var.data_tiering_enabled
+  auto_minor_version_upgrade  = var.auto_minor_version_upgrade
+  global_replication_group_id = var.global_replication_group_id
 
   dynamic "log_delivery_configuration" {
     for_each = var.log_delivery_configuration
@@ -204,7 +210,7 @@ resource "aws_elasticache_replication_group" "default" {
 
   tags = module.this.tags
 
-  num_node_groups         = var.cluster_mode_enabled ? var.cluster_mode_num_node_groups : null
+  num_node_groups         = local.num_node_groups
   replicas_per_node_group = var.cluster_mode_enabled ? var.cluster_mode_replicas_per_node_group : null
   user_group_ids          = var.user_group_ids
 

@@ -298,7 +298,6 @@ variable "auto_minor_version_upgrade" {
   description = "Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported if the engine version is 6 or higher."
 }
 
-# Add boolean to create a serverless cluster
 variable "serverless_enabled" {
   type        = bool
   default     = false
@@ -333,4 +332,10 @@ variable "serverless_snapshot_arns_to_restore" {
   type        = list(string)
   default     = []
   description = "The list of ARN(s) of the snapshot that the new serverless cache will be created from. Available for Redis only."
+}
+
+variable "global_replication_group_id" {
+  type        = string
+  default     = null
+  description = "The ID of the global replication group to which this replication group should belong. If this parameter is specified, the replication group is added to the specified global replication group as a secondary replication group; otherwise, the replication group is not part of any global replication group. If global_replication_group_id is set, the num_node_groups parameter cannot be set."
 }
