@@ -4,13 +4,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.47 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.73.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.47 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.73.0 |
 
 ## Modules
 
@@ -75,6 +75,7 @@
 | <a name="input_existing_security_groups"></a> [existing\_security\_groups](#input\_existing\_security\_groups) | DEPRECATED: Use `associated_security_group_ids` instead.<br/>Historical description: List of existing Security Group IDs to place the cluster into.<br/>Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster. | `list(string)` | `[]` | no |
 | <a name="input_family"></a> [family](#input\_family) | The family of the ElastiCache parameter group | `string` | `"redis4.0"` | no |
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | The name of your final node group (shard) snapshot. ElastiCache creates the snapshot from the primary node in the cluster. If omitted, no final snapshot will be made. | `string` | `null` | no |
+| <a name="input_global_replication_group_id"></a> [global\_replication\_group\_id](#input\_global\_replication\_group\_id) | The ID of the global replication group to which this replication group should belong. If this parameter is specified, the replication group is added to the specified global replication group as a secondary replication group; otherwise, the replication group is not part of any global replication group. If global\_replication\_group\_id is set, the num\_node\_groups parameter cannot be set. | `string` | `null` | no |
 | <a name="input_id_length_limit"></a> [id\_length\_limit](#input\_id\_length\_limit) | Limit `id` to this many characters (minimum 6).<br/>Set to `0` for unlimited length.<br/>Set to `null` for keep the existing setting, which defaults to `0`.<br/>Does not affect `id_full`. | `number` | `null` | no |
 | <a name="input_inline_rules_enabled"></a> [inline\_rules\_enabled](#input\_inline\_rules\_enabled) | NOT RECOMMENDED. Create rules "inline" instead of as separate `aws_security_group_rule` resources.<br/>See [#20046](https://github.com/hashicorp/terraform-provider-aws/issues/20046) for one of several issues with inline rules.<br/>See [this post](https://github.com/hashicorp/terraform-provider-aws/pull/9032#issuecomment-639545250) for details on the difference between inline rules and rule resources. | `bool` | `false` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Elastic cache instance type | `string` | `"cache.t2.micro"` | no |
@@ -107,6 +108,7 @@
 | <a name="input_serverless_cache_usage_limits"></a> [serverless\_cache\_usage\_limits](#input\_serverless\_cache\_usage\_limits) | The usage limits for the serverless cache | `map(any)` | `{}` | no |
 | <a name="input_serverless_enabled"></a> [serverless\_enabled](#input\_serverless\_enabled) | Flag to enable/disable creation of a serverless redis cluster | `bool` | `false` | no |
 | <a name="input_serverless_major_engine_version"></a> [serverless\_major\_engine\_version](#input\_serverless\_major\_engine\_version) | The major version of the engine to use for the serverless cluster | `string` | `"7"` | no |
+| <a name="input_serverless_snapshot_arns_to_restore"></a> [serverless\_snapshot\_arns\_to\_restore](#input\_serverless\_snapshot\_arns\_to\_restore) | The list of ARN(s) of the snapshot that the new serverless cache will be created from. Available for Redis only. | `list(string)` | `[]` | no |
 | <a name="input_serverless_snapshot_time"></a> [serverless\_snapshot\_time](#input\_serverless\_snapshot\_time) | The daily time that snapshots will be created from the serverless cache. | `string` | `"06:00"` | no |
 | <a name="input_serverless_user_group_id"></a> [serverless\_user\_group\_id](#input\_serverless\_user\_group\_id) | User Group ID to associate with the replication group | `string` | `null` | no |
 | <a name="input_snapshot_arns"></a> [snapshot\_arns](#input\_snapshot\_arns) | A single-element string list containing an Amazon Resource Name (ARN) of a Redis RDB snapshot file stored in Amazon S3. Example: arn:aws:s3:::my\_bucket/snapshot1.rdb | `list(string)` | `[]` | no |
