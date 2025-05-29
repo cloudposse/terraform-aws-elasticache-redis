@@ -3,7 +3,7 @@
 <!-- markdownlint-disable -->
 <a href="https://cpco.io/homepage"><img src="https://github.com/cloudposse/terraform-aws-elasticache-redis/blob/main/.github/banner.png?raw=true" alt="Project Banner"/></a><br/>
     <p align="right">
-<a href="https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest"><img src="https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge" alt="Latest Release"/></a><a href="https://github.com/cloudposse/terraform-aws-elasticache-redis/commits"><img src="https://img.shields.io/github/last-commit/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge" alt="Last Updated"/></a><a href="https://slack.cloudposse.com"><img src="https://slack.cloudposse.com/for-the-badge.svg" alt="Slack Community"/></a></p>
+<a href="https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest"><img src="https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge" alt="Latest Release"/></a><a href="https://github.com/cloudposse/terraform-aws-elasticache-redis/commits"><img src="https://img.shields.io/github/last-commit/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge" alt="Last Updated"/></a><a href="https://cloudposse.com/slack"><img src="https://slack.cloudposse.com/for-the-badge.svg" alt="Slack Community"/></a></p>
 <!-- markdownlint-restore -->
 
 <!--
@@ -159,18 +159,6 @@ Review the [complete example](examples/complete) or [serverless example](example
 
 
 <!-- markdownlint-disable -->
-## Makefile Targets
-```text
-Available targets:
-
-  help                                Help screen
-  help/all                            Display help for all targets
-  help/short                          This help short screen
-  lint                                Lint terraform code
-
-```
-<!-- markdownlint-restore -->
-<!-- markdownlint-disable -->
 ## Requirements
 
 | Name | Version |
@@ -316,6 +304,11 @@ Available targets:
 | <a name="output_security_group_name"></a> [security\_group\_name](#output\_security\_group\_name) | The name of the created security group |
 | <a name="output_serverless_enabled"></a> [serverless\_enabled](#output\_serverless\_enabled) | Indicates if serverless mode is enabled |
 <!-- markdownlint-restore -->
+
+
+
+
+
 
 
 ## Related Projects
