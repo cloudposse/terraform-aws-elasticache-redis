@@ -8,16 +8,16 @@ name: terraform-aws-elasticache-redis
 
 # Tags of this project
 tags:
-- aws
-- cache
-- elasticache
-- elasticache-redis
-- terraform
-- terraform-module
+  - aws
+  - cache
+  - elasticache
+  - elasticache-redis
+  - terraform
+  - terraform-module
 
 # Categories of this project
 categories:
-- terraform-modules/databases
+  - terraform-modules/databases
 
 # Logo for this project
 #logo: docs/logo.png
@@ -30,24 +30,24 @@ github_repo: cloudposse/terraform-aws-elasticache-redis
 
 # Badges to display
 badges:
-- name: Latest Release
-  image: https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
-  url: https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest
-- name: Last Updated
-  image: https://img.shields.io/github/last-commit/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
-  url: https://github.com/cloudposse/terraform-aws-elasticache-redis/commits
-- name: Slack Community
-  image: https://slack.cloudposse.com/for-the-badge.svg
-  url: https://slack.cloudposse.com
+  - name: Latest Release
+    image: https://img.shields.io/github/release/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
+    url: https://github.com/cloudposse/terraform-aws-elasticache-redis/releases/latest
+  - name: Last Updated
+    image: https://img.shields.io/github/last-commit/cloudposse/terraform-aws-elasticache-redis.svg?style=for-the-badge
+    url: https://github.com/cloudposse/terraform-aws-elasticache-redis/commits
+  - name: Slack Community
+    image: https://slack.cloudposse.com/for-the-badge.svg
+    url: https://cloudposse.com/slack
 
 # List any related terraform modules that this module may be used with or that this module depends on.
 related:
-- name: "terraform-aws-security-group"
-  description: "Terraform module to provision an AWS Security Group."
-  url: "https://github.com/cloudposse/terraform-aws-security-group"
-- name: "terraform-null-label"
-  description: "Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention."
-  url: "https://github.com/cloudposse/terraform-null-label"
+  - name: "terraform-aws-security-group"
+    description: "Terraform module to provision an AWS Security Group."
+    url: "https://github.com/cloudposse/terraform-aws-security-group"
+  - name: "terraform-null-label"
+    description: "Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention."
+    url: "https://github.com/cloudposse/terraform-null-label"
 
 
 # Short description of this project
@@ -156,9 +156,5 @@ usage: |-
 examples: |-
   Review the [complete example](examples/complete) or [serverless example](examples/serverless) to see how to use this module.
 
-include:
-- "docs/targets.md"
-- "docs/terraform.md"
-
-# Contributors to this project
+include: []
 contributors: []
