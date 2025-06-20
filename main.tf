@@ -163,7 +163,7 @@ resource "aws_elasticache_replication_group" "default" {
   count = local.create_normal_instance ? 1 : 0
 
   auth_token                  = var.transit_encryption_enabled ? var.auth_token : null
-  auth_token_update_strategy  = var.auth_token_update_strategy
+  auth_token_update_strategy  = var.auth_token != null ? var.auth_token_update_strategy : null
   replication_group_id        = var.replication_group_id == "" ? module.this.id : var.replication_group_id
   description                 = coalesce(var.description, module.this.id)
   node_type                   = local.instance_type
