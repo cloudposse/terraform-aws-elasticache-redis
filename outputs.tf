@@ -58,3 +58,8 @@ output "serverless_enabled" {
   value       = var.serverless_enabled
   description = "Indicates if serverless mode is enabled"
 }
+
+output "transit_encryption_mode" {
+  value       = join("", aws_elasticache_replication_group.default[*].transit_encryption_mode)
+  description = "The transit encryption mode of the replication group"
+}
