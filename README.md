@@ -306,6 +306,7 @@ Review the [complete example](examples/complete) or [serverless example](example
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | The ID of the created security group |
 | <a name="output_security_group_name"></a> [security\_group\_name](#output\_security\_group\_name) | The name of the created security group |
 | <a name="output_serverless_enabled"></a> [serverless\_enabled](#output\_serverless\_enabled) | Indicates if serverless mode is enabled |
+| <a name="output_transit_encryption_mode"></a> [transit\_encryption\_mode](#output\_transit\_encryption\_mode) | The transit encryption mode of the replication group |
 <!-- markdownlint-restore -->
 
 
