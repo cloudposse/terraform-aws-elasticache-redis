@@ -222,7 +222,7 @@ variable "snapshot_window" {
 
 variable "snapshot_retention_limit" {
   type        = number
-  description = "The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them."
+  description = "The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. Set a value to enable automated backups on the cache. If the value of snapshot_retention_limit is set to zero (0), backups are turned off."
   default     = 0
 }
 
