@@ -47,7 +47,7 @@ variable "instance_type" {
 
 variable "family" {
   type        = string
-  default     = "redis4.0"
+  default     = "redis7"
   description = "The family of the ElastiCache parameter group"
 }
 
@@ -68,7 +68,7 @@ variable "engine" {
 
 variable "engine_version" {
   type        = string
-  default     = "4.0.10"
+  default     = "7.1"
   description = "Version number of the cache engine"
 }
 

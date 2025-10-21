@@ -233,10 +233,10 @@ Review the [complete example](examples/complete) or [serverless example](example
 | <a name="input_elasticache_subnet_group_name"></a> [elasticache\_subnet\_group\_name](#input\_elasticache\_subnet\_group\_name) | Subnet group name for the ElastiCache instance | `string` | `""` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
 | <a name="input_engine"></a> [engine](#input\_engine) | Name of the cache engine | `string` | `"redis"` | no |
-| <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Version number of the cache engine | `string` | `"4.0.10"` | no |
+| <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Version number of the cache engine | `string` | `"7.1"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | `null` | no |
 | <a name="input_existing_security_groups"></a> [existing\_security\_groups](#input\_existing\_security\_groups) | DEPRECATED: Use `associated_security_group_ids` instead.<br/>Historical description: List of existing Security Group IDs to place the cluster into.<br/>Set `use_existing_security_groups` to `true` to enable using `existing_security_groups` as Security Groups for the cluster. | `list(string)` | `[]` | no |
-| <a name="input_family"></a> [family](#input\_family) | The family of the ElastiCache parameter group | `string` | `"redis4.0"` | no |
+| <a name="input_family"></a> [family](#input\_family) | The family of the ElastiCache parameter group | `string` | `"redis7"` | no |
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | The name of your final node group (shard) snapshot. ElastiCache creates the snapshot from the primary node in the cluster. If omitted, no final snapshot will be made. | `string` | `null` | no |
 | <a name="input_global_replication_group_id"></a> [global\_replication\_group\_id](#input\_global\_replication\_group\_id) | The ID of the global replication group to which this replication group should belong. If this parameter is specified, the replication group is added to the specified global replication group as a secondary replication group; otherwise, the replication group is not part of any global replication group. If global\_replication\_group\_id is set, the num\_node\_groups parameter cannot be set. | `string` | `null` | no |
 | <a name="input_id_length_limit"></a> [id\_length\_limit](#input\_id\_length\_limit) | Limit `id` to this many characters (minimum 6).<br/>Set to `0` for unlimited length.<br/>Set to `null` for keep the existing setting, which defaults to `0`.<br/>Does not affect `id_full`. | `number` | `null` | no |
@@ -361,7 +361,7 @@ Check out these related projects.
 > - **Customer Workshops.** Engage with our team in weekly workshops, gaining insights and strategies to continuously improve and innovate.
 >
 > <a href="https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-elasticache-redis&utm_content=commercial_support"><img alt="Request Quote" src="https://img.shields.io/badge/request%20quote-success.svg?style=for-the-badge"/></a>
-> 
+>
 </details>
 
 ## ✨ Contributing
@@ -404,15 +404,15 @@ Setup dependencies:
 
 To run tests:
 
-- Run all tests:  
+- Run all tests:
   ```sh
   atmos test run
   ```
-- Clean up test artifacts:  
+- Clean up test artifacts:
   ```sh
   atmos test clean
   ```
-- Explore additional test options:  
+- Explore additional test options:
   ```sh
   atmos test --help
   ```
