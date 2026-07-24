@@ -9,65 +9,16 @@ variable "subnets" {
   default     = []
 }
 
-variable "security_group_enabled" {
-  type        = bool
-  description = "Whether to create default Security Group for ElastiCache."
-  default     = true
-}
-
-variable "security_group_description" {
-  type        = string
-  default     = "ElastiCache Security Group"
-  description = "The Security Group description."
-}
-
-variable "security_group_use_name_prefix" {
-  type        = bool
-  default     = false
-  description = "Whether to create a default Security Group with unique name beginning with the normalized prefix."
-}
-
-variable "security_group_rules" {
-  type = list(any)
-  default = [
-    {
-      type        = "egress"
-      from_port   = 0
-      to_port     = 65535
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "Allow all outbound traffic"
-    }
-  ]
-  description = <<-EOT
-    A list of maps of Security Group rules. 
-    The values of map is fully complated with `aws_security_group_rule` resource. 
-    To get more info see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule .
-  EOT
-}
-
-variable "security_groups" {
-  description = "A list of Security Group IDs to associate with ElastiCache."
-  type        = list(string)
-  default     = []
-}
-
-variable "associated_security_group_ids" {
-  type        = list(string)
-  default     = []
-  description = "List of existing Security Group IDs to associate with the cluster. Use this when security_group_enabled = false."
-}
-
-variable "create_parameter_group" {
-  type        = bool
-  default     = false
-  description = "Reserved for future use. This module does not create a parameter group; pass the name via parameter_group_name."
-}
-
 variable "elasticache_subnet_group_name" {
   type        = string
   description = "Subnet group name for the ElastiCache instance"
   default     = ""
+}
+
+variable "network_type" {
+  type        = string
+  default     = "ipv4"
+  description = "The network type of the cluster. Valid values: ipv4, ipv6, dual_stack."
 }
 
 variable "maintenance_window" {
@@ -85,7 +36,7 @@ variable "cluster_size" {
 variable "port" {
   type        = number
   default     = 6379
-  description = "Redis port"
+  description = "Port number on which the cache nodes will accept connections"
 }
 
 variable "instance_type" {
@@ -96,8 +47,8 @@ variable "instance_type" {
 
 variable "family" {
   type        = string
-  default     = "redis4.0"
-  description = "Redis family"
+  default     = "redis7"
+  description = "The family of the ElastiCache parameter group"
 }
 
 variable "parameter" {
@@ -117,8 +68,8 @@ variable "engine" {
 
 variable "engine_version" {
   type        = string
-  default     = "4.0.10"
-  description = "Cache engine version (e.g. 7.1 for Redis OSS, 7.2 for Valkey)."
+  default     = "7.1"
+  description = "Version number of the cache engine"
 }
 
 variable "at_rest_encryption_enabled" {
@@ -130,7 +81,18 @@ variable "at_rest_encryption_enabled" {
 variable "transit_encryption_enabled" {
   type        = bool
   default     = true
-  description = "Whether to enable encryption in transit. If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis"
+  description = <<-EOT
+    Set `true` to enable encryption in transit. Forced `true` if `var.auth_token` is set.
+    If this is enabled, use the [following guide](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html#connect-tls) to access redis.
+    EOT
+}
+
+variable "transit_encryption_mode" {
+  type        = string
+  default     = null
+  description = <<-EOT
+    A setting that enables clients to migrate to in-transit encryption with no downtime. Valid values are `preferred` and `required`. When enabling encryption on an existing replication group, this must first be set to `preferred` before setting it to `required` in a subsequent apply. See the TransitEncryptionMode field in the [CreateReplicationGroup](https://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateReplicationGroup.html) API documentation for additional details."
+    EOT
 }
 
 variable "notification_topic_arn" {
@@ -170,6 +132,12 @@ variable "apply_immediately" {
   description = "Apply changes immediately"
 }
 
+variable "data_tiering_enabled" {
+  type        = bool
+  default     = false
+  description = "Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type."
+}
+
 variable "automatic_failover_enabled" {
   type        = bool
   default     = false
@@ -189,9 +157,13 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  type        = string
-  default     = ""
-  description = "Route53 DNS Zone ID"
+  type        = any
+  default     = []
+  description = <<-EOT
+    Route53 DNS Zone ID as list of string (0 or 1 items). If empty, no custom DNS name will be published.
+    If the list contains a single Zone ID, a custom DNS name will be pulished in that zone.
+    Can also be a plain string, but that use is DEPRECATED because of Terraform issues.
+    EOT
 }
 
 variable "dns_subdomain" {
@@ -204,6 +176,17 @@ variable "auth_token" {
   type        = string
   description = "Auth token for password protecting redis, `transit_encryption_enabled` must be set to `true`. Password must be longer than 16 chars"
   default     = null
+}
+
+variable "auth_token_update_strategy" {
+  type        = string
+  description = "Strategy to use when updating the auth_token. Valid values are `SET`, `ROTATE`, and `DELETE`. Defaults to `ROTATE`."
+  default     = "ROTATE"
+
+  validation {
+    condition     = contains(["set", "rotate", "delete"], lower(var.auth_token_update_strategy))
+    error_message = "Valid values for auth_token_update_strategy are `SET`, `ROTATE`, and `DELETE`."
+  }
 }
 
 variable "kms_key_id" {
@@ -229,6 +212,7 @@ variable "snapshot_arns" {
   default     = []
 }
 
+
 variable "snapshot_name" {
   type        = string
   description = "The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource."
@@ -243,7 +227,7 @@ variable "snapshot_window" {
 
 variable "snapshot_retention_limit" {
   type        = number
-  description = "The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them."
+  description = "The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. Set a value to enable automated backups on the cache. If the value of snapshot_retention_limit is set to zero (0), backups are turned off."
   default     = 0
 }
 
@@ -277,13 +261,86 @@ variable "cloudwatch_metric_alarms_enabled" {
   default     = false
 }
 
+variable "create_parameter_group" {
+  type        = bool
+  default     = true
+  description = "Whether new parameter group should be created. Set to false if you want to use existing parameter group"
+}
+
 variable "parameter_group_description" {
   type        = string
   default     = null
   description = "Managed by Terraform"
 }
 
-variable parameter_group_name {
-  type = string
-  description = "(Optional) The name of the parameter group to associate with this replication group. If this argument is omitted, the default cache parameter group for the specified engine is used. To enable \"cluster mode\", i.e. data sharding, use a parameter group that has the parameter cluster-enabled set to true."
+variable "parameter_group_name" {
+  type        = string
+  default     = null
+  description = "Override the default parameter group name"
+}
+
+variable "log_delivery_configuration" {
+  type        = list(map(any))
+  default     = []
+  description = "The log_delivery_configuration block allows the streaming of Redis SLOWLOG or Redis Engine Log to CloudWatch Logs or Kinesis Data Firehose. Max of 2 blocks."
+}
+
+variable "description" {
+  type        = string
+  default     = null
+  description = "Description of elasticache replication group"
+}
+
+variable "user_group_ids" {
+  type        = list(string)
+  default     = null
+  description = "User Group ID to associate with the replication group"
+}
+
+variable "auto_minor_version_upgrade" {
+  type        = bool
+  default     = null
+  description = "Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported if the engine version is 6 or higher."
+}
+
+variable "serverless_enabled" {
+  type        = bool
+  default     = false
+  description = "Flag to enable/disable creation of a serverless redis cluster"
+}
+
+variable "serverless_major_engine_version" {
+  type        = string
+  default     = "7"
+  description = "The major version of the engine to use for the serverless cluster"
+}
+
+variable "serverless_snapshot_time" {
+  type        = string
+  default     = "06:00"
+  description = "The daily time that snapshots will be created from the serverless cache."
+}
+
+variable "serverless_user_group_id" {
+  type        = string
+  default     = null
+  description = "User Group ID to associate with the replication group"
+}
+
+variable "serverless_cache_usage_limits" {
+  type        = map(any)
+  default     = {}
+  description = "The usage limits for the serverless cache"
+}
+
+variable "serverless_snapshot_arns_to_restore" {
+  type        = list(string)
+  default     = []
+  description = "The list of ARN(s) of the snapshot that the new serverless cache will be created from. Available for Redis only."
+}
+
+variable "global_replication_group_id" {
+  type        = string
+  default     = null
+  description = "The ID of the global replication group to which this replication group should belong. If this parameter is specified, the replication group is added to the specified global replication group as a secondary replication group; otherwise, the replication group is not part of any global replication group. If global_replication_group_id is set, the num_node_groups parameter cannot be set."
 }

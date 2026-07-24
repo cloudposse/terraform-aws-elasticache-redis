@@ -54,26 +54,27 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	clusterHost := terraform.Output(t, terraformOptions, "cluster_host")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-redis-test-"+randId+".testing.cloudposse.co", clusterHost)
+	// assert.Equal(t, "eg-test-redis-test-"+randId+".testing.cloudposse.co", clusterHost)
+	assert.Equal(t, "eg-test-redis-test-"+randId+".elasticache-redis-terratest-"+randId+".testing.cloudposse.co", clusterHost)
 
 	// Run `terraform output` to get the value of an output variable
 	clusterId := terraform.Output(t, terraformOptions, "cluster_id")
 	// Verify we're getting back the outputs we expect
 	assert.Equal(t, "eg-test-redis-test-"+randId, clusterId)
 
-	// Run `terraform output` to get the value of an output variable
-	securityGroupName := terraform.Output(t, terraformOptions, "cluster_security_group_name")
-	expectedSecurityGroupName := "eg-test-redis-test-" + randId
-	// Verify we're getting back the outputs we expect
-	assert.Equal(t, expectedSecurityGroupName, securityGroupName)
 
-	// Run `terraform output` to get the value of an output variable
-	securityGroupID := terraform.Output(t, terraformOptions, "cluster_security_group_id")
-	// Verify we're getting back the outputs we expect
-	assert.Contains(t, securityGroupID, "sg-", "SG ID should contains substring 'sg-'")
+	terraformOptions.Vars = map[string]interface{}{
+		"attributes": attributes,
+		"sg_name": "changed",
+	}
 
-	// Run `terraform output` to get the value of an output variable
-	securityGroupARN := terraform.Output(t, terraformOptions, "cluster_security_group_arn")
-	// Verify we're getting back the outputs we expect
-	assert.Contains(t, securityGroupARN, "arn:aws:ec2", "SG ID should contains substring 'arn:aws:ec2'")
+	terraformOptions.Parallelism = 1
+
+	// This will run `terraform apply` and fail the test if there are any errors
+	// We are checking to make sure that changing the security group name
+	// does not fail with a dependency error.
+	terraform.Apply(t, terraformOptions)
+
+	// Restore parallelism for destroy operation
+	terraformOptions.Parallelism = 10
 }
