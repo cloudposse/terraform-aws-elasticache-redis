@@ -52,6 +52,18 @@ variable "security_groups" {
   default     = []
 }
 
+variable "associated_security_group_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of existing Security Group IDs to associate with the cluster. Use this when security_group_enabled = false."
+}
+
+variable "create_parameter_group" {
+  type        = bool
+  default     = false
+  description = "Reserved for future use. This module does not create a parameter group; pass the name via parameter_group_name."
+}
+
 variable "elasticache_subnet_group_name" {
   type        = string
   description = "Subnet group name for the ElastiCache instance"
@@ -97,10 +109,16 @@ variable "parameter" {
   description = "A list of Redis parameters to apply. Note that parameters may differ from one Redis family to another"
 }
 
+variable "engine" {
+  type        = string
+  default     = "redis"
+  description = "Cache engine. Valid values: redis, valkey."
+}
+
 variable "engine_version" {
   type        = string
   default     = "4.0.10"
-  description = "Redis engine version"
+  description = "Cache engine version (e.g. 7.1 for Redis OSS, 7.2 for Valkey)."
 }
 
 variable "at_rest_encryption_enabled" {

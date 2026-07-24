@@ -43,13 +43,14 @@ resource "aws_elasticache_replication_group" "default" {
   num_cache_clusters         = var.cluster_mode_enabled ? null : var.cluster_size
   port                       = var.port
   parameter_group_name       = var.parameter_group_name
-  availability_zones         = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
+  preferred_cache_cluster_azs = length(var.availability_zones) == 0 ? null : [for n in range(0, var.cluster_size) : element(var.availability_zones, n)]
   automatic_failover_enabled = var.automatic_failover_enabled
   multi_az_enabled           = var.multi_az_enabled
   subnet_group_name          = local.elasticache_subnet_group_name
-  security_group_ids         = compact(concat(module.security_group.*.id, var.security_groups))
+  security_group_ids         = compact(concat(module.security_group.*.id, var.security_groups, var.associated_security_group_ids))
   maintenance_window         = var.maintenance_window
   notification_topic_arn     = var.notification_topic_arn
+  engine                     = var.engine
   engine_version             = var.engine_version
   at_rest_encryption_enabled = var.at_rest_encryption_enabled
   transit_encryption_enabled = var.auth_token != null ? coalesce(true, var.transit_encryption_enabled) : var.transit_encryption_enabled
