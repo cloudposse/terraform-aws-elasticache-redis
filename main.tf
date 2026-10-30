@@ -5,7 +5,8 @@ locals {
   enabled                    = module.this.enabled
   create_normal_instance     = local.enabled && !var.serverless_enabled
   create_serverless_instance = local.enabled && var.serverless_enabled
-  create_parameter_group     = var.global_replication_group_id == null ? var.create_parameter_group : false
+  # Serverless caches do not use parameter groups, so never create one for them
+  create_parameter_group     = var.global_replication_group_id == null && !var.serverless_enabled ? var.create_parameter_group : false
   engine                     = var.global_replication_group_id == null ? var.engine : null
   engine_version             = var.global_replication_group_id == null ? var.engine_version : null
   instance_type              = var.global_replication_group_id == null ? var.instance_type : null
